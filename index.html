@@ -57,7 +57,6 @@
     .trigger-list { display: grid; gap: 8px; }
     .trigger-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9fafb; border-radius: 8px; font-size: 0.9rem; border: 1px solid transparent; transition: all 0.3s ease; }
     .trigger-active { background: #d1fae5; border-color: #10b981; color: #065f46; animation: pulse 2s infinite; }
-
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     .status-dot { width: 12px; height: 12px; border-radius: 50%; background: #d1d5db; }
     .status-dot.active { background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
@@ -93,21 +92,32 @@
     .ok { color: #10b981; } .warn { color: #f59e0b; } .bad { color: #ef4444; }
     .pill { display:inline-block; padding: 4px 8px; border-radius: 999px; font-size: 0.8rem; border:1px solid #e5e7eb; background:#fff; }
 
+    .install-banner {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white; padding: 15px 20px; border-radius: 15px; margin-bottom: 20px;
+      display: none; align-items: center; justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    .install-text { font-size: 1rem; font-weight: 500; }
+    .install-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
+    .install-btn:hover { background: rgba(255,255,255,0.3); }
+
     @media (max-width: 768px) {
       .price-display { font-size: 2.2rem; }
       .countdown-display { font-size: 1.8rem; }
       .grid { grid-template-columns: 1fr; }
       .container { padding: 10px; }
       .button-row { flex-direction: column; }
+      .install-banner { flex-direction: column; text-align: center; gap: 10px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <!-- Install Banner -->
-    <div class="install-banner" id="installBanner" style="display:none">
+    <div class="install-banner" id="installBanner">
       <div class="install-text">📱 Als App installieren</div>
-      <button class="install-btn btn btn-outline" id="installBtn">Installieren</button>
+      <button class="install-btn" id="installBtn">Installieren</button>
     </div>
 
     <!-- Header -->
@@ -160,24 +170,12 @@
       <div class="card">
         <div class="card-title">📊 Trigger Status</div>
         <div class="trigger-list">
-          <div class="trigger-item" id="trigger1">
-            <span>1h Close > $118,400</span><div class="status-dot" id="dot1"></div>
-          </div>
-          <div class="trigger-item" id="trigger2">
-            <span>Spot ≥ $119,100</span><div class="status-dot" id="dot2"></div>
-          </div>
-          <div class="trigger-item" id="trigger3">
-            <span>Spot ≤ $117,200</span><div class="status-dot" id="dot3"></div>
-          </div>
-          <div class="trigger-item" id="trigger4">
-            <span>Zone $116.4k–$116.9k</span><div class="status-dot" id="dot4"></div>
-          </div>
-          <div class="trigger-item" id="trigger5">
-            <span>Spot ≤ $116,100</span><div class="status-dot" id="dot5"></div>
-          </div>
-          <div class="trigger-item" id="trigger6">
-            <span>Spot ≤ $114,500</span><div class="status-dot" id="dot6"></div>
-          </div>
+          <div class="trigger-item" id="trigger1"><span>1h Close > $118,400</span><div class="status-dot" id="dot1"></div></div>
+          <div class="trigger-item" id="trigger2"><span>Spot ≥ $119,100</span><div class="status-dot" id="dot2"></div></div>
+          <div class="trigger-item" id="trigger3"><span>Spot ≤ $117,200</span><div class="status-dot" id="dot3"></div></div>
+          <div class="trigger-item" id="trigger4"><span>Zone $116.4k–$116.9k</span><div class="status-dot" id="dot4"></div></div>
+          <div class="trigger-item" id="trigger5"><span>Spot ≤ $116,100</span><div class="status-dot" id="dot5"></div></div>
+          <div class="trigger-item" id="trigger6"><span>Spot ≤ $114,500</span><div class="status-dot" id="dot6"></div></div>
         </div>
         <div class="mt12 small">
           Letzter 1h Close: <strong id="lastClose">$118,062</strong>
@@ -251,7 +249,6 @@
       <!-- Bear Market Survival -->
       <div class="card">
         <div class="card-title">🐻 Bear Market Survival</div>
-
         <!-- DCA -->
         <div class="small muted">DCA‑Rechner (holt 1D‑Klines; Close‑Preis je Intervall)</div>
         <div class="row3 mt8">
@@ -354,7 +351,7 @@
       <div class="card">
         <div class="card-title">ℹ️ App Info</div>
         <div class="small">
-          <p><strong>GitHub PWA Version 2.2</strong></p>
+          <p><strong>GitHub PWA Version 2.3</strong></p>
           <p>📡 Live‑Updates: Echtzeit (WS) + Fallback 5 s</p>
           <p>🔔 Push‑Benachrichtigungen</p>
           <p>📱 Installation: Alle Browser</p>
@@ -375,15 +372,15 @@
     let updateCounter = 0;
     let fearGreedIndex = 50;
 
-    // FOMC & PCE Referenz (PCE fest aus Beispiel)
-    let FOMC_NEXT = null; // aus Fed‑Terminen (siehe unten)
+    // FOMC & PCE
+    let FOMC_NEXT = null; // aus Fed‑Terminen
     const PCE_DATE = new Date('2025-07-31T12:30:00Z');
 
-    // Preisverlauf (für Crash‑Detection)
+    // Preisverlauf (Crash‑Detection)
     const priceHistory = []; // [{t: ms, p: price}]
     const PRICE_HISTORY_WINDOW_MS = 60 * 60 * 1000; // 60m
 
-    // Day‑Trading‑Puffer
+    // Day‑Trading
     let dayModeOn = true;
     let crashOn = true;
 
@@ -391,14 +388,14 @@
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      document.getElementById('installBanner')?.setAttribute('style','display:flex');
+      document.getElementById('installBanner').style.display = 'flex';
     });
-    document.getElementById('installBtn')?.addEventListener('click', async () => {
+    document.getElementById('installBtn').addEventListener('click', async () => {
       if (!deferredPrompt) return;
       deferredPrompt.prompt();
       await deferredPrompt.userChoice;
       deferredPrompt = null;
-      document.getElementById('installBanner')?.setAttribute('style','display:none');
+      document.getElementById('installBanner').style.display = 'none';
       if (pushEnabled) sendNotification('App installiert!', 'BTC Monitor installiert.');
     });
 
@@ -438,7 +435,6 @@
         document.getElementById('pceCountdown').textContent = 'PCE veröffentlicht';
       }
     }
-
     function updateLastUpdateTime() {
       const ts = new Date();
       const hh = fmt2(ts.getHours()), mm = fmt2(ts.getMinutes()), ss = fmt2(ts.getSeconds());
@@ -452,10 +448,8 @@
     function applyPriceUpdate(priceFloat, changePctFloat) {
       currentPrice = Math.round(priceFloat);
 
-      // Preis
       document.getElementById('btcPrice').textContent = `$${currentPrice.toLocaleString('en-US')}`;
 
-      // 24h‑Change
       const changeEl = document.getElementById('priceChange');
       const sign = changePctFloat >= 0 ? '+' : '';
       changeEl.textContent = `${sign}${changePctFloat.toFixed(2)}% (24h)`;
@@ -467,11 +461,10 @@
       while (priceHistory.length && (now - priceHistory[0].t) > PRICE_HISTORY_WINDOW_MS) priceHistory.shift();
       if (crashOn) checkCrashSignals();
 
-      // Folge‑Updates
       updatePhases();
       updateTriggers();
       generateRecommendations();
-      updateFearGreedUI(); // nur UI, Wert kommt getrennt
+      updateFearGreedUI();
       updateLastUpdateTime();
     }
 
@@ -485,9 +478,7 @@
           if (stream.endsWith('@ticker')) {
             const last = parseFloat(d.c);
             const pct  = parseFloat(d.P);
-            if (Number.isFinite(last) && Number.isFinite(pct)) {
-              applyPriceUpdate(last, pct);
-            }
+            if (Number.isFinite(last) && Number.isFinite(pct)) applyPriceUpdate(last, pct);
           } else if (stream.includes('@kline_5m')) {
             onKline('5m', d.k);
           } else if (stream.includes('@kline_15m')) {
@@ -637,7 +628,6 @@
     function pctChange(a,b){ return ((b-a)/a)*100; }
     function findPriceAt(msAgo) {
       const target = Date.now() - msAgo;
-      // lineare Suche rückwärts, da Puffer < 60m
       for (let i=priceHistory.length-1; i>=0; i--) {
         if (priceHistory[i].t <= target) return priceHistory[i].p;
       }
@@ -678,30 +668,23 @@
     }
 
     // ========= Day‑Trading‑Signale =========
-    const buf5m = []; // Array von {open, high, low, close, volume, t}
+    const buf5m = []; // {open, high, low, close, volume, t, closed}
     const buf15m = [];
     function onKline(tf, k) {
-      const obj = {
-        open: +k.o, high: +k.h, low: +k.l, close: +k.c, volume: +k.v,
-        closed: k.x, t: k.t
-      };
+      const obj = { open:+k.o, high:+k.h, low:+k.l, close:+k.c, volume:+k.v, closed:k.x, t:k.t };
       const buf = tf==='5m' ? buf5m : buf15m;
-      // ersetze letzte if same start time
       if (buf.length && buf[buf.length-1].t === obj.t) buf[buf.length-1] = obj;
       else buf.push(obj);
-      const maxLen = tf==='5m' ? 200 : 200;
-      while (buf.length>maxLen) buf.shift();
+      const maxLen = 200; while (buf.length>maxLen) buf.shift();
 
       if (dayModeOn) {
         const sig = computeSignals(buf);
         if (sig && obj.closed) {
           const msg = `${tf} ${sig.type} @ ${obj.close.toFixed(0)} (RSI ${sig.rsi.toFixed(0)}, EMA9/21 ${sig.ema9.toFixed(0)}/${sig.ema21.toFixed(0)})`;
-          logDay(msg, sig.type==='BUY'?'ok':sig.type==='SELL'?'bad':'warn');
+          logDay(msg, sig.type==='BUY'?'ok':'bad');
         }
-        // Volume Spike
         const volMsg = volumeSpike(buf);
         if (volMsg && obj.closed) logDay(`${tf} ${volMsg}`, 'warn', true);
-        // S/R nachführen
         updateSR();
       }
     }
@@ -723,9 +706,8 @@
     }
     function computeSignals(buf) {
       if (buf.length<21) return null;
-      const closes = buf.map(b=>b.close);
-      const ema9 = ema(buf.slice(-50), 9, x=>x.close);
-      const ema21= ema(buf.slice(-50), 21, x=>x.close);
+      const ema9  = ema(buf.slice(-50),  9, x=>x.close);
+      const ema21 = ema(buf.slice(-50), 21, x=>x.close);
       const r = rsi(buf, 14);
       let type = null;
       if (ema9>ema21 && r>55) type = 'BUY';
@@ -739,7 +721,7 @@
       const avg = buf.slice(-21,-1).reduce((s,b)=>s+b.volume,0)/20;
       if (avg>0 && last.volume>1.5*avg) {
         document.getElementById('sigVol').textContent = `${(last.volume).toFixed(2)} (>1.5×)`;
-        if (pushEnabled) sendNotification('Volume Spike', `TF: ${last.t} Vol > 1.5×`);
+        if (pushEnabled) sendNotification('Volume Spike', `Vol > 1.5× (TF aktuell)`);
         return `Volume‑Spike: ${(last.volume).toFixed(2)} (>1.5× 20‑Schnitt)`;
       }
       return null;
@@ -772,19 +754,10 @@
     }
     function fmtUSD(n){ return '$'+Math.round(n).toLocaleString('en-US'); }
     function dcaSim(kl, interval, amount) {
-      // Bestimme Kauf‑Tage
       const buys = [];
-      if (interval==='daily') {
-        for (let i=0;i<kl.length;i++) buys.push(kl[i]);
-      } else if (interval==='weekly') {
-        for (let i=0;i<kl.length;i+=7) buys.push(kl[i]);
-      } else { // monthly
-        let lastMonth = -1;
-        for (let i=0;i<kl.length;i++) {
-          const m = new Date(kl[i].t).getUTCMonth();
-          if (m!==lastMonth){ buys.push(kl[i]); lastMonth=m; }
-        }
-      }
+      if (interval==='daily') for (let i=0;i<kl.length;i++) buys.push(kl[i]);
+      else if (interval==='weekly') for (let i=0;i<kl.length;i+=7) buys.push(kl[i]);
+      else { let lastMonth=-1; for (let i=0;i<kl.length;i++){ const m=new Date(kl[i].t).getUTCMonth(); if(m!==lastMonth){ buys.push(kl[i]); lastMonth=m; } } }
       let invested=0, coins=0;
       buys.forEach(b => { invested += amount; coins += amount / b.close; });
       const avg = invested / (coins || 1e-9);
@@ -797,14 +770,13 @@
     }
     function fibs(fromLow, toHigh) {
       const diff = toHigh - fromLow;
-      const levels = [
+      return [
         {label:'23.6%', val: toHigh - 0.236*diff},
         {label:'38.2%', val: toHigh - 0.382*diff},
         {label:'50.0%', val: toHigh - 0.5*diff},
         {label:'61.8%', val: toHigh - 0.618*diff},
         {label:'78.6%', val: toHigh - 0.786*diff},
       ];
-      return levels;
     }
 
     async function runDCA() {
@@ -822,9 +794,7 @@
         const pl = value - res.invested;
         const sign = pl>=0?'+':'';
         document.getElementById('dcaPL').textContent = `${sign}${fmtUSD(pl)}`;
-      } catch (e) {
-        alert('DCA‑Berechnung fehlgeschlagen.');
-      }
+      } catch { alert('DCA‑Berechnung fehlgeschlagen.'); }
     }
 
     async function updateSMAZonesAndATH() {
@@ -860,16 +830,13 @@
         document.getElementById('athDist').textContent = (dist>=0?dist.toFixed(2)+'% unter ATH':(-dist).toFixed(2)+'% über ATH');
         const daysSince = Math.floor((Date.now()-ath.t)/86400000);
         document.getElementById('athDays').textContent = daysSince + ' Tage';
-        // Fibs
         const levels = fibs(cycleLow.price, ath.price);
         const fibWrap = document.getElementById('fibList'); fibWrap.innerHTML = '';
         levels.forEach(l=>{
           const k = document.createElement('div'); k.textContent = l.label; fibWrap.appendChild(k);
           const v = document.createElement('div'); v.className='mono'; v.textContent = fmtUSD(l.val); fibWrap.appendChild(v);
         });
-      } catch (e) {
-        // still ok
-      }
+      } catch {}
     }
 
     // ========= Profit‑Taking =========
@@ -926,19 +893,97 @@
       btn.innerHTML='🔄 Updating…'; btn.disabled = true; setTimeout(()=>{btn.innerHTML=t; btn.disabled=false;}, 900);
     }
 
-    // ========= Service Worker =========
+    // ========= Service Worker (Cache‑Fix, Network‑First Navigation) =========
     const SW_CODE = `
-      const CACHE_NAME='btc-monitor-v2.2';
-      const urlsToCache=['/','/index.html'];
-      self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(urlsToCache)))});
-      self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))});
+      const CACHE_NAME = 'btc-monitor-v2.3';
+
+      self.addEventListener('install', (event) => {
+        self.skipWaiting();
+      });
+
+      self.addEventListener('activate', (event) => {
+        event.waitUntil((async () => {
+          const keys = await caches.keys();
+          await Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)));
+          self.clients.claim();
+        })());
+      });
+
+      self.addEventListener('fetch', (event) => {
+        const req = event.request;
+
+        // Navigation: network-first
+        if (req.mode === 'navigate') {
+          event.respondWith((async () => {
+            try {
+              const fresh = await fetch(req);
+              const cache = await caches.open(CACHE_NAME);
+              cache.put(req, fresh.clone());
+              return fresh;
+            } catch (e) {
+              const cached = await caches.match(req);
+              return cached || Response.error();
+            }
+          })());
+          return;
+        }
+
+        // Andere Requests: cache-first, dann network + cache
+        event.respondWith((async () => {
+          const cached = await caches.match(req);
+          if (cached) return cached;
+          const fresh = await fetch(req);
+          const cache = await caches.open(CACHE_NAME);
+          cache.put(req, fresh.clone());
+          return fresh;
+        })());
+      });
     `;
     function registerServiceWorker() {
       if ('serviceWorker' in navigator) {
-        const blob = new Blob([SW_CODE], {type:'application/javascript'});
+        const blob = new Blob([SW_CODE], { type: 'application/javascript' });
         const swUrl = URL.createObjectURL(blob);
-        navigator.serviceWorker.register(swUrl).catch(()=>{});
+        navigator.serviceWorker.register(swUrl).then((reg) => {
+          reg.update(); // sofort nach Updates suchen
+        }).catch(()=>{});
       }
+    }
+
+    // ========= Manifest =========
+    function generateManifest() {
+      const manifest = {
+        "name": "BTC Trading Monitor",
+        "short_name": "BTC Monitor",
+        "description": "GitHub PWA für BTC Trading mit Live-Updates",
+        "start_url": "/",
+        "display": "standalone",
+        "background_color": "#667eea",
+        "theme_color": "#10b981",
+        "orientation": "portrait-primary",
+        "icons": [
+          {
+            "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiMxMGI5ODEiLz4KPHRleHQgeD0iOTYiIHk9IjEwNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjY0IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZmZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+4oK/PC90ZXh0Pgo8L3N2Zz4K",
+            "sizes": "192x192",
+            "type": "image/svg+xml"
+          },
+          {
+            "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iNjQiIGZpbGw9IiMxMGI5ODEiLz4KPHRleHQgeD0iMjU2IiB5PSIyODAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNzAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZmZmZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7igrM8L3RleHQ+Cjwvc3ZnPgo=",
+            "sizes": "512x512",
+            "type": "image/svg+xml"
+          }
+        ],
+        "categories": ["finance", "productivity", "utilities"],
+        "screenshots": [],
+        "shortcuts": [
+          { "name": "Aktuelle Trigger", "short_name": "Trigger", "description": "Zeige aktuelle Trading Trigger", "url": "/#triggers" }
+        ]
+      };
+      const manifestBlob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
+      const manifestUrl = URL.createObjectURL(manifestBlob);
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = manifestUrl + '?v=2.3'; // Version-Bust
+      document.head.appendChild(link);
     }
 
     // ========= Events =========
@@ -960,22 +1005,20 @@
     document.getElementById('dayToggle').addEventListener('click', () => {
       dayModeOn = !dayModeOn;
       document.getElementById('dayToggle').textContent = dayModeOn ? '✅ Aktiv' : '⛔ Deaktiviert';
-      document.getElementById('dayStatus').textContent = dayModeOn ? 'Signale aktiv.' : 'Signale aus.';
+      document.getElementById('dayStatus').textContent = dayModeOn ? '5m/15m EMA/RSI/Vol aktiv' : 'Signale aus.';
     });
     document.getElementById('dcaCalcBtn').addEventListener('click', runDCA);
     document.getElementById('ptCalcBtn').addEventListener('click', calcPT);
 
-    // ========= Day Trading Anzeige‑Felder =========
-    // (werden in logDay() aktualisiert)
-
     // ========= Init =========
     async function init() {
-      console.log('BTC Monitor v2.2 init');
+      console.log('BTC Monitor v2.3 init');
+      generateManifest();
       registerServiceWorker();
 
-      // Fed‑Termine initial (Beispiel: nimm deinen nächsten Termin hier rein, sonst UI nutzen)
+      // Fed‑Termine initial
       if (loadFedEvents().length === 0) {
-        addFedEvent('2025-07-30T14:00:00Z', 'FOMC Meeting'); // Beispieltermin
+        addFedEvent('2025-07-30T14:00:00Z', 'FOMC Meeting'); // Beispiel
       } else {
         renderFedEvents();
       }
@@ -998,8 +1041,9 @@
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
-    // ========= Utility UI Update bei Start =========
-    renderFedEvents();
+    // Liste rendern (falls schon vorhanden)
+    function renderFedEventsIfAny(){ try{renderFedEvents();}catch{} }
+    renderFedEventsIfAny();
   </script>
 </body>
 </html>
