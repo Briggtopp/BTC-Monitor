@@ -3,8 +3,6 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-  <!-- PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="BTC Monitor"/>
@@ -12,9 +10,7 @@
   <meta name="application-name" content="BTC Monitor"/>
   <meta name="theme-color" content="#10b981"/>
   <meta name="msapplication-TileColor" content="#10b981"/>
-
   <title>🚀 BTC Trading Monitor</title>
-
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Roboto',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:15px;color:#333}
@@ -81,13 +77,13 @@
       </div>
     </div>
 
-    <!-- Nächstes FF-Event Countdown -->
+    <!-- Nächstes Macro-Event -->
     <div class="countdown-container">
-      <div class="countdown-title">⏰ Nächstes Wirtschafts-Event (ForexFactory)</div>
+      <div class="countdown-title">⏰ Nächstes Wirtschafts‑Event (ForexFactory)</div>
       <div class="countdown-display" id="macroCountdown">Wird geladen…</div>
-      <div class="countdown-details" id="macroDetail">Quelle: ForexFactory (über API)</div>
+      <div class="countdown-details" id="macroDetail">Quelle: Proxy → JBlanked → ForexFactory</div>
       <div class="volatility-info">
-        ⚠️ Makro-Termine (z. B. CPI, NFP, Zinsentscheide) können starke Bewegungen auslösen.
+        ⚠️ Makro‑Termine (CPI, NFP, Zinsentscheide etc.) können starke Bewegungen auslösen.
       </div>
     </div>
 
@@ -134,28 +130,17 @@
           <div>Letztes Update</div><div id="fearGreedTime" class="mono">–</div>
         </div>
         <div class="meter-bar mt12"><div class="meter-indicator" id="fearGreedIndicator" style="left:50%"></div></div>
-        <div class="small muted mt8" id="fearGreedNote">Live-Abruf (alternative.me) – Fallback bei CORS.</div>
+        <div class="small muted mt8" id="fearGreedNote">Live‑Abruf (alternative.me) – Fallback bei CORS.</div>
       </div>
 
       <!-- ForexFactory Kalender -->
       <div class="card">
-        <div class="card-title">🗓️ Wirtschaftskalender (ForexFactory)</div>
+        <div class="card-title">🗓️ Wirtschaftskalender (via Proxy)</div>
 
         <div class="row">
           <div>
-            <label class="small muted">API-Key (JBlanked)</label>
-            <input id="ffApiKey" placeholder="Api-Key einfügen"/>
-          </div>
-          <div>
             <label class="small muted">Währungen (CSV)</label>
             <input id="ffFx" value="USD,EUR,GBP,JPY"/>
-          </div>
-        </div>
-
-        <div class="row mt8">
-          <div>
-            <label class="small muted">Filter (Name/Category enthält)</label>
-            <input id="ffFilter" placeholder="CPI, NFP, Rate, GDP"/>
           </div>
           <div>
             <label class="small muted">Zeitraum</label>
@@ -166,19 +151,28 @@
           </div>
         </div>
 
-        <!-- Tage/Top-Events -->
         <div class="row mt8">
+          <div>
+            <label class="small muted">Filter (Name/Category enthält)</label>
+            <input id="ffFilter" placeholder="CPI, NFP, Rate, GDP"/>
+          </div>
           <div>
             <label class="small muted">Tage ab heute (1–7)</label>
             <input id="ffDays" type="number" min="1" max="7" value="3"/>
           </div>
+        </div>
+
+        <div class="row mt8">
           <div>
-            <label class="small muted">Nur Top-Events</label>
+            <label class="small muted">Nur Top‑Events</label>
             <div><input id="ffTopOnly" type="checkbox" checked/> <span class="small muted">CPI, PCE, NFP, Rate, GDP, PMI, Unemployment</span></div>
+          </div>
+          <div>
+            <label class="small muted">Proxy testen</label><br/>
+            <button class="btn btn-outline mt4" id="ffTest">🧪 Test</button>
           </div>
         </div>
 
-        <!-- Wochentage -->
         <div class="mt8 small">
           <span class="muted">Wochentage (Mo–Fr):</span>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
@@ -191,20 +185,17 @@
         </div>
 
         <div class="mt8">
-          <button class="btn btn-outline" id="ffSave">💾 Speichern</button>
           <button class="btn btn-outline" id="ffLoad">🔄 Laden</button>
-          <button class="btn btn-outline" id="ffTest">🧪 Key testen</button>
         </div>
         <div id="ffMsg" class="small muted mt8"></div>
 
-        <div class="mt12 small muted">Quelle: ForexFactory (über JBlanked-API). Key im Header <code>Authorization: Api-Key …</code> erforderlich.</div>
         <ul id="ffList" class="mt12" style="list-style:none;padding-left:0;max-height:260px;overflow:auto;"></ul>
       </div>
 
-      <!-- Bear Market Survival -->
+      <!-- Bear Market, Bull Run, Day Trading – unverändert -->
       <div class="card">
         <div class="card-title">🐻 Bear Market Survival</div>
-        <div class="small muted">DCA-Rechner (1D-Klines)</div>
+        <div class="small muted">DCA‑Rechner (1D‑Klines)</div>
         <div class="row3 mt8">
           <div><label class="small muted">Zeitraum (Tage)</label><input id="dcaDays" type="number" min="30" max="1000" value="365"/></div>
           <div><label class="small muted">Intervall</label><select id="dcaInterval"><option value="daily">täglich</option><option value="weekly">wöchentlich</option><option value="monthly">monatlich</option></select></div>
@@ -214,14 +205,14 @@
         <div class="kv mt12">
           <div>Investiert</div><div class="mono" id="dcaInvested">–</div>
           <div>BTC erworben</div><div class="mono" id="dcaCoins">–</div>
-          <div>Ø-Preis</div><div class="mono" id="dcaAvg">–</div>
+          <div>Ø‑Preis</div><div class="mono" id="dcaAvg">–</div>
           <div>Wert @ Spot</div><div class="mono" id="dcaValue">–</div>
           <div>P/L</div><div class="mono" id="dcaPL">–</div>
         </div>
 
-        <div class="mt20 small muted">Accumulation-Zonen (200D-SMA)</div>
+        <div class="mt20 small muted">Accumulation‑Zonen (200D‑SMA)</div>
         <div class="kv mt8">
-          <div>200D-SMA</div><div class="mono" id="sma200">–</div>
+          <div>200D‑SMA</div><div class="mono" id="sma200">–</div>
           <div>Zone A (≤80% SMA)</div><div class="mono" id="zoneA">–</div>
           <div>Zone B (80–90% SMA)</div><div class="mono" id="zoneB">–</div>
           <div>Zone C (90–100% SMA)</div><div class="mono" id="zoneC">–</div>
@@ -229,7 +220,6 @@
         </div>
       </div>
 
-      <!-- Bull Run Tracker -->
       <div class="card">
         <div class="card-title">🐂 Bull Run Tracker</div>
         <div class="kv">
@@ -238,10 +228,10 @@
           <div>Distanz zu ATH</div><div class="mono" id="athDist">–</div>
           <div>Tage seit ATH</div><div class="mono" id="athDays">–</div>
         </div>
-        <div class="mt12 small muted">Fibonacci-Levels (Cycle Low ↔ ATH)</div>
+        <div class="mt12 small muted">Fibonacci‑Levels (Cycle Low ↔ ATH)</div>
         <div class="kv mt8" id="fibList"></div>
 
-        <div class="mt16 small muted">Profit-Taking Zonen</div>
+        <div class="mt16 small muted">Profit‑Taking Zonen</div>
         <div class="row3 mt8">
           <div><label class="small muted">Einstieg (USDT)</label><input id="entryPrice" type="number" value="100000"/></div>
           <div><label class="small muted">Staffel (%)</label><input id="ptSteps" type="text" value="10,20,30"/></div>
@@ -251,45 +241,41 @@
         <ul id="ptList" class="mt8" style="list-style:none;padding-left:0;"></ul>
       </div>
 
-      <!-- Day Trading -->
       <div class="card">
         <div class="card-title">🟢 Day Trading Mode</div>
         <div class="row">
           <div><button class="btn btn-success" id="dayToggle">✅ Aktiv</button></div>
-          <div><span class="small muted" id="dayStatus">5m/15m EMA9/EMA21-Cross + RSI(14) + Volume-Spikes</span></div>
+          <div><span class="small muted" id="dayStatus">5m/15m EMA9/EMA21‑Cross + RSI(14) + Volume‑Spikes</span></div>
         </div>
         <div class="row3 mt12">
-          <div class="pill">Letztes 5m-Signal: <span id="sig5m" class="mono">–</span></div>
-          <div class="pill">Letztes 15m-Signal: <span id="sig15m" class="mono">–</span></div>
-          <div class="pill">Letzter Volume-Spike: <span id="sigVol" class="mono">–</span></div>
+          <div class="pill">Letztes 5m‑Signal: <span id="sig5m" class="mono">–</span></div>
+          <div class="pill">Letztes 15m‑Signal: <span id="sig15m" class="mono">–</span></div>
+          <div class="pill">Letzter Volume‑Spike: <span id="sigVol" class="mono">–</span></div>
         </div>
         <div class="mt12 small muted">Support/Resistance (5m, ~100 Kerzen)</div>
         <div class="kv mt8">
           <div>Support</div><div class="mono" id="srSupport">–</div>
           <div>Resistance</div><div class="mono" id="srResistance">–</div>
         </div>
-        <div class="mt12">
-          <div class="small muted">Signallog:</div>
+        <div class="mt12"><div class="small muted">Signallog:</div>
           <ul id="dayLog" style="list-style:none;padding-left:0;max-height:180px;overflow:auto;"></ul>
         </div>
       </div>
 
-      <!-- Empfehlungen -->
       <div class="card">
         <div class="card-title">🎯 Trading Empfehlungen</div>
-        <div class="alert-box"><strong>Hinweis:</strong><br/>Nutze Crash-Detection & Day-Trading für Intraday; DCA & Zonen für langfristig.</div>
+        <div class="alert-box"><strong>Hinweis:</strong><br/>Nutze Crash‑Detection & Day‑Trading für Intraday; DCA & Zonen für langfristig.</div>
         <div class="success-box" id="currentRecommendation"><strong>📍 Status</strong><br/>Wartet auf Signale.</div>
       </div>
 
-      <!-- App Info -->
       <div class="card">
         <div class="card-title">ℹ️ App Info</div>
         <div class="small">
-          <p><strong>GitHub PWA Version 2.4.3</strong></p>
-          <p>📡 Live-Updates: Echtzeit (WS) + Fallback 5 s</p>
-          <p>🔔 Push-Benachrichtigungen</p>
+          <p><strong>GitHub PWA Version 2.4.4</strong></p>
+          <p>📡 Live‑Updates: Echtzeit (WS) + Fallback 5 s</p>
+          <p>🔔 Push‑Benachrichtigungen</p>
           <p>📱 Installation: Alle Browser</p>
-          <p>⚡ Offline-fähig</p>
+          <p>⚡ Offline‑fähig</p>
           <p>🎯 Letztes Update: <span id="lastUpdate">–</span></p>
         </div>
       </div>
@@ -297,16 +283,16 @@
   </div>
 
   <script>
-    // ======= Globale =======
-    let currentPrice = 119540;
-    let lastHourClose = 118062;
-    let pushEnabled = false;
-    let isMonitoring = true;
-    let deferredPrompt;
-    let updateCounter = 0;
-    let fearGreedIndex = 50;
+    // ===== Proxy-Konfiguration =====
+    // Vercel-API:
+    const FF_PROXY = '/api/ff';
+    // Falls Cloudflare Worker:
+    // const FF_PROXY = 'https://DEIN-WORKER.workers.dev/ff';
 
-    // PCE Referenz
+    // ===== Globale =====
+    let currentPrice = 119540, lastHourClose = 118062;
+    let pushEnabled = false, isMonitoring = true, deferredPrompt;
+    let updateCounter = 0, fearGreedIndex = 50;
     const PCE_DATE = new Date('2025-07-31T12:30:00Z');
 
     // Crash-Detection
@@ -314,513 +300,245 @@
     const PRICE_HISTORY_WINDOW_MS = 60*60*1000;
 
     // Day-Trading
-    let dayModeOn = true;
-    let crashOn = true;
+    let dayModeOn = true, crashOn = true;
 
-    // FF-Kalender (JBlanked)
-    const FF_KEY_STORAGE = 'ff_api_key_v1';
-    let ffEvents = []; // normalisiert
-    let nextMacro = null; // {name, when: Date, currency, category}
-    let ffLast = 0; // Throttle-Zeitstempel
+    // Kalender
+    let ffEvents = [], nextMacro = null, ffLast = 0;
 
-    // Top-Event Wörter (Kernfilter)
-    const TOP_WORDS = [
-      'cpi','core cpi','hicp','pce','nonfarm','non-farm','nfp',
-      'interest rate','rate decision','federal funds','ecb','boe','boj',
-      'gdp','unemployment','payrolls','retail sales','pmi','ism','confidence','fomc'
-    ];
+    // Top-Event Keywords
+    const TOP_WORDS = ['cpi','core cpi','hicp','pce','nonfarm','non-farm','nfp','interest rate','rate decision','federal funds','ecb','boe','boj','gdp','unemployment','payrolls','retail sales','pmi','ism','confidence','fomc'];
 
-    // ======= PWA Install =======
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault(); deferredPrompt = e;
-      document.getElementById('installBanner').style.display = 'flex';
-    });
+    // ===== PWA Install =====
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBanner').style.display = 'flex'; });
     document.getElementById('installBtn').addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null;
-      document.getElementById('installBanner').style.display = 'none';
-      if (pushEnabled) sendNotification('App installiert!', 'BTC Monitor installiert.');
+      if (!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null;
+      document.getElementById('installBanner').style.display = 'none'; if (pushEnabled) sendNotification('App installiert!', 'BTC Monitor installiert.');
     });
 
-    // ======= Countdowns =======
+    // ===== Countdowns =====
     function fmt2(n){return n<10?'0'+n:n;}
-    function updateCountdowns() {
-      // Nächstes Makro-Event
-      if (nextMacro && nextMacro.when) {
-        const now = new Date();
-        const diff = nextMacro.when - now;
-        const cEl = document.getElementById('macroCountdown');
-        const dEl = document.getElementById('macroDetail');
-        if (diff > 0) {
-          const d = Math.floor(diff/86400000);
-          const h = Math.floor((diff%86400000)/3600000);
-          const m = Math.floor((diff%3600000)/60000);
-          const s = Math.floor((diff%60000)/1000);
+    function updateCountdowns(){
+      if (nextMacro && nextMacro.when){
+        const now = new Date(), diff = nextMacro.when - now;
+        const cEl = document.getElementById('macroCountdown'), dEl = document.getElementById('macroDetail');
+        if (diff>0){
+          const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
           cEl.textContent = `${d>0?d+'d ':''}${fmt2(h)}h ${fmt2(m)}m ${fmt2(s)}s`;
           dEl.textContent = `${nextMacro.currency} — ${nextMacro.name} (${nextMacro.category||'–'}) • ${nextMacro.when.toLocaleString()}`;
-          if (diff < 24*3600000) cEl.style.color = '#dc2626';
-        } else {
-          cEl.textContent = 'LIVE';
-          dEl.textContent = `${nextMacro.currency} — ${nextMacro.name} (läuft)`;
-          cEl.style.color = '#dc2626';
-        }
+          if (diff<24*3600000) cEl.style.color='#dc2626';
+        } else { cEl.textContent='LIVE'; dEl.textContent=`${nextMacro.currency} — ${nextMacro.name} (läuft)`; cEl.style.color='#dc2626'; }
       } else {
-        document.getElementById('macroCountdown').textContent = 'Keine Events';
-        document.getElementById('macroDetail').textContent = 'Filter/Zeitraum prüfen.';
+        document.getElementById('macroCountdown').textContent='Keine Events';
+        document.getElementById('macroDetail').textContent='Filter/Zeitraum prüfen.';
       }
-
-      // PCE
-      const now = new Date();
-      const pceDiff = PCE_DATE - now;
-      if (pceDiff > 0) {
-        const d = Math.floor(pceDiff/86400000);
-        const h = Math.floor((pceDiff%86400000)/3600000);
-        const m = Math.floor((pceDiff%3600000)/60000);
-        document.getElementById('pceCountdown').textContent = `PCE in ${d>0?d+'d ':''}${fmt2(h)}h ${fmt2(m)}m`;
-      } else {
-        document.getElementById('pceCountdown').textContent = 'PCE veröffentlicht';
-      }
+      const now = new Date(), pceDiff = PCE_DATE - now;
+      document.getElementById('pceCountdown').textContent = pceDiff>0 ? `PCE in ${Math.floor(pceDiff/86400000)>0?Math.floor(pceDiff/86400000)+'d ':''}${fmt2(Math.floor((pceDiff%86400000)/3600000))}h ${fmt2(Math.floor((pceDiff%3600000)/60000))}m` : 'PCE veröffentlicht';
     }
-    function updateLastUpdateTime(){
-      const ts=new Date(); const hh=fmt2(ts.getHours()), mm=fmt2(ts.getMinutes()), ss=fmt2(ts.getSeconds());
-      document.getElementById('lastUpdate').textContent = `${hh}:${mm}:${ss}`;
-    }
+    function updateLastUpdateTime(){ const ts=new Date(); document.getElementById('lastUpdate').textContent = `${fmt2(ts.getHours())}:${fmt2(ts.getMinutes())}:${fmt2(ts.getSeconds())}`; }
 
-    // ======= Binance Live-Preis =======
+    // ===== Binance Live-Preis =====
     const STREAM_URL='wss://stream.binance.com:9443/stream?streams=btcusdt@ticker|btcusdt@kline_5m|btcusdt@kline_15m';
     let ws=null, pollTimer=null;
-
     function applyPriceUpdate(priceFloat, changePctFloat){
       currentPrice = Math.round(priceFloat);
       document.getElementById('btcPrice').textContent = `$${currentPrice.toLocaleString('en-US')}`;
-      const changeEl=document.getElementById('priceChange');
-      const sign = changePctFloat>=0?'+':'';
-      changeEl.textContent = `${sign}${changePctFloat.toFixed(2)}% (24h)`;
-      changeEl.style.color = changePctFloat>=0?'#10b981':'#ef4444';
-
-      const now=Date.now(); priceHistory.push({t:now,p:currentPrice});
-      while(priceHistory.length && (now-priceHistory[0].t)>PRICE_HISTORY_WINDOW_MS) priceHistory.shift();
+      const changeEl=document.getElementById('priceChange'); const sign = changePctFloat>=0?'+':'';
+      changeEl.textContent = `${sign}${changePctFloat.toFixed(2)}% (24h)`; changeEl.style.color = changePctFloat>=0?'#10b981':'#ef4444';
+      const now=Date.now(); priceHistory.push({t:now,p:currentPrice}); while(priceHistory.length && (now-priceHistory[0].t)>PRICE_HISTORY_WINDOW_MS) priceHistory.shift();
       if (crashOn) checkCrashSignals();
-
-      updatePhases(); updateTriggers(); generateRecommendations();
-      updateFearGreedUI(); updateLastUpdateTime();
+      updatePhases(); updateTriggers(); generateRecommendations(); updateFearGreedUI(); updateLastUpdateTime();
     }
     function startPriceStream(){
       try{
         ws = new WebSocket(STREAM_URL);
-        ws.onmessage=(evt)=>{
-          const o=JSON.parse(evt.data); const s=o.stream; const d=o.data;
-          if (s.endsWith('@ticker')) {
-            const last=parseFloat(d.c), pct=parseFloat(d.P);
-            if (Number.isFinite(last)&&Number.isFinite(pct)) applyPriceUpdate(last,pct);
-          } else if (s.includes('@kline_5m')) { onKline('5m', d.k); }
-          else if (s.includes('@kline_15m')) { onKline('15m', d.k); }
+        ws.onmessage=(evt)=>{ const o=JSON.parse(evt.data), s=o.stream, d=o.data;
+          if (s.endsWith('@ticker')){ const last=parseFloat(d.c), pct=parseFloat(d.P); if (Number.isFinite(last)&&Number.isFinite(pct)) applyPriceUpdate(last,pct); }
+          else if (s.includes('@kline_5m')) onKline('5m', d.k);
+          else if (s.includes('@kline_15m')) onKline('15m', d.k);
         };
-        ws.onclose=()=>startPricePollingFallback();
-        ws.onerror=()=>{try{ws.close();}catch{}};
+        ws.onclose=()=>startPricePollingFallback(); ws.onerror=()=>{try{ws.close();}catch{}};
       }catch{ startPricePollingFallback(); }
     }
-    async function pollOnce(){
-      try{
-        const r=await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT',{cache:'no-store'});
-        const j=await r.json();
-        const last=parseFloat(j.lastPrice), pct=parseFloat(j.priceChangePercent);
-        if (Number.isFinite(last)&&Number.isFinite(pct)) applyPriceUpdate(last,pct);
-      }catch{}
-    }
-    function startPricePollingFallback(){
-      if (pollTimer) clearInterval(pollTimer);
-      pollOnce(); pollTimer=setInterval(pollOnce,5000);
-    }
-    async function fetchLastHourClose(){
-      try{
-        const r=await fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=2',{cache:'no-store'});
-        const a=await r.json();
-        if (Array.isArray(a)&&a.length>=1){
-          const prevClose=parseFloat(a[0][4]);
-          if (Number.isFinite(prevClose)){
-            lastHourClose=Math.round(prevClose);
-            document.getElementById('lastClose').textContent=`$${lastHourClose.toLocaleString('en-US')}`;
-            updateTriggers();
-          }
-        }
-      }catch{}
-    }
+    async function pollOnce(){ try{ const r=await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT',{cache:'no-store'}); const j=await r.json(); const last=parseFloat(j.lastPrice), pct=parseFloat(j.priceChangePercent); if (Number.isFinite(last)&&Number.isFinite(pct)) applyPriceUpdate(last,pct); }catch{} }
+    function startPricePollingFallback(){ if (pollTimer) clearInterval(pollTimer); pollOnce(); pollTimer=setInterval(pollOnce,5000); }
+    async function fetchLastHourClose(){ try{ const r=await fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=2',{cache:'no-store'}); const a=await r.json(); if (Array.isArray(a)&&a.length>=1){ const prevClose=parseFloat(a[0][4]); if (Number.isFinite(prevClose)){ lastHourClose=Math.round(prevClose); document.getElementById('lastClose').textContent=`$${lastHourClose.toLocaleString('en-US')}`; updateTriggers(); }}}catch{} }
 
-    // ======= Phasen/Trigger =======
-    function updatePhases(){
-      const p1=currentPrice>=116000&&currentPrice<=119000; updatePhase('phase1','phase1Status',p1,'🎯 AKTIV','Bereit');
-      const p2=currentPrice>=109000&&currentPrice<=114000; updatePhase('phase2','phase2Status',p2,'🚀 EXECUTE!','Wartend');
-      const p3=currentPrice>=103000&&currentPrice<=108000; updatePhase('phase3','phase3Status',p3,'💎 DEEP VALUE!','Reserve');
-    }
-    function updatePhase(id,sid,active,aTxt,iTxt){
-      const el=document.getElementById(id), st=document.getElementById(sid);
-      if (active){ el.classList.add('phase-active'); st.textContent=aTxt; st.className='phase-status status-active'; }
-      else { el.classList.remove('phase-active'); st.textContent=iTxt; st.className='phase-status status-waiting'; }
-    }
-    function updateTriggers(){
-      setTrigger('trigger1','dot1', lastHourClose>118400);
-      setTrigger('trigger2','dot2', currentPrice>=119100);
-      setTrigger('trigger3','dot3', currentPrice<=117200);
-      setTrigger('trigger4','dot4', currentPrice>=116400&&currentPrice<=116900);
-      setTrigger('trigger5','dot5', currentPrice<=116100);
-      setTrigger('trigger6','dot6', currentPrice<=114500);
-    }
-    function setTrigger(tid,did,on){
-      const t=document.getElementById(tid), d=document.getElementById(did);
-      if (on){ t.classList.add('trigger-active'); d.classList.add('active'); }
-      else{ t.classList.remove('trigger-active'); d.classList.remove('active'); }
-    }
-    function generateRecommendations(){
-      const rec=document.getElementById('currentRecommendation');
-      if (currentPrice>=119000 && currentPrice<=121000){
-        rec.innerHTML='<strong>⚠️ Short-Liquiditätscluster</strong><br>$'+currentPrice.toLocaleString()+' – Stop-Hunt möglich.';
-      } else if (currentPrice<116000 && currentPrice>=109000){
-        rec.innerHTML='<strong>🎯 Phase 2 Bereich</strong><br>$'+currentPrice.toLocaleString()+' – Staffelkäufe vorbereiten.';
-      } else if (currentPrice<109000){
-        rec.innerHTML='<strong>💎 Deep Value</strong><br>$'+currentPrice.toLocaleString()+' – Reserve prüfen.';
-      } else {
-        rec.innerHTML='<strong>📍 Normaler Handel</strong><br>$'+currentPrice.toLocaleString()+' – Setup abwarten.';
-      }
-    }
+    // ===== Phasen/Trigger =====
+    function updatePhases(){ const p1=currentPrice>=116000&&currentPrice<=119000; updatePhase('phase1','phase1Status',p1,'🎯 AKTIV','Bereit'); const p2=currentPrice>=109000&&currentPrice<=114000; updatePhase('phase2','phase2Status',p2,'🚀 EXECUTE!','Wartend'); const p3=currentPrice>=103000&&currentPrice<=108000; updatePhase('phase3','phase3Status',p3,'💎 DEEP VALUE!','Reserve'); }
+    function updatePhase(id,sid,active,aTxt,iTxt){ const el=document.getElementById(id), st=document.getElementById(sid); if (active){ el.classList.add('phase-active'); st.textContent=aTxt; st.className='phase-status status-active'; } else { el.classList.remove('phase-active'); st.textContent=iTxt; st.className='phase-status status-waiting'; } }
+    function updateTriggers(){ setTrigger('trigger1','dot1', lastHourClose>118400); setTrigger('trigger2','dot2', currentPrice>=119100); setTrigger('trigger3','dot3', currentPrice<=117200); setTrigger('trigger4','dot4', currentPrice>=116400&&currentPrice<=116900); setTrigger('trigger5','dot5', currentPrice<=116100); setTrigger('trigger6','dot6', currentPrice<=114500); }
+    function setTrigger(tid,did,on){ const t=document.getElementById(tid), d=document.getElementById(did); if (on){ t.classList.add('trigger-active'); d.classList.add('active'); } else { t.classList.remove('trigger-active'); d.classList.remove('active'); } }
+    function generateRecommendations(){ const rec=document.getElementById('currentRecommendation'); if (currentPrice>=119000&&currentPrice<=121000){ rec.innerHTML='<strong>⚠️ Short‑Liquiditätscluster</strong><br>$'+currentPrice.toLocaleString()+' – Stop‑Hunt möglich.'; } else if (currentPrice<116000&&currentPrice>=109000){ rec.innerHTML='<strong>🎯 Phase 2 Bereich</strong><br>$'+currentPrice.toLocaleString()+' – Staffelkäufe vorbereiten.'; } else if (currentPrice<109000){ rec.innerHTML='<strong>💎 Deep Value</strong><br>$'+currentPrice.toLocaleString()+' – Reserve prüfen.'; } else { rec.innerHTML='<strong>📍 Normaler Handel</strong><br>$'+currentPrice.toLocaleString()+' – Setup abwarten.'; } }
 
-    // ======= Fear & Greed =======
-    async function fetchFearGreed(){
-      try{
-        const r=await fetch('https://api.alternative.me/fng/?limit=1&format=json',{cache:'no-store'});
-        const j=await r.json();
-        if (j&&j.data&&j.data[0]){
-          fearGreedIndex=parseInt(j.data[0].value,10);
-          const ts=parseInt(j.data[0].timestamp,10)*1000;
-          document.getElementById('fearGreedTime').textContent=new Date(ts).toISOString();
-          updateFearGreedUI(); document.getElementById('fearGreedNote').textContent='Live-Abruf erfolgreich.';
-        }
-      }catch{
-        document.getElementById('fearGreedNote').textContent='Live-Abruf blockiert – Fallback aktiv.'; updateFearGreedUI();
-      }
-    }
-    function updateFearGreedUI(){
-      const v=Math.max(0,Math.min(100,Math.round(fearGreedIndex)));
-      document.getElementById('fearGreedValue').textContent=v;
-      document.getElementById('fearGreedIndicator').style.left=v+'%';
-      const text=v<25?'Extreme Fear':v<45?'Fear':v<55?'Neutral':v<75?'Greed':'Extreme Greed';
-      document.getElementById('fearGreedText').textContent=text;
-    }
+    // ===== Fear & Greed =====
+    async function fetchFearGreed(){ try{ const r=await fetch('https://api.alternative.me/fng/?limit=1&format=json',{cache:'no-store'}); const j=await r.json(); if (j&&j.data&&j.data[0]){ fearGreedIndex=parseInt(j.data[0].value,10); const ts=parseInt(j.data[0].timestamp,10)*1000; document.getElementById('fearGreedTime').textContent=new Date(ts).toISOString(); updateFearGreedUI(); document.getElementById('fearGreedNote').textContent='Live‑Abruf erfolgreich.'; } }catch{ document.getElementById('fearGreedNote').textContent='Live‑Abruf blockiert – Fallback aktiv.'; updateFearGreedUI(); } }
+    function updateFearGreedUI(){ const v=Math.max(0,Math.min(100,Math.round(fearGreedIndex))); document.getElementById('fearGreedValue').textContent=v; document.getElementById('fearGreedIndicator').style.left=v+'%'; document.getElementById('fearGreedText').textContent=v<25?'Extreme Fear':v<45?'Fear':v<55?'Neutral':v<75?'Greed':'Extreme Greed'; }
 
-    // ======= ForexFactory über API (JBlanked) =======
-    function storeFFKey(k){ localStorage.setItem(FF_KEY_STORAGE, k||''); }
-    function loadFFKey(){ return localStorage.getItem(FF_KEY_STORAGE)||''; }
-    function parseFFDate(str){
-      // Format "YYYY.MM.DD HH:MM:SS" (UTC)
-      const m = /^(\d{4})\.(\d{2})\.(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(str||'');
-      if (!m) return null;
-      const [_,Y,M,D,h,mi,s] = m.map(Number);
-      return new Date(Date.UTC(Y,M-1,D,h,mi,s));
-    }
-    function normalizeFF(items){
-      return items.map(x=>({
-        name: x.Name || x.name || '',
-        currency: x.Currency || x.currency || '',
-        category: x.Category || x.category || '',
-        when: parseFFDate(x.Date || x.date || '')
-      })).filter(e=>e.when && e.name);
-    }
+    // ===== FF über Proxy =====
+    function parseFFDate(str){ const m=/^(\d{4})\.(\d{2})\.(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(str||''); if(!m) return null; const [_,Y,M,D,h,mi,s]=m.map(Number); return new Date(Date.UTC(Y,M-1,D,h,mi,s)); }
+    function normalizeFF(items){ return items.map(x=>({ name:x.Name||x.name||'', currency:(x.Currency||x.currency||''), category:(x.Category||x.category||''), when:parseFFDate(x.Date||x.date||'') })).filter(e=>e.when&&e.name); }
 
     async function fetchFF(period){
-      const key = loadFFKey().trim();
-      if (!key){
-        const ul = document.getElementById('ffList');
-        if (ul) ul.innerHTML = '<li class="mt8 bad">API-Key fehlt. Trage ihn oben ein und klicke „Laden“.</li>';
-        const msg=document.getElementById('ffMsg'); if (msg) msg.textContent='';
-        nextMacro = null; updateCountdowns();
-        return [];
-      }
-      const endpoint = period==='today'
-        ? 'https://www.jblanked.com/news/api/forex-factory/calendar/today/'
-        : 'https://www.jblanked.com/news/api/forex-factory/calendar/week/';
-      const headers = { 'Content-Type':'application/json', 'Authorization':'Api-Key '+key };
-      const r = await fetch(endpoint, { headers, cache:'no-store' });
+      const endpoint = `${FF_PROXY}?period=${period==='today'?'today':'week'}`;
+      const r = await fetch(endpoint, { cache:'no-store' });
       const body = await r.text();
       if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}: ${body.slice(0,160)}`);
       const j = JSON.parse(body);
-      return Array.isArray(j)? j : (j?.data||[]);
+      return Array.isArray(j) ? j : (j?.data||[]);
     }
 
-    function getSelectedWeekdays(){
-      // Checkbox-Werte 1..5 (Mo..Fr). Date.getDay(): 0..6 (So..Sa)
-      const cbs = Array.from(document.querySelectorAll('.ffDow'));
-      const set = new Set(cbs.filter(cb=>cb.checked).map(cb=>parseInt(cb.value,10))); // 1..5
-      return set;
-    }
-    function isTopEvent(str){
-      const t=(str||'').toLowerCase();
-      return TOP_WORDS.some(k=>t.includes(k));
-    }
+    function getSelectedWeekdays(){ const cbs=Array.from(document.querySelectorAll('.ffDow')); return new Set(cbs.filter(cb=>cb.checked).map(cb=>parseInt(cb.value,10))); }
+    function isTopEvent(str){ const t=(str||'').toLowerCase(); return TOP_WORDS.some(k=>t.includes(k)); }
 
     function applyFFToUI(list){
-      const ul = document.getElementById('ffList'); ul.innerHTML='';
+      const ul=document.getElementById('ffList'); ul.innerHTML='';
+      const wantFx=(document.getElementById('ffFx').value||'').split(',').map(s=>s.trim().toUpperCase()).filter(Boolean);
+      const needles=(document.getElementById('ffFilter').value||'').toLowerCase().split(',').map(s=>s.trim()).filter(Boolean);
+      const daysAhead=Math.max(1,Math.min(7,parseInt(document.getElementById('ffDays').value||'3',10)));
+      const topOnly=!!document.getElementById('ffTopOnly').checked;
+      const dows=getSelectedWeekdays();
+      const now=new Date(), cutoff=new Date(now.getTime()+daysAhead*86400000);
 
-      const wantFx = (document.getElementById('ffFx').value||'').split(',').map(s=>s.trim().toUpperCase()).filter(Boolean);
-      const needles = (document.getElementById('ffFilter').value||'').toLowerCase().split(',').map(s=>s.trim()).filter(Boolean);
-      const daysAhead = Math.max(1, Math.min(7, parseInt(document.getElementById('ffDays').value||'3',10)));
-      const topOnly = !!document.getElementById('ffTopOnly').checked;
-      const dows = getSelectedWeekdays(); // 1..5 => Mo..Fr
-
-      const now = new Date();
-      const cutoff = new Date(now.getTime() + daysAhead*86400000);
-
-      const filtered = list.filter(e=>{
-        const local = new Date(e.when.getTime());
-        if (!(local>=now && local<=cutoff)) return false;
-
-        // Wochentag-Filter (nur selektierte Tage 1..5)
-        const wd = local.getDay(); // 0..6 (So..Sa)
-        const dayIdx = (wd===0?7:wd); // 1..7
+      const filtered=list.filter(e=>{
+        const local=new Date(e.when.getTime());
+        if(!(local>=now&&local<=cutoff)) return false;
+        const wd=local.getDay(); const dayIdx=(wd===0?7:wd);
         if (dows.size && !(dayIdx>=1 && dayIdx<=5 && dows.has(dayIdx))) return false;
-
-        // Währungen
-        const fxOK = wantFx.length ? wantFx.includes((e.currency||'').toUpperCase()) : true;
-
-        // Textfilter
-        const text = ((e.name||'')+' '+(e.category||'')).toLowerCase();
-        const kwOK = needles.length ? needles.some(n=>text.includes(n)) : true;
-
-        // Top-Events
-        const topOK = topOnly ? isTopEvent(text) : true;
-
+        const fxOK=wantFx.length? wantFx.includes((e.currency||'').toUpperCase()) : true;
+        const text=((e.name||'')+' '+(e.category||'')).toLowerCase();
+        const kwOK=needles.length? needles.some(n=>text.includes(n)) : true;
+        const topOK=topOnly? isTopEvent(text) : true;
         return fxOK && kwOK && topOK;
       }).sort((a,b)=>a.when-b.when);
 
       nextMacro = filtered.find(e=>e.when>now) || null;
 
       filtered.forEach(ev=>{
-        const li = document.createElement('li'); li.className = 'mt8';
-        li.innerHTML = `<span class="mono">${ev.when.toLocaleString()}</span> — <strong>${ev.currency}</strong> — ${ev.name} <span class="muted">(${ev.category||'–'})</span>`;
+        const li=document.createElement('li'); li.className='mt8';
+        li.innerHTML=`<span class="mono">${ev.when.toLocaleString()}</span> — <strong>${ev.currency}</strong> — ${ev.name} <span class="muted">(${ev.category||'–'})</span>`;
         ul.appendChild(li);
       });
-      if (filtered.length===0){
-        ul.innerHTML = '<li class="mt8 warn">Keine passenden Events im gewählten Zeitraum/Filter.</li>';
-      }
+      if (!filtered.length) ul.innerHTML='<li class="mt8 warn">Keine passenden Events im gewählten Zeitraum/Filter.</li>';
 
       updateCountdowns();
     }
 
     async function loadFFFromControls(){
       try{
-        const period = (document.getElementById('ffRange').value||'week');
-        const raw = await fetchFF(period);
-        ffEvents = normalizeFF(raw);
+        const period=(document.getElementById('ffRange').value||'week');
+        const raw=await fetchFF(period);
+        ffEvents=normalizeFF(raw);
         applyFFToUI(ffEvents);
         const el=document.getElementById('ffMsg'); if (el) el.textContent='OK';
       }catch(e){
-        const ul = document.getElementById('ffList');
-        if (ul) ul.innerHTML = '<li class="mt8 bad">Kalender-Abruf fehlgeschlagen. Details siehe unten.</li>';
-        const el=document.getElementById('ffMsg');
-        if (el) el.textContent = (e && e.message) ? e.message : String(e);
-        console.log('FF error:', e);
+        document.getElementById('ffList').innerHTML='<li class="mt8 bad">Kalender‑Abruf fehlgeschlagen. Details siehe unten.</li>';
+        const el=document.getElementById('ffMsg'); if (el) el.textContent=(e&&e.message)? e.message:String(e);
+        console.log('FF error:',e);
       }
     }
+    async function safeLoadFF(){ const now=Date.now(); if (now-ffLast<6*60*1000){ const el=document.getElementById('ffMsg'); if (el) el.textContent='Cooldown aktiv (≤6 Min.).'; return; } ffLast=now; await loadFFFromControls(); }
+    async function testFFKey(){ const el=document.getElementById('ffMsg'); try{ const r=await fetch(`${FF_PROXY}?period=today`,{cache:'no-store'}); const t=await r.text(); el.textContent=`HTTP ${r.status} ${r.statusText}`+(r.ok?' – OK':' – '+t.slice(0,120)); }catch(e){ el.textContent='Netzwerk/CORS: '+e; } }
 
-    // Throttle (6 Min.) – Klick/Auto-Reload nutzen diese Hülle
-    async function safeLoadFF(){
-      const now=Date.now();
-      if (now - ffLast < 6*60*1000) { const el=document.getElementById('ffMsg'); if (el) el.textContent='Cooldown aktiv (≤6 Min.).'; return; }
-      ffLast = now;
-      await loadFFFromControls();
-    }
-
-    // Key-Test
-    async function testFFKey(){
-      const k=(document.getElementById('ffApiKey').value||localStorage.getItem(FF_KEY_STORAGE)||'').trim();
-      const el=document.getElementById('ffMsg');
-      if(!k){ el.textContent='Kein Key gesetzt.'; return; }
-      try{
-        const r=await fetch('https://www.jblanked.com/news/api/forex-factory/calendar/today/',{
-          headers:{'Authorization':'Api-Key '+k,'Content-Type':'application/json'},
-          cache:'no-store'
-        });
-        const txt=await r.text();
-        el.textContent = `HTTP ${r.status} ${r.statusText}` + (r.ok? ' – OK':' – '+txt.slice(0,120));
-      }catch(e){ el.textContent='Netzwerk/CORS: '+e; }
-    }
-
-    // ======= Crash-Detection =======
+    // ===== Crash-Detection =====
     function pctChange(a,b){ return ((b-a)/a)*100; }
-    function findPriceAt(msAgo){
-      const target=Date.now()-msAgo;
-      for (let i=priceHistory.length-1;i>=0;i--) if (priceHistory[i].t<=target) return priceHistory[i].p;
-      return null;
-    }
-    function logCrash(msg){ if (pushEnabled) sendNotification('Preis-Alarm', msg); }
+    function findPriceAt(msAgo){ const target=Date.now()-msAgo; for (let i=priceHistory.length-1;i>=0;i--) if (priceHistory[i].t<=target) return priceHistory[i].p; return null; }
+    function logCrash(msg){ if (pushEnabled) sendNotification('Preis‑Alarm', msg); }
     function checkCrashSignals(){
-      const t1=-1, t5=-3, t15=-5;
-      const pNow=currentPrice;
-
+      const t1=-1, t5=-3, t15=-5, pNow=currentPrice;
       const p1=findPriceAt(60*1000); if (p1){ const pc1=pctChange(p1,pNow); if (pc1<=t1) logCrash(`−${Math.abs(pc1).toFixed(2)}% in 1m → $${pNow.toLocaleString()}`); if (pc1>=Math.abs(t1)) logCrash(`+${pc1.toFixed(2)}% in 1m → $${pNow.toLocaleString()}`); }
       const p5=findPriceAt(5*60*1000); if (p5){ const pc5=pctChange(p5,pNow); if (pc5<=t5) logCrash(`−${Math.abs(pc5).toFixed(2)}% in 5m → $${pNow.toLocaleString()}`); if (pc5>=Math.abs(t5)) logCrash(`+${pc5.toFixed(2)}% in 5m → $${pNow.toLocaleString()}`); }
       const p15=findPriceAt(15*60*1000); if (p15){ const pc15=pctChange(p15,pNow); if (pc15<=t15) logCrash(`−${Math.abs(pc15).toFixed(2)}% in 15m → $${pNow.toLocaleString()}`); if (pc15>=Math.abs(t15)) logCrash(`+${pc15.toFixed(2)}% in 15m → $${pNow.toLocaleString()}`); }
     }
 
-    // ======= Day-Trading =======
+    // ===== Day-Trading =====
     const buf5m=[], buf15m=[];
     function onKline(tf,k){
       const obj={open:+k.o,high:+k.h,low:+k.l,close:+k.c,volume:+k.v,closed:k.x,t:k.t};
-      const buf=tf==='5m'?buf5m:buf15m;
-      if (buf.length && buf[buf.length-1].t===obj.t) buf[buf.length-1]=obj; else buf.push(obj);
-      while (buf.length>200) buf.shift();
-
-      if (dayModeOn){
-        const sig=computeSignals(buf);
-        if (sig && obj.closed){
-          const msg=`${tf} ${sig.type} @ ${obj.close.toFixed(0)} (RSI ${sig.rsi.toFixed(0)}, EMA9/21 ${sig.ema9.toFixed(0)}/${sig.ema21.toFixed(0)})`;
-          if (pushEnabled) sendNotification('Day-Trading', msg);
-        }
-        const volMsg=volumeSpike(buf); if (volMsg && obj.closed && pushEnabled) sendNotification('Day-Trading', `${tf} ${volMsg}`);
-        updateSR();
-      }
+      const buf=tf==='5m'?buf5m:buf15m; if (buf.length && buf[buf.length-1].t===obj.t) buf[buf.length-1]=obj; else buf.push(obj); while(buf.length>200) buf.shift();
+      if (dayModeOn){ const sig=computeSignals(buf); if (sig && obj.closed){ const msg=`${tf} ${sig.type} @ ${obj.close.toFixed(0)} (RSI ${sig.rsi.toFixed(0)}, EMA9/21 ${sig.ema9.toFixed(0)}/${sig.ema21.toFixed(0)})`; if (pushEnabled) sendNotification('Day‑Trading', msg); }
+        const volMsg=volumeSpike(buf); if (volMsg && obj.closed && pushEnabled) sendNotification('Day‑Trading', `${tf} ${volMsg}`); updateSR(); }
     }
     function ema(arr,period,acc){ const k=2/(period+1); let v=acc(arr[0]); for(let i=1;i<arr.length;i++) v=acc(arr[i])*k+v*(1-k); return v; }
     function rsi(arr,period=14){ if (arr.length<period+1) return 50; let g=0,l=0; for(let i=arr.length-period;i<arr.length;i++){const ch=arr[i].close-arr[i-1].close; if(ch>0)g+=ch; else l-=ch;} const avgG=g/period, avgL=(l/period)||1e-9; const rs=avgG/avgL; return 100-(100/(1+rs)); }
     function computeSignals(buf){ if (buf.length<21) return null; const ema9=ema(buf.slice(-50),9,x=>x.close); const ema21=ema(buf.slice(-50),21,x=>x.close); const r=rsi(buf,14); let type=null; if (ema9>ema21&&r>55) type='BUY'; if (ema9<ema21&&r<45) type='SELL'; if (!type) return null; return {type,rsi:r,ema9,ema21}; }
-    function volumeSpike(buf){ if (buf.length<25) return null; const last=buf[buf.length-1]; const avg=buf.slice(-21,-1).reduce((s,b)=>s+b.volume,0)/20; if (avg>0 && last.volume>1.5*avg){ document.getElementById('sigVol').textContent=`${(last.volume).toFixed(2)} (>1.5×)`; return `Volume-Spike: ${(last.volume).toFixed(2)} (>1.5× 20-Schnitt)`;} return null; }
+    function volumeSpike(buf){ if (buf.length<25) return null; const last=buf[buf.length-1]; const avg=buf.slice(-21,-1).reduce((s,b)=>s+b.volume,0)/20; if (avg>0 && last.volume>1.5*avg){ document.getElementById('sigVol').textContent=`${(last.volume).toFixed(2)} (>1.5×)`; return `Volume‑Spike: ${(last.volume).toFixed(2)} (>1.5× 20‑Schnitt)`;} return null; }
     function updateSR(){ if (buf5m.length<50) return; const highs=buf5m.slice(-100).map(b=>b.high); const lows=buf5m.slice(-100).map(b=>b.low); const res=Math.max(...highs), sup=Math.min(...lows); document.getElementById('srResistance').textContent=`$${Math.round(res).toLocaleString('en-US')}`; document.getElementById('srSupport').textContent=`$${Math.round(sup).toLocaleString('en-US')}`; }
 
-    // ======= DCA / SMA / ATH & Fibs =======
+    // ===== DCA / SMA / ATH & Fibs =====
     async function fetchDaily(limit=365){ const lim=Math.max(30,Math.min(1000,limit)); const url=`https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=${lim}`; const r=await fetch(url,{cache:'no-store'}); const a=await r.json(); return a.map(x=>({open:+x[1],high:+x[2],low:+x[3],close:+x[4],vol:+x[5],t:+x[0]})); }
     function fmtUSD(n){ return '$'+Math.round(n).toLocaleString('en-US'); }
     function dcaSim(kl,interval,amount){ const buys=[]; if (interval==='daily'){for(let i=0;i<kl.length;i++)buys.push(kl[i]);} else if (interval==='weekly'){for(let i=0;i<kl.length;i+=7)buys.push(kl[i]);} else {let lastM=-1; for(let i=0;i<kl.length;i++){const m=new Date(kl[i].t).getUTCMonth(); if(m!==lastM){buys.push(kl[i]); lastM=m;}}} let invested=0,coins=0; buys.forEach(b=>{invested+=amount; coins+=amount/b.close;}); const avg=invested/(coins||1e-9); return {invested,coins,avg}; }
+    async function runDCA(){ try{ const days=parseInt(document.getElementById('dcaDays').value,10); const interval=document.getElementById('dcaInterval').value; const amount=parseFloat(document.getElementById('dcaAmount').value); const kl=await fetchDaily(days); const res=dcaSim(kl,interval,amount); document.getElementById('dcaInvested').textContent=fmtUSD(res.invested); document.getElementById('dcaCoins').textContent=res.coins.toFixed(6)+' BTC'; document.getElementById('dcaAvg').textContent=fmtUSD(res.avg); const value=res.coins*currentPrice; document.getElementById('dcaValue').textContent=fmtUSD(value); const pl=value-res.invested; const sign=pl>=0?'+':''; document.getElementById('dcaPL').textContent=`${sign}${fmtUSD(pl)}`; }catch{ alert('DCA‑Berechnung fehlgeschlagen.'); } }
     function sma(arr,period){ if (arr.length<period) return null; let sum=0; for(let i=arr.length-period;i<arr.length;i++) sum+=arr[i].close; return sum/period; }
     function fibs(fromLow,toHigh){ const diff=toHigh-fromLow; return [{label:'23.6%',val:toHigh-0.236*diff},{label:'38.2%',val:toHigh-0.382*diff},{label:'50.0%',val:toHigh-0.5*diff},{label:'61.8%',val:toHigh-0.618*diff},{label:'78.6%',val:toHigh-0.786*diff}]; }
-    async function runDCA(){ try{ const days=parseInt(document.getElementById('dcaDays').value,10); const interval=document.getElementById('dcaInterval').value; const amount=parseFloat(document.getElementById('dcaAmount').value); const kl=await fetchDaily(days); const res=dcaSim(kl,interval,amount); document.getElementById('dcaInvested').textContent=fmtUSD(res.invested); document.getElementById('dcaCoins').textContent=res.coins.toFixed(6)+' BTC'; document.getElementById('dcaAvg').textContent=fmtUSD(res.avg); const value=res.coins*currentPrice; document.getElementById('dcaValue').textContent=fmtUSD(value); const pl=value-res.invested; const sign=pl>=0?'+':''; document.getElementById('dcaPL').textContent=`${sign}${fmtUSD(pl)}`; }catch{ alert('DCA-Berechnung fehlgeschlagen.'); } }
-    async function updateSMAZonesAndATH(){ try{ const kl=await fetchDaily(1000); const vSMA=sma(kl,200); if (vSMA){ document.getElementById('sma200').textContent=fmtUSD(vSMA); const zA=0.8*vSMA,zB1=0.8*vSMA,zB2=0.9*vSMA,zC1=0.9*vSMA,zC2=1.0*vSMA; document.getElementById('zoneA').textContent='≤ '+fmtUSD(zA); document.getElementById('zoneB').textContent=fmtUSD(zB1)+' – '+fmtUSD(zB2); document.getElementById('zoneC').textContent=fmtUSD(zC1)+' – '+fmtUSD(zC2); let status='Über SMA'; if (currentPrice<=zA) status='Zone A'; else if (currentPrice<=zB2) status='Zone B'; else if (currentPrice<=zC2) status='Zone C'; document.getElementById('zoneStatus').textContent=status; } else { document.getElementById('sma200').textContent='–'; document.getElementById('zoneStatus').textContent='nicht genug Daten'; } let ath={price:-Infinity,t:null}, low={price:Infinity,t:null}; for (const c of kl){ if(c.high>ath.price) ath={price:c.high,t:c.t}; if(c.low<low.price) low={price:c.low,t:c.t}; } document.getElementById('athPrice').textContent=fmtUSD(ath.price); document.getElementById('athDate').textContent=new Date(ath.t).toISOString().slice(0,10); const dist=((ath.price-currentPrice)/ath.price)*100; document.getElementById('athDist').textContent=dist>=0?dist.toFixed(2)+'% unter ATH':(-dist).toFixed(2)+'% über ATH'; const daysSince=Math.floor((Date.now()-ath.t)/86400000); document.getElementById('athDays').textContent=daysSince+' Tage'; const levels=fibs(low.price,ath.price); const fibWrap=document.getElementById('fibList'); fibWrap.innerHTML=''; levels.forEach(l=>{ const k=document.createElement('div'); k.textContent=l.label; fibWrap.appendChild(k); const v=document.createElement('div'); v.className='mono'; v.textContent=fmtUSD(l.val); fibWrap.appendChild(v); }); }catch{} }
+    async function updateSMAZonesAndATH(){ try{ const kl=await fetchDaily(1000); const vSMA=sma(kl,200); if (vSMA){ document.getElementById('sma200').textContent=fmtUSD(vSMA); const zA=0.8*vSMA,zB2=0.9*vSMA,zC2=1.0*vSMA; document.getElementById('zoneA').textContent='≤ '+fmtUSD(zA); document.getElementById('zoneB').textContent=fmtUSD(0.8*vSMA)+' – '+fmtUSD(zB2); document.getElementById('zoneC').textContent=fmtUSD(0.9*vSMA)+' – '+fmtUSD(zC2); let status='Über SMA'; if (currentPrice<=zA) status='Zone A'; else if (currentPrice<=zB2) status='Zone B'; else if (currentPrice<=zC2) status='Zone C'; document.getElementById('zoneStatus').textContent=status; } let ath={price:-Infinity,t:null}, low={price:Infinity,t:null}; const kl2=await fetchDaily(1000); for (const c of kl2){ if(c.high>ath.price) ath={price:c.high,t:c.t}; if(c.low<low.price) low={price:c.low,t:c.t}; } document.getElementById('athPrice').textContent=fmtUSD(ath.price); document.getElementById('athDate').textContent=new Date(ath.t).toISOString().slice(0,10); const dist=((ath.price-currentPrice)/ath.price)*100; document.getElementById('athDist').textContent=dist>=0?dist.toFixed(2)+'% unter ATH':(-dist).toFixed(2)+'% über ATH'; const daysSince=Math.floor((Date.now()-ath.t)/86400000); document.getElementById('athDays').textContent=daysSince+' Tage'; const levels=fibs(low.price,ath.price); const fibWrap=document.getElementById('fibList'); fibWrap.innerHTML=''; levels.forEach(l=>{ const k=document.createElement('div'); k.textContent=l.label; fibWrap.appendChild(k); const v=document.createElement('div'); v.className='mono'; v.textContent=fmtUSD(l.val); fibWrap.appendChild(v); }); }catch{} }
 
-    // ======= Profit-Taking =======
-    function calcPT(){
-      const entry=parseFloat(document.getElementById('entryPrice').value||'0');
-      const steps=(document.getElementById('ptSteps').value||'10,20,30').split(',').map(s=>parseFloat(s.trim())).filter(x=>!isNaN(x));
-      const size=parseFloat(document.getElementById('ptSize').value||'0');
-      const ul=document.getElementById('ptList'); ul.innerHTML='';
-      steps.forEach(p=>{ const lvl=entry*(1+p/100); const li=document.createElement('li'); li.className='mt8'; const diff=((currentPrice-lvl)/lvl)*100; li.textContent=`${p}% → ${fmtUSD(lvl)} (${diff>=0?'+':''}${diff.toFixed(2)}% vs Spot) — Teilverkauf: ${(size*0.3333).toFixed(4)} BTC`; ul.appendChild(li); });
-    }
+    // ===== Profit-Taking =====
+    function calcPT(){ const entry=parseFloat(document.getElementById('entryPrice').value||'0'); const steps=(document.getElementById('ptSteps').value||'10,20,30').split(',').map(s=>parseFloat(s.trim())).filter(x=>!isNaN(x)); const size=parseFloat(document.getElementById('ptSize').value||'0'); const ul=document.getElementById('ptList'); ul.innerHTML=''; steps.forEach(p=>{ const lvl=entry*(1+p/100); const li=document.createElement('li'); li.className='mt8'; const diff=((currentPrice-lvl)/lvl)*100; li.textContent=`${p}% → ${fmtUSD(lvl)} (${diff>=0?'+':''}${diff.toFixed(2)}% vs Spot) — Teilverkauf: ${(size*0.3333).toFixed(4)} BTC`; ul.appendChild(li); }); }
 
-    // ======= Push =======
-    function enablePush(){
-      if (!('Notification' in window)) { alert('Browser unterstützt keine Push-Benachrichtigungen.'); return; }
-      if (Notification.permission==='granted'){ pushEnabled=true; updatePushButton(); sendNotification('BTC Monitor','Push aktiv.'); return; }
-      Notification.requestPermission().then(p=>{ if(p==='granted'){ pushEnabled=true; updatePushButton(); sendNotification('BTC Monitor','Push aktiv.'); } else alert('Push abgelehnt.'); });
-    }
+    // ===== Push =====
+    function enablePush(){ if (!('Notification' in window)) { alert('Browser unterstützt keine Push‑Benachrichtigungen.'); return; } if (Notification.permission==='granted'){ pushEnabled=true; updatePushButton(); sendNotification('BTC Monitor','Push aktiv.'); return; } Notification.requestPermission().then(p=>{ if(p==='granted'){ pushEnabled=true; updatePushButton(); sendNotification('BTC Monitor','Push aktiv.'); } else alert('Push abgelehnt.'); }); }
     function updatePushButton(){ const btn=document.getElementById('pushBtn'); if (pushEnabled){ btn.innerHTML='✅ Push aktiv'; btn.className='btn btn-success'; } }
     function sendNotification(title,body){ if (!pushEnabled||Notification.permission!=='granted') return; try{ const n=new Notification(`🚨 ${title}`,{body,icon:'/favicon.ico',tag:'btc-monitor',requireInteraction:false,vibrate:[200,100,200]}); setTimeout(()=>n.close(),8000); }catch{} }
 
-    // ======= Controls =======
-    function toggleMonitoring(){
-      isMonitoring=!isMonitoring;
-      const btn=document.getElementById('monitorBtn');
-      if (isMonitoring){ btn.innerHTML='⏸️ Pausieren'; btn.className='btn btn-warning'; }
-      else { btn.innerHTML='▶️ Starten'; btn.className='btn btn-success'; }
-      if (pushEnabled) sendNotification('Monitor', isMonitoring?'gestartet':'pausiert');
-    }
-    function forceUpdate(){
-      pollOnce(); fetchLastHourClose(); fetchFearGreed(); updateSMAZonesAndATH();
-      if (loadFFKey()) { safeLoadFF(); } // nur laden, wenn Key vorhanden (mit Throttle)
-      if (pushEnabled) sendNotification('Daten aktualisiert', `Spot: $${currentPrice.toLocaleString()}`);
-      const btn=document.getElementById('refreshBtn'); const t=btn.innerHTML; btn.innerHTML='🔄 Updating…'; btn.disabled=true; setTimeout(()=>{btn.innerHTML=t; btn.disabled=false;},900);
-    }
+    // ===== Controls =====
+    function toggleMonitoring(){ isMonitoring=!isMonitoring; const btn=document.getElementById('monitorBtn'); if (isMonitoring){ btn.innerHTML='⏸️ Pausieren'; btn.className='btn btn-warning'; } else { btn.innerHTML='▶️ Starten'; btn.className='btn btn-success'; } if (pushEnabled) sendNotification('Monitor', isMonitoring?'gestartet':'pausiert'); }
+    function forceUpdate(){ pollOnce(); fetchLastHourClose(); fetchFearGreed(); updateSMAZonesAndATH(); safeLoadFF(); if (pushEnabled) sendNotification('Daten aktualisiert', `Spot: $${currentPrice.toLocaleString()}`); const btn=document.getElementById('refreshBtn'); const t=btn.innerHTML; btn.innerHTML='🔄 Updating…'; btn.disabled=true; setTimeout(()=>{btn.innerHTML=t; btn.disabled=false;},900); }
 
-    // ======= Service Worker (Cache-Fix + JBlanked-Bypass) =======
+    // ===== Service Worker (kein Cache für /api/ff) =====
     const SW_CODE = `
-      const CACHE_NAME='btc-monitor-v2.4.3';
+      const CACHE_NAME='btc-monitor-v2.4.4';
       self.addEventListener('install',e=>{self.skipWaiting();});
       self.addEventListener('activate',e=>{e.waitUntil((async()=>{const ks=await caches.keys(); await Promise.all(ks.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k))); self.clients.claim();})());});
       self.addEventListener('fetch',e=>{
         const req=e.request;
         try{
           const u=new URL(req.url);
-          // Niemals cachen: JBlanked-API (Auth-Header, CORS)
-          if (u.hostname==='www.jblanked.com' || u.hostname==='jblanked.com'){
-            e.respondWith(fetch(req)); return;
-          }
+          if (u.pathname.startsWith('/api/ff')){ e.respondWith(fetch(req)); return; }
         }catch{}
         if (req.mode==='navigate'){
-          e.respondWith((async()=>{try{const fresh=await fetch(req); const c=await caches.open(CACHE_NAME); c.put(req,fresh.clone()); return fresh;}catch(e){const cached=await caches.match(req); return cached||Response.error();}})());
-          return;
+          e.respondWith((async()=>{try{const fresh=await fetch(req); const c=await caches.open(CACHE_NAME); c.put(req,fresh.clone()); return fresh;}catch(e){const cached=await caches.match(req); return cached||Response.error();}})()); return;
         }
         e.respondWith((async()=>{const cached=await caches.match(req); if (cached) return cached; const fresh=await fetch(req); const c=await caches.open(CACHE_NAME); c.put(req,fresh.clone()); return fresh;})());
       });
     `;
-    function registerServiceWorker(){
-      if ('serviceWorker' in navigator){
-        const blob=new Blob([SW_CODE],{type:'application/javascript'});
-        const swUrl=URL.createObjectURL(blob);
-        navigator.serviceWorker.register(swUrl).then(reg=>{reg.update();}).catch(()=>{});
-      }
-    }
+    function registerServiceWorker(){ if ('serviceWorker' in navigator){ const blob=new Blob([SW_CODE],{type:'application/javascript'}); const swUrl=URL.createObjectURL(blob); navigator.serviceWorker.register(swUrl).then(reg=>{reg.update();}).catch(()=>{}); } }
 
-    // ======= Manifest =======
+    // ===== Manifest =====
     function generateManifest(){
-      const manifest={ name:"BTC Trading Monitor", short_name:"BTC Monitor", description:"GitHub PWA für BTC Trading mit Live-Updates", start_url:"/", display:"standalone", background_color:"#667eea", theme_color:"#10b981", orientation:"portrait-primary",
+      const manifest={ name:"BTC Trading Monitor", short_name:"BTC Monitor", description:"PWA für BTC Trading mit Live-Updates", start_url:"/", display:"standalone", background_color:"#667eea", theme_color:"#10b981", orientation:"portrait-primary",
         icons:[{src:"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIyNCIgZmlsbD0iIzEwYjk4MSIvPjx0ZXh0IHg9Ijk2IiB5PSIxMDUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI2NCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKCvzwvdGV4dD48L3N2Zz4=",sizes:"192x192",type:"image/svg+xml"},
                {src:"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSI2NCIgZmlsbD0iIzEwYjk4MSIvPjx0ZXh0IHg9IjI1NiIgeT0iMjgwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTcwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZmZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+4oKzPC90ZXh0Pjwvc3ZnPg==",sizes:"512x512",type:"image/svg+xml"}],
         categories:["finance","productivity","utilities"] };
       const blob=new Blob([JSON.stringify(manifest,null,2)],{type:'application/json'});
       const url=URL.createObjectURL(blob);
-      const link=document.createElement('link'); link.rel='manifest'; link.href=url+'?v=2.4.3'; document.head.appendChild(link);
+      const link=document.createElement('link'); link.rel='manifest'; link.href=url+'?v=2.4.4'; document.head.appendChild(link);
     }
 
-    // ======= Events =======
+    // ===== Events =====
     document.getElementById('pushBtn').addEventListener('click', enablePush);
     document.getElementById('monitorBtn').addEventListener('click', toggleMonitoring);
     document.getElementById('refreshBtn').addEventListener('click', forceUpdate);
     document.getElementById('dcaCalcBtn').addEventListener('click', runDCA);
     document.getElementById('ptCalcBtn').addEventListener('click', calcPT);
-
-    document.getElementById('ffSave').addEventListener('click', ()=>{
-      const k=(document.getElementById('ffApiKey').value||'').trim();
-      storeFFKey(k);
-      document.getElementById('ffMsg').textContent = k ? 'Key gespeichert.' : 'Key gelöscht.';
-    });
     document.getElementById('ffLoad').addEventListener('click', safeLoadFF);
     document.getElementById('ffTest').addEventListener('click', testFFKey);
-
-    // Re-Filter ohne neuen API-Call:
     ['ffDays','ffTopOnly','ffFx','ffFilter'].forEach(id=>{
-      const el=document.getElementById(id);
-      el.addEventListener('input', ()=>{ if (ffEvents.length) applyFFToUI(ffEvents); });
+      const el=document.getElementById(id); el.addEventListener('input', ()=>{ if (ffEvents.length) applyFFToUI(ffEvents); });
     });
-    document.querySelectorAll('.ffDow').forEach(cb=>{
-      cb.addEventListener('change', ()=>{ if (ffEvents.length) applyFFToUI(ffEvents); });
-    });
-    document.getElementById('ffRange').addEventListener('change', ()=>{ if (loadFFKey()) safeLoadFF(); });
+    document.querySelectorAll('.ffDow').forEach(cb=>cb.addEventListener('change', ()=>{ if (ffEvents.length) applyFFToUI(ffEvents); }));
+    document.getElementById('ffRange').addEventListener('change', ()=>{ safeLoadFF(); });
 
-    // ======= Init =======
+    // ===== Init =====
     async function init(){
-      console.log('BTC Monitor v2.4.3 init');
       generateManifest(); registerServiceWorker();
-
-      // FF-Key in UI spiegeln
-      document.getElementById('ffApiKey').value = loadFFKey();
-
-      // Countdowns
-      updateCountdowns();
-      setInterval(()=>{ updateCountdowns(); updateCounter++; }, 1000);
-
-      // Live Daten
-      startPriceStream();
-      fetchLastHourClose();
-      setInterval(fetchLastHourClose, 60*1000);
-
-      // Fear & Greed + SMA/ATH
-      fetchFearGreed();
-      updateSMAZonesAndATH();
-
-      // Kalender nicht automatisch ohne Key
-      if (loadFFKey()) { safeLoadFF(); }
-      // Periodisch (mit Key) – Throttle greift:
-      setInterval(()=>{ if (loadFFKey()) safeLoadFF(); }, 30*60*1000);
-
-      console.log('✅ Systeme online');
+      updateCountdowns(); setInterval(()=>{ updateCountdowns(); updateCounter++; }, 1000);
+      startPriceStream(); fetchLastHourClose(); setInterval(fetchLastHourClose, 60*1000);
+      fetchFearGreed(); updateSMAZonesAndATH();
+      safeLoadFF(); setInterval(()=>{ safeLoadFF(); }, 30*60*1000);
     }
     if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
   </script>
 </body>
 </html>
+
