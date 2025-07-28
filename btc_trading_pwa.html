@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BTC Monitor">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="BTC Monitor">
+    <meta name="theme-color" content="#10b981">
+    <meta name="msapplication-TileColor" content="#10b981">
+    
+    <title>🚀 BTC Trading Monitor</title>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 20px;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .price-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #10b981;
+            margin: 15px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .countdown-container {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .countdown-title {
+            font-size: 1.3rem;
+            color: #374151;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .countdown-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ef4444;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .countdown-details {
+            font-size: 1rem;
+            color: #6b7280;
+            margin-top: 10px;
+        }
+
+        .volatility-info {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #92400e;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .phase-item {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .phase-active {
+            background: #d1fae5;
+            border-color: #10b981;
+            transform: scale(1.02);
+        }
+
+        .phase-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .phase-range {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .phase-status {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .status-active {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-waiting {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .trigger-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .trigger-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .trigger-active {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #d1d5db;
+        }
+
+        .status-dot.active {
+            background: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 5px;
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-success { background: #10b981; }
+        .btn-warning { background: #f59e0b; }
+        .btn-danger { background: #ef4444; }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .alert-box {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+
+        .success-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+
+        .install-banner {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .install-text {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .install-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .install-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .fear-greed-meter {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .meter-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .meter-bar {
+            height: 10px;
+            background: linear-gradient(90deg, #ef4444 0%, #f59e0b 25%, #eab308 50%, #84cc16 75%, #10b981 100%);
+            border-radius: 5px;
+            position: relative;
+            margin: 15px 0;
+        }
+
+        .meter-indicator {
+            position: absolute;
+            top: -5px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 3px solid #374151;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            transition: left 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .price-display { font-size: 2.2rem; }
+            .countdown-display { font-size: 1.8rem; }
+            .grid { grid-template-columns: 1fr; }
+            .container { padding: 10px; }
+            .button-row { flex-direction: column; }
+            .install-banner { flex-direction: column; text-align: center; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Installation Banner -->
+        <div class="install-banner" id="installBanner">
+            <div class="install-text">📱 Als App installieren für beste Erfahrung</div>
+            <button class="install-btn" id="installBtn">Installieren</button>
+        </div>
+        
+        <!-- Header -->
+        <div class="header">
+            <h1>🚀 BTC Trading Monitor</h1>
+            <p>GitHub PWA - 560k USDT → 5.05 BTC Ziel</p>
+            <div class="price-display" id="btcPrice">$119,540</div>
+            <div id="priceChange">+1.03% (24h)</div>
+            
+            <div class="button-row">
+                <button class="btn btn-warning" id="pushBtn">
+                    🔔 Push aktivieren
+                </button>
+                <button class="btn btn-success" id="refreshBtn">
+                    🔄 Aktualisieren
+                </button>
+                <button class="btn" id="monitorBtn">
+                    ⏸️ Pausieren
+                </button>
+            </div>
+        </div>
+        
+        <!-- FOMC Countdown -->
+        <div class="countdown-container">
+            <div class="countdown-title">⏰ FOMC Meeting Countdown</div>
+            <div class="countdown-display" id="fomcCountdown">Wird geladen...</div>
+            <div class="countdown-details">
+                30. Juli 2025, 14:00 UTC (16:00 MESZ)
+            </div>
+            <div class="volatility-info">
+                📊 Historische Daten: 78% Wahrscheinlichkeit für 8-12% Volatilität<br>
+                🎯 Target: $109k-$114k Bereich (Phase 2)
+            </div>
+        </div>
+        
+        <!-- Main Grid -->
+        <div class="grid">
+            <!-- Trading Phasen -->
+            <div class="card">
+                <div class="card-title">💰 Trading Phasen</div>
+                
+                <div class="phase-item phase-active" id="phase1">
+                    <div class="phase-title">Phase 1 (25%)</div>
+                    <div class="phase-range">$116,000 - $119,000 | 140k USDT</div>
+                    <div class="phase-status status-active" id="phase1Status">🎯 AKTIV</div>
+                </div>
+                
+                <div class="phase-item" id="phase2">
+                    <div class="phase-title">Phase 2 (50%)</div>
+                    <div class="phase-range">$109,000 - $114,000 | 280k USDT</div>
+                    <div class="phase-status status-waiting" id="phase2Status">Wartend</div>
+                </div>
+                
+                <div class="phase-item" id="phase3">
+                    <div class="phase-title">Phase 3 (25%)</div>
+                    <div class="phase-range">$103,000 - $108,000 | 140k USDT</div>
+                    <div class="phase-status status-waiting" id="phase3Status">Reserve</div>
+                </div>
+            </div>
+            
+            <!-- Trigger Status -->
+            <div class="card">
+                <div class="card-title">📊 Trigger Status</div>
+                <div class="trigger-list">
+                    <div class="trigger-item" id="trigger1">
+                        <span>1h Close > $118,400</span>
+                        <div class="status-dot" id="dot1"></div>
+                    </div>
+                    <div class="trigger-item trigger-active" id="trigger2">
+                        <span>Spot ≥ $119,100</span>
+                        <div class="status-dot active" id="dot2"></div>
+                    </div>
+                    <div class="trigger-item" id="trigger3">
+                        <span>Spot ≤ $117,200</span>
+                        <div class="status-dot" id="dot3"></div>
+                    </div>
+                    <div class="trigger-item" id="trigger4">
+                        <span>Zone $116.4k-$116.9k</span>
+                        <div class="status-dot" id="dot4"></div>
+                    </div>
+                    <div class="trigger-item" id="trigger5">
+                        <span>Spot ≤ $116,100</span>
+                        <div class="status-dot" id="dot5"></div>
+                    </div>
+                    <div class="trigger-item" id="trigger6">
+                        <span>Spot ≤ $114,500</span>
+                        <div class="status-dot" id="dot6"></div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 0.9rem; color: #6b7280;">
+                    Letzter 1h Close: <strong id="lastClose">$118,062</strong>
+                </div>
+            </div>
+            
+            <!-- PCE Countdown -->
+            <div class="card">
+                <div class="card-title">📊 PCE Data Countdown</div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 1.8rem; font-weight: bold; color: #f59e0b;" id="pceCountdown">
+                        Wird geladen...
+                    </div>
+                    <div style="font-size: 0.9rem; color: #6b7280; margin-top: 5px;">
+                        31. Juli 2025, 12:30 UTC
+                    </div>
+                    <div style="font-size: 0.9rem; color: #059669; margin-top: 10px;">
+                        45% Wahrscheinlichkeit für Phase 3 Level
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fear & Greed Meter -->
+            <div class="card">
+                <div class="card-title">😱 Fear & Greed Index</div>
+                <div class="fear-greed-meter">
+                    <div class="meter-value" id="fearGreedValue">72</div>
+                    <div style="font-size: 0.9rem; color: #6b7280; margin-bottom: 15px;">Greed</div>
+                    <div class="meter-bar">
+                        <div class="meter-indicator" id="fearGreedIndicator" style="left: 72%;"></div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 10px;">
+                        Letztes Update: <span id="fearGreedTime">vor 2h</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Aktuelle Empfehlungen -->
+        <div class="card">
+            <div class="card-title">🎯 Trading Empfehlungen</div>
+            
+            <div class="alert-box">
+                <strong>⏰ FOMC Event in Kürze!</strong><br>
+                Bereiten Sie 280k USDT für Phase 2 ($109k-$114k) vor. Historisch hohe Volatilität erwartet.
+            </div>
+            
+            <div class="success-box" id="currentRecommendation">
+                <strong>📍 Aktuelle Position: Short-Cluster Zone</strong><br>
+                $119,540 - Stop-Hunt möglich. Bereit für Dip-Kauf in tiefere Level.
+            </div>
+        </div>
+        
+        <!-- GitHub Info -->
+        <div class="card">
+            <div class="card-title">ℹ️ App Info</div>
+            <div style="font-size: 0.9rem; color: #6b7280;">
+                <p><strong>GitHub PWA Version 2.1</strong></p>
+                <p>📡 Live-Updates: Alle 5 Sekunden</p>
+                <p>🔔 Push-Notifications: Verfügbar</p>
+                <p>📱 Installation: Alle Browser</p>
+                <p>⚡ Offline-fähig</p>
+                <p>🎯 Letztes Update: <span id="lastUpdate">vor wenigen Sekunden</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentPrice = 119540;
+        let lastHourClose = 118062;
+        let pushEnabled = false;
+        let isMonitoring = true;
+        let deferredPrompt;
+        let updateCounter = 0;
+        let fearGreedIndex = 72;
+
+        // FOMC & PCE Termine
+        const FOMC_DATE = new Date('2025-07-30T14:00:00Z');
+        const PCE_DATE = new Date('2025-07-31T12:30:00Z');
+
+        // PWA Installation Handler
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBanner').style.display = 'flex';
+        });
+
+        document.getElementById('installBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                
+                if (outcome === 'accepted') {
+                    document.getElementById('installBanner').style.display = 'none';
+                    if (pushEnabled) {
+                        sendNotification('App installiert!', 'BTC Monitor wurde erfolgreich installiert!');
+                    }
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        // Countdown Functions
+        function updateCountdowns() {
+            const now = new Date();
+            
+            // FOMC Countdown
+            const fomcDiff = FOMC_DATE - now;
+            if (fomcDiff > 0) {
+                const days = Math.floor(fomcDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((fomcDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((fomcDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((fomcDiff % (1000 * 60)) / 1000);
+                
+                let fomcText = '';
+                if (days > 0) fomcText += `${days}d `;
+                fomcText += `${hours}h ${minutes}m ${seconds}s`;
+                
+                document.getElementById('fomcCountdown').textContent = fomcText;
+                
+                if (fomcDiff < 24 * 60 * 60 * 1000) {
+                    document.getElementById('fomcCountdown').style.color = '#dc2626';
+                }
+            } else {
+                document.getElementById('fomcCountdown').textContent = 'FOMC LIVE!';
+                document.getElementById('fomcCountdown').style.color = '#dc2626';
+            }
+            
+            // PCE Countdown
+            const pceDiff = PCE_DATE - now;
+            if (pceDiff > 0) {
+                const days = Math.floor(pceDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((pceDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((pceDiff % (1000 * 60 * 60)) / (1000 * 60));
+                
+                let pceText = '';
+                if (days > 0) pceText += `${days}d `;
+                pceText += `${hours}h ${minutes}m`;
+                
+                document.getElementById('pceCountdown').textContent = `PCE in ${pceText}`;
+            } else {
+                document.getElementById('pceCountdown').textContent = 'PCE veröffentlicht';
+            }
+        }
+
+        // Price Simulation with more realistic behavior
+        function simulatePrice() {
+            if (!isMonitoring) return;
+            
+            const volatility = 0.0008 + (Math.random() * 0.0004); // Variable volatility
+            const trend = Math.sin(Date.now() / 300000) * 0.0002; // Subtle trend
+            const change = ((Math.random() - 0.5) * volatility) + trend;
+            
+            currentPrice = Math.max(100000, Math.round(currentPrice * (1 + change)));
+            
+            document.getElementById('btcPrice').textContent = `$${currentPrice.toLocaleString()}`;
+            
+            const change24h = ((currentPrice - 118321) / 118321) * 100;
+            const changeEl = document.getElementById('priceChange');
+            changeEl.textContent = `${change24h >= 0 ? '+' : ''}${change24h.toFixed(2)}% (24h)`;
+            changeEl.style.color = change24h >= 0 ? '#10b981' : '#ef4444';
+            
+            updatePhases();
+            updateTriggers();
+            generateRecommendations();
+            updateFearGreed();
+            updateLastUpdateTime();
+        }
+
+        function updatePhases() {
+            // Phase 1: $116k-$119k
+            const phase1Active = currentPrice >= 116000 && currentPrice <= 119000;
+            updatePhase('phase1', 'phase1Status', phase1Active, '🎯 AKTIV', 'Bereit');
+            
+            // Phase 2: $109k-$114k
+            const phase2Active = currentPrice >= 109000 && currentPrice <= 114000;
+            updatePhase('phase2', 'phase2Status', phase2Active, '🚀 EXECUTE!', 'Wartend');
+            
+            if (phase2Active && pushEnabled && updateCounter % 20 === 0) {
+                sendNotification('Phase 2 aktiviert!', `$${currentPrice.toLocaleString()} - Jetzt 280k USDT deployen!`);
+            }
+            
+            // Phase 3: $103k-$108k
+            const phase3Active = currentPrice >= 103000 && currentPrice <= 108000;
+            updatePhase('phase3', 'phase3Status', phase3Active, '💎 DEEP VALUE!', 'Reserve');
+            
+            if (phase3Active && pushEnabled && updateCounter % 30 === 0) {
+                sendNotification('Phase 3 Deep Value!', `$${currentPrice.toLocaleString()} - Finale 140k USDT aktivieren!`);
+            }
+        }
+
+        function updatePhase(phaseId, statusId, isActive, activeText, inactiveText) {
+            const phaseEl = document.getElementById(phaseId);
+            const statusEl = document.getElementById(statusId);
+            
+            if (isActive) {
+                phaseEl.classList.add('phase-active');
+                statusEl.textContent = activeText;
+                statusEl.className = 'phase-status status-active';
+            } else {
+                phaseEl.classList.remove('phase-active');
+                statusEl.textContent = inactiveText;
+                statusEl.className = 'phase-status status-waiting';
+            }
+        }
+
+        function updateTriggers() {
+            updateTrigger('trigger1', 'dot1', lastHourClose > 118400);
+            updateTrigger('trigger2', 'dot2', currentPrice >= 119100);
+            updateTrigger('trigger3', 'dot3', currentPrice <= 117200);
+            updateTrigger('trigger4', 'dot4', currentPrice >= 116400 && currentPrice <= 116900);
+            updateTrigger('trigger5', 'dot5', currentPrice <= 116100);
+            updateTrigger('trigger6', 'dot6', currentPrice <= 114500);
+            
+            // Simulate hourly close updates
+            if (Math.random() < 0.05) {
+                lastHourClose = Math.round(currentPrice * (0.998 + Math.random() * 0.004));
+                document.getElementById('lastClose').textContent = `$${lastHourClose.toLocaleString()}`;
+            }
+        }
+
+        function updateTrigger(triggerId, dotId, isActive) {
+            const triggerEl = document.getElementById(triggerId);
+            const dotEl = document.getElementById(dotId);
+            
+            if (isActive) {
+                triggerEl.classList.add('trigger-active');
+                dotEl.classList.add('active');
+            } else {
+                triggerEl.classList.remove('trigger-active');
+                dotEl.classList.remove('active');
+            }
+        }
+
+        function updateFearGreed() {
+            // Simulate Fear & Greed Index changes
+            if (Math.random() < 0.1) {
+                const priceChange = (currentPrice - 119540) / 119540;
+                fearGreedIndex = Math.max(0, Math.min(100, 
+                    fearGreedIndex + (priceChange * 20) + (Math.random() - 0.5) * 3
+                ));
+                
+                document.getElementById('fearGreedValue').textContent = Math.round(fearGreedIndex);
+                document.getElementById('fearGreedIndicator').style.left = fearGreedIndex + '%';
+                
+                // Update text based on value
+                const fearGreedText = fearGreedIndex < 25 ? 'Extreme Fear' :
+                                    fearGreedIndex < 45 ? 'Fear' :
+                                    fearGreedIndex < 55 ? 'Neutral' :
+                                    fearGreedIndex < 75 ? 'Greed' : 'Extreme Greed';
+                
+                document.querySelector('.meter-value').nextElementSibling.textContent = fearGreedText;
+                
+                // Update timestamp
+                document.getElementById('fearGreedTime').textContent = 'vor ' + Math.floor(Math.random() * 3 + 1) + 'h';
+            }
+        }
+
+        function generateRecommendations() {
+            const recEl = document.getElementById('currentRecommendation');
+            
+            if (currentPrice >= 119000 && currentPrice <= 121000) {
+                recEl.innerHTML = '<strong>⚠️ Short-Liquiditätscluster AKTIV</strong><br>' +
+                    `$${currentPrice.toLocaleString()} - Stop-Hunt wahrscheinlich. Bereit für Dip-Kauf.`;
+            } else if (currentPrice < 116000) {
+                recEl.innerHTML = '<strong>🎯 KAUFGELEGENHEIT!</strong><br>' +
+                    `$${currentPrice.toLocaleString()} - Phase 2 Zone erreicht. 280k USDT bereithalten!`;
+            } else if (currentPrice < 108000) {
+                recEl.innerHTML = '<strong>💎 DEEP VALUE ZONE!</strong><br>' +
+                    `$${currentPrice.toLocaleString()} - Phase 3 aktiv. Finale 140k USDT deployen!`;
+            } else {
+                recEl.innerHTML = '<strong>📍 Normaler Handel</strong><br>' +
+                    `$${currentPrice.toLocaleString()} - Warten auf bessere Einstiegslevel.`;
+            }
+        }
+
+        function updateLastUpdateTime() {
+            const now = new Date();
+            const seconds = Math.floor((Date.now() / 1000) % 60);
+            const timeText = seconds < 10 ? 'vor wenigen Sekunden' : `vor ${seconds}s`;
+            document.getElementById('lastUpdate').textContent = timeText;
+        }
+
+        // Push Notifications
+        function enablePush() {
+            if (!('Notification' in window)) {
+                alert('❌ Ihr Browser unterstützt keine Push-Benachrichtigungen.');
+                return;
+            }
+            
+            if (Notification.permission === 'granted') {
+                pushEnabled = true;
+                updatePushButton();
+                sendNotification('BTC Monitor bereit!', 'Push-Benachrichtigungen sind aktiv!');
+                return;
+            }
+            
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    pushEnabled = true;
+                    updatePushButton();
+                    sendNotification('Setup Complete!', 'GitHub PWA BTC Trading Alerts sind jetzt aktiv!');
+                    alert('✅ Push-Benachrichtigungen aktiviert!\n\nSie erhalten jetzt Alerts bei wichtigen Trading-Signalen!');
+                } else {
+                    alert('❌ Push-Benachrichtigungen wurden abgelehnt.\n\nAktivieren Sie sie in den Browser-Einstellungen.');
+                }
+            });
+        }
+
+        function updatePushButton() {
+            const btn = document.getElementById('pushBtn');
+            if (pushEnabled) {
+                btn.innerHTML = '✅ Push aktiv';
+                btn.className = 'btn btn-success';
+            }
+        }
+
+        function sendNotification(title, body) {
+            if (!pushEnabled || Notification.permission !== 'granted') return;
+            
+            try {
+                const notification = new Notification(`🚨 ${title}`, {
+                    body: body,
+                    icon: '/favicon.ico',
+                    tag: 'btc-monitor',
+                    requireInteraction: true,
+                    vibrate: [200, 100, 200],
+                    timestamp: Date.now()
+                });
+                
+                notification.onclick = () => {
+                    window.focus();
+                    notification.close();
+                };
+                
+                setTimeout(() => notification.close(), 10000);
+            } catch (error) {
+                console.log('Notification error:', error);
+            }
+        }
+
+        // Control Functions
+        function toggleMonitoring() {
+            isMonitoring = !isMonitoring;
+            const btn = document.getElementById('monitorBtn');
+            
+            if (isMonitoring) {
+                btn.innerHTML = '⏸️ Pausieren';
+                btn.className = 'btn btn-warning';
+            } else {
+                btn.innerHTML = '▶️ Starten';
+                btn.className = 'btn btn-success';
+            }
+            
+            if (pushEnabled) {
+                const status = isMonitoring ? 'gestartet' : 'pausiert';
+                sendNotification('Monitor Status', `BTC Monitor wurde ${status}`);
+            }
+        }
+
+        function forceUpdate() {
+            simulatePrice();
+            updateCountdowns();
+            if (pushEnabled) {
+                sendNotification('Daten aktualisiert', `Aktueller BTC Preis: ${currentPrice.toLocaleString()}`);
+            }
+            
+            // Visual feedback
+            const btn = document.getElementById('refreshBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '🔄 Updating...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 1000);
+        }
+
+        // Service Worker for PWA functionality
+        const SW_CODE = `
+            const CACHE_NAME = 'btc-monitor-v2.1';
+            const urlsToCache = [
+                '/',
+                '/index.html'
+            ];
+
+            self.addEventListener('install', event => {
+                event.waitUntil(
+                    caches.open(CACHE_NAME)
+                        .then(cache => cache.addAll(urlsToCache))
+                );
+            });
+
+            self.addEventListener('fetch', event => {
+                event.respondWith(
+                    caches.match(event.request)
+                        .then(response => {
+                            if (response) {
+                                return response;
+                            }
+                            return fetch(event.request);
+                        }
+                    )
+                );
+            });
+
+            self.addEventListener('push', event => {
+                const options = {
+                    body: event.data ? event.data.text() : 'BTC Monitor Update',
+                    icon: '/favicon.ico',
+                    badge: '/favicon.ico',
+                    vibrate: [100, 50, 100],
+                    data: {
+                        dateOfArrival: Date.now(),
+                        primaryKey: 1
+                    }
+                };
+
+                event.waitUntil(
+                    self.registration.showNotification('🚨 BTC Monitor', options)
+                );
+            });
+        `;
+
+        // Register Service Worker
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                const blob = new Blob([SW_CODE], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl).then(() => {
+                    console.log('Service Worker registered successfully');
+                }).catch(error => {
+                    console.log('Service Worker registration failed:', error);
+                });
+            }
+        }
+
+        // PWA Manifest generator
+        function generateManifest() {
+            const manifest = {
+                "name": "BTC Trading Monitor",
+                "short_name": "BTC Monitor",
+                "description": "GitHub PWA für BTC Trading mit Live-Updates",
+                "start_url": "/",
+                "display": "standalone",
+                "background_color": "#667eea",
+                "theme_color": "#10b981",
+                "orientation": "portrait-primary",
+                "icons": [
+                    {
+                        "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiMxMGI5ODEiLz4KPHRleHQgeD0iOTYiIHk9IjEwNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjY0IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZmZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+4oK/PC90ZXh0Pgo8L3N2Zz4K",
+                        "sizes": "192x192",
+                        "type": "image/svg+xml"
+                    },
+                    {
+                        "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iNjQiIGZpbGw9IiMxMGI5ODEiLz4KPHRleHQgeD0iMjU2IiB5PSIyODAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNzAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZmZmZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7igrM8L3RleHQ+Cjwvc3ZnPgo=",
+                        "sizes": "512x512",
+                        "type": "image/svg+xml"
+                    }
+                ],
+                "categories": ["finance", "productivity", "utilities"],
+                "screenshots": [],
+                "shortcuts": [
+                    {
+                        "name": "Aktuelle Trigger",
+                        "short_name": "Trigger",
+                        "description": "Zeige aktuelle Trading Trigger",
+                        "url": "/#triggers"
+                    }
+                ]
+            };
+            
+            const manifestBlob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
+            const manifestUrl = URL.createObjectURL(manifestBlob);
+            
+            const link = document.createElement('link');
+            link.rel = 'manifest';
+            link.href = manifestUrl;
+            document.head.appendChild(link);
+        }
+
+        // Event Listeners
+        document.getElementById('pushBtn').addEventListener('click', enablePush);
+        document.getElementById('monitorBtn').addEventListener('click', toggleMonitoring);
+        document.getElementById('refreshBtn').addEventListener('click', forceUpdate);
+
+        // Advanced Trading Analysis
+        function performTechnicalAnalysis() {
+            const prices = [];
+            const basePrice = 119540;
+            
+            // Generate last 20 prices for analysis
+            for (let i = 19; i >= 0; i--) {
+                const variation = (Math.random() - 0.5) * 0.02;
+                prices.push(basePrice * (1 + variation * (i / 20)));
+            }
+            prices.push(currentPrice);
+            
+            // Simple Moving Average
+            const sma20 = prices.reduce((sum, price) => sum + price, 0) / prices.length;
+            
+            // RSI calculation (simplified)
+            let gains = 0, losses = 0;
+            for (let i = 1; i < prices.length; i++) {
+                const change = prices[i] - prices[i - 1];
+                if (change > 0) gains += change;
+                else losses -= change;
+            }
+            const avgGain = gains / 14;
+            const avgLoss = losses / 14;
+            const rs = avgGain / avgLoss;
+            const rsi = 100 - (100 / (1 + rs));
+            
+            return {
+                sma20: Math.round(sma20),
+                rsi: Math.round(rsi),
+                trend: currentPrice > sma20 ? 'bullish' : 'bearish',
+                momentum: rsi > 70 ? 'overbought' : rsi < 30 ? 'oversold' : 'neutral'
+            };
+        }
+
+        // Initialize everything
+        function init() {
+            console.log('🚀 BTC Trading Monitor PWA gestartet');
+            
+            // Generate PWA manifest
+            generateManifest();
+            
+            // Register service worker
+            registerServiceWorker();
+            
+            // Start main loops
+            updateCountdowns();
+            simulatePrice();
+            
+            // Set up intervals
+            setInterval(() => {
+                updateCountdowns();
+                updateCounter++;
+            }, 1000);
+            
+            setInterval(() => {
+                if (isMonitoring) {
+                    simulatePrice();
+                }
+            }, 5000);
+            
+            // Performance monitoring
+            setInterval(() => {
+                const analysis = performTechnicalAnalysis();
+                console.log('📊 Technical Analysis:', analysis);
+            }, 30000);
+            
+            // Check for important price alerts
+            setInterval(() => {
+                if (pushEnabled && isMonitoring) {
+                    checkCriticalLevels();
+                }
+            }, 15000);
+            
+            console.log('✅ Alle Systeme online');
+        }
+
+        function checkCriticalLevels() {
+            const criticalLevels = [116000, 114000, 109000, 103000];
+            
+            criticalLevels.forEach(level => {
+                const diff = Math.abs(currentPrice - level);
+                const threshold = level * 0.001; // 0.1% threshold
+                
+                if (diff < threshold && Math.random() < 0.1) {
+                    sendNotification(
+                        'Kritisches Level erreicht!',
+                        `BTC bei ${currentPrice.toLocaleString()} - Nahe ${level.toLocaleString()}`
+                    );
+                }
+            });
+        }
+
+        // Error handling
+        window.addEventListener('error', (event) => {
+            console.error('App Error:', event.error);
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled Promise Rejection:', event.reason);
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (event) => {
+            if (event.ctrlKey || event.metaKey) {
+                switch (event.key) {
+                    case 'r':
+                        event.preventDefault();
+                        forceUpdate();
+                        break;
+                    case ' ':
+                        event.preventDefault();
+                        toggleMonitoring();
+                        break;
+                }
+            }
+        });
+
+        // Initialize the app when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>
