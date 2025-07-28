@@ -376,6 +376,8 @@
 
         // Simple API fetch with error handling
         async function fetchBTCPrice() {
+            console.log('🔄 Starte API-Abfrage...');
+            
             try {
                 // Try Binance API first (usually CORS-friendly)
                 let response = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT');
@@ -388,41 +390,54 @@
                         volume24h: parseFloat(data.quoteVolume),
                         source: 'Binance API'
                     };
+                    console.log(`✅ Binance API erfolgreich: ${priceData.price.toLocaleString()}`);
                     updatePriceDisplay();
                     updateStatus(true, 'Binance API');
                     return true;
                 }
                 
-                // Fallback to CoinGecko
-                response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    priceData = {
-                        price: data.bitcoin.usd,
-                        change24h: data.bitcoin.usd_24h_change,
-                        volume24h: 0,
-                        source: 'CoinGecko API'
-                    };
-                    updatePriceDisplay();
-                    updateStatus(true, 'CoinGecko API');
-                    return true;
-                }
-                
-                throw new Error('Alle APIs fehlgeschlagen');
+                throw new Error('Binance API fehlgeschlagen');
                 
             } catch (error) {
-                console.error('API Error:', error);
-                updateStatus(false, error.message);
+                console.error('❌ Binance API Error:', error);
                 
-                // Show fallback price if no data yet
-                if (currentPrice === 0) {
-                    currentPrice = 119540; // Fallback
-                    document.getElementById('btcPrice').textContent = `~$${currentPrice.toLocaleString()}`;
-                    document.getElementById('priceChange').textContent = 'Offline - Geschätzter Preis';
+                // Fallback to CoinGecko
+                try {
+                    console.log('🔄 Versuche CoinGecko Fallback...');
+                    const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        priceData = {
+                            price: data.bitcoin.usd,
+                            change24h: data.bitcoin.usd_24h_change,
+                            volume24h: 0,
+                            source: 'CoinGecko API'
+                        };
+                        console.log(`✅ CoinGecko API erfolgreich: ${priceData.price.toLocaleString()}`);
+                        updatePriceDisplay();
+                        updateStatus(true, 'CoinGecko API');
+                        return true;
+                    }
+                    
+                    throw new Error('CoinGecko API fehlgeschlagen');
+                    
+                } catch (cgError) {
+                    console.error('❌ CoinGecko API Error:', cgError);
+                    updateStatus(false, 'Alle APIs offline');
+                    
+                    // Show fallback price if no data yet
+                    if (currentPrice === 0) {
+                        console.log('⚠️ Verwende Fallback-Preis');
+                        currentPrice = 119540; // Fallback
+                        document.getElementById('btcPrice').textContent = `~${currentPrice.toLocaleString()}`;
+                        document.getElementById('priceChange').textContent = 'Offline - Geschätzter Preis';
+                        // Auch mit Fallback-Preis Content aktualisieren
+                        updateModeContent();
+                    }
+                    
+                    return false;
                 }
-                
-                return false;
             }
         }
 
@@ -431,7 +446,7 @@
             
             // Update price
             const priceEl = document.getElementById('btcPrice');
-            priceEl.textContent = `$${currentPrice.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            priceEl.textContent = `${currentPrice.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
             priceEl.classList.remove('price-loading');
             
             // Update change
@@ -447,7 +462,8 @@
                 showAlert('pump', `BTC steigt um ${change.toFixed(1)}%!`);
             }
             
-            // Update content
+            // WICHTIG: Aktualisiere Content mit ECHTEM Preis
+            console.log(`🔄 Aktualisiere mit Live-Preis: ${currentPrice.toLocaleString()}`);
             updateModeContent();
             lastPriceUpdate = Date.now();
         }
