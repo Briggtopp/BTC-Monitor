@@ -7,13 +7,13 @@
     <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="BTC Live Monitor">
+    <meta name="apple-mobile-web-app-title" content="BTC Monitor">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="BTC Live Monitor">
+    <meta name="application-name" content="BTC Monitor">
     <meta name="theme-color" content="#10b981">
     <meta name="msapplication-TileColor" content="#10b981">
     
-    <title>🚀 BTC Live Trading Monitor</title>
+    <title>🚀 BTC Trading Monitor</title>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,33 +27,39 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            gap: 15px;
+            gap: 20px;
         }
 
-        .api-status {
+        .header {
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
-            padding: 15px;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .price-input {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #10b981;
+            background: transparent;
+            border: 2px dashed #10b981;
             border-radius: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
         }
 
-        .api-status.online {
-            border-left: 4px solid #10b981;
-        }
-
-        .api-status.offline {
-            border-left: 4px solid #ef4444;
-        }
-
-        .api-status.loading {
-            border-left: 4px solid #f59e0b;
+        .price-input:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
 
         .mode-selector {
@@ -90,88 +96,6 @@
             border-color: #10b981;
         }
 
-        .header {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .price-display {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #10b981;
-            margin: 15px 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .price-display.loading {
-            color: #f59e0b;
-            animation: pulse 2s infinite;
-        }
-
-        .price-display.error {
-            color: #ef4444;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-
-        .crash-alert {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
-            font-weight: bold;
-            animation: flashAlert 1s infinite;
-            display: none;
-        }
-
-        .pump-alert {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
-            font-weight: bold;
-            animation: flashAlert 1s infinite;
-            display: none;
-        }
-
-        @keyframes flashAlert {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 15px;
-        }
-
-        .card {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .countdown-container {
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
@@ -182,12 +106,20 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
+        .countdown-title {
+            font-size: 1.3rem;
+            color: #374151;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
         .countdown-display {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: #ef4444;
             margin: 10px 0;
             font-family: 'Courier New', monospace;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .fed-schedule {
@@ -212,17 +144,148 @@
             font-weight: 600;
         }
 
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .phase-item {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .phase-active {
+            background: #d1fae5;
+            border-color: #10b981;
+            transform: scale(1.02);
+        }
+
+        .phase-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .phase-range {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .phase-status {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .status-active {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-waiting {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .calculator {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        .calc-input {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .calc-input input, .calc-input select {
+            flex: 1;
+            min-width: 100px;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .calc-result {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .level-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin: 8px 0;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .level-active {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
         .btn {
             background: #3b82f6;
             color: white;
             border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
+            padding: 12px 20px;
+            border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.85rem;
-            margin: 5px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 5px;
+            min-height: 44px;
         }
 
         .btn:hover {
@@ -254,99 +317,57 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
-        .debug-panel {
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 0.8rem;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .error-message {
+        .alert-box {
             background: #fef2f2;
             border: 1px solid #fecaca;
             color: #991b1b;
-            padding: 10px;
-            border-radius: 6px;
-            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
             font-size: 0.9rem;
         }
 
-        .api-info {
-            font-size: 0.8rem;
-            color: #6b7280;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #10b981;
-            animation: pulse 2s infinite;
-        }
-
-        .status-dot.offline {
-            background: #ef4444;
-        }
-
-        .status-dot.loading {
-            background: #f59e0b;
-        }
-
-        .retry-btn {
-            background: #f59e0b;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-top: 10px;
+        .success-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 0.9rem;
         }
 
         @media (max-width: 768px) {
-            .price-display { font-size: 2.2rem; }
+            .price-input { font-size: 2rem; }
+            .countdown-display { font-size: 1.8rem; }
             .grid { grid-template-columns: 1fr; }
-            .container { padding: 8px; }
-            .mode-buttons { flex-direction: column; }
-            .api-status { flex-direction: column; gap: 10px; text-align: center; }
+            .container { padding: 10px; }
+            .button-row { flex-direction: column; }
+            .calc-input { flex-direction: column; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- API Status -->
-        <div class="api-status loading" id="apiStatus">
-            <div>
-                <strong>📡 Live Data Feed</strong>
-                <div class="api-info">
-                    <div class="status-dot loading" id="statusDot"></div>
-                    <span id="apiInfo">Verbinde zu API...</span>
-                </div>
-            </div>
-            <div style="font-size: 0.8rem; color: #6b7280;">
-                Letztes Update: <span id="lastApiUpdate">--:--</span>
-            </div>
-        </div>
-
-        <!-- Debug Panel (only visible if needed) -->
-        <div class="debug-panel" id="debugPanel" style="display: none;">
-            <strong>🔧 Debug Info:</strong><br>
-            <div id="debugLog">Initialisiere...</div>
-            <button class="retry-btn" onclick="forceRetry()">🔄 Alle APIs erneut versuchen</button>
-        </div>
-
         <!-- Installation Banner -->
         <div class="install-banner" id="installBanner">
             <div class="install-text">📱 Als App installieren für beste Erfahrung</div>
             <button class="install-btn btn" id="installBtn">Installieren</button>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>🚀 BTC Trading Monitor</h1>
+            <p>Professionelles Trading Tool - Einfach & Zuverlässig</p>
+            <input type="number" class="price-input" id="priceInput" placeholder="Aktueller BTC Preis eingeben" value="119540">
+            <div style="font-size: 0.9rem; color: #6b7280; margin-top: 10px;">
+                💡 Preis manuell eingeben für präzise Berechnungen
+            </div>
+            
+            <div class="button-row">
+                <button class="btn btn-warning" id="pushBtn">🔔 Push aktivieren</button>
+                <button class="btn btn-success" id="updateBtn">📊 Berechnungen aktualisieren</button>
+            </div>
         </div>
 
         <!-- Mode Selector -->
@@ -357,29 +378,6 @@
                 <div class="mode-btn" data-mode="bull">🚀 Bull Run Tracker</div>
                 <div class="mode-btn" data-mode="day">⚡ Day Trading</div>
                 <div class="mode-btn" data-mode="hodl">💎 HODL Monitor</div>
-            </div>
-        </div>
-        
-        <!-- Header -->
-        <div class="header">
-            <h1>🚀 BTC Live Trading Monitor</h1>
-            <p id="modeDescription">Bear Market Survival - DCA & Accumulation Focus</p>
-            <div class="price-display loading" id="btcPrice">Lade Live-Daten...</div>
-            <div id="priceChange">Verbinde zu APIs...</div>
-            
-            <!-- Crash/Pump Alerts -->
-            <div class="crash-alert" id="crashAlert">
-                🚨 CRASH DETECTED! BTC fällt stark!
-            </div>
-            <div class="pump-alert" id="pumpAlert">
-                🚀 PUMP DETECTED! BTC steigt stark!
-            </div>
-            
-            <div class="button-row">
-                <button class="btn btn-warning" id="pushBtn">🔔 Push aktivieren</button>
-                <button class="btn btn-success" id="refreshBtn">🔄 Aktualisieren</button>
-                <button class="btn" id="monitorBtn">⏸️ Pausieren</button>
-                <button class="btn btn-danger" id="debugBtn">🔧 Debug</button>
             </div>
         </div>
         
@@ -394,39 +392,18 @@
         
         <!-- Dynamic Content Grid -->
         <div class="grid" id="dynamicGrid">
-            <div class="card">
-                <div class="card-title">⏳ Lade Daten...</div>
-                <p>Die Live-Daten werden geladen. Falls dies länger dauert, prüfen Sie die Debug-Informationen.</p>
-            </div>
+            <!-- Content wird je nach Modus dynamisch geladen -->
         </div>
     </div>
 
     <script>
         // Global Variables
-        let currentPrice = 0;
-        let priceData = {};
-        let fearGreedData = {};
+        let currentPrice = 119540;
         let pushEnabled = false;
-        let isMonitoring = true;
         let currentMode = 'bear';
         let deferredPrompt;
-        let apiOnline = false;
-        let debugMode = false;
-        let apiAttempts = 0;
-        let maxRetries = 3;
 
-        // Debug logging
-        function debugLog(message) {
-            const timestamp = new Date().toLocaleTimeString();
-            const logEl = document.getElementById('debugLog');
-            if (logEl) {
-                logEl.innerHTML += `<br>[${timestamp}] ${message}`;
-                logEl.scrollTop = logEl.scrollHeight;
-            }
-            console.log(`[BTC Monitor] ${message}`);
-        }
-
-        // Fed Meeting Dates 2025
+        // Fed Meeting Dates 2025 (Echte Termine)
         const FED_MEETINGS = [
             { date: new Date('2025-01-29T19:00:00Z'), desc: '29. Januar 2025' },
             { date: new Date('2025-03-19T18:00:00Z'), desc: '19. März 2025' },
@@ -438,218 +415,46 @@
             { date: new Date('2025-12-17T19:00:00Z'), desc: '17. Dezember 2025' }
         ];
 
-        // Multiple API endpoints with CORS proxies
-        const API_ENDPOINTS = [
-            {
-                name: 'CoinGecko (Direct)',
-                url: 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_last_updated_at=true'
+        // Mode Configurations
+        const MODES = {
+            bear: {
+                title: 'Bear Market Survival - DCA & Accumulation Focus',
+                features: ['dca', 'accumulation', 'support']
             },
-            {
-                name: 'CoinGecko (CORS Proxy)',
-                url: 'https://cors-anywhere.herokuapp.com/https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_last_updated_at=true'
+            bull: {
+                title: 'Bull Run Tracker - ATH & Fibonacci Targets',
+                features: ['ath', 'fibonacci', 'profits']
             },
-            {
-                name: 'Binance (Direct)',
-                url: 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT'
+            day: {
+                title: 'Day Trading - Support/Resistance & Levels',
+                features: ['levels', 'support', 'resistance']
             },
-            {
-                name: 'CoinCap API',
-                url: 'https://api.coincap.io/v2/assets/bitcoin'
-            },
-            {
-                name: 'CryptoCompare',
-                url: 'https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD'
+            hodl: {
+                title: 'HODL Monitor - Langfristige Perspektive',
+                features: ['ath', 'accumulation', 'profits']
             }
-        ];
+        };
 
-        // Try multiple APIs in sequence
-        async function fetchBTCPrice() {
-            debugLog('Starte API-Abfrage...');
-            apiAttempts++;
-            
-            for (let i = 0; i < API_ENDPOINTS.length; i++) {
-                const endpoint = API_ENDPOINTS[i];
-                debugLog(`Versuche ${endpoint.name}...`);
-                
-                try {
-                    updateAPIStatus('loading', `Verbinde zu ${endpoint.name}...`);
-                    
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
-                    
-                    const response = await fetch(endpoint.url, {
-                        method: 'GET',
-                        signal: controller.signal,
-                        headers: {
-                            'Accept': 'application/json',
-                        }
-                    });
-                    
-                    clearTimeout(timeoutId);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    
-                    const data = await response.json();
-                    debugLog(`${endpoint.name} erfolgreich: ${JSON.stringify(data).substring(0, 100)}...`);
-                    
-                    // Parse different API formats
-                    if (endpoint.name.includes('CoinGecko')) {
-                        const btcData = data.bitcoin;
-                        priceData = {
-                            price: btcData.usd,
-                            change24h: btcData.usd_24h_change,
-                            volume24h: btcData.usd_24h_vol,
-                            lastUpdated: btcData.last_updated_at * 1000,
-                            source: endpoint.name
-                        };
-                    } else if (endpoint.name.includes('Binance')) {
-                        priceData = {
-                            price: parseFloat(data.lastPrice),
-                            change24h: parseFloat(data.priceChangePercent),
-                            volume24h: parseFloat(data.quoteVolume),
-                            lastUpdated: Date.now(),
-                            source: endpoint.name
-                        };
-                    } else if (endpoint.name.includes('CoinCap')) {
-                        const btcData = data.data;
-                        priceData = {
-                            price: parseFloat(btcData.priceUsd),
-                            change24h: parseFloat(btcData.changePercent24Hr),
-                            volume24h: parseFloat(btcData.volumeUsd24Hr),
-                            lastUpdated: Date.now(),
-                            source: endpoint.name
-                        };
-                    } else if (endpoint.name.includes('CryptoCompare')) {
-                        priceData = {
-                            price: data.USD,
-                            change24h: 0, // Not available in this endpoint
-                            volume24h: 0, // Not available in this endpoint
-                            lastUpdated: Date.now(),
-                            source: endpoint.name
-                        };
-                    }
-                    
-                    currentPrice = priceData.price;
-                    updatePriceDisplay();
-                    updateAPIStatus('online', `${endpoint.name} • Live Data`);
-                    debugLog(`Preis erfolgreich geladen: $${currentPrice.toLocaleString()}`);
-                    
-                    return true;
-                    
-                } catch (error) {
-                    debugLog(`${endpoint.name} Fehler: ${error.message}`);
-                    continue; // Try next API
-                }
+        // Price Input Handler
+        document.getElementById('priceInput').addEventListener('input', function() {
+            const value = parseFloat(this.value);
+            if (value && value > 0) {
+                currentPrice = value;
+                updateAllCalculations();
             }
-            
-            // All APIs failed
-            debugLog(`Alle ${API_ENDPOINTS.length} APIs fehlgeschlagen nach ${apiAttempts} Versuchen`);
-            updateAPIStatus('offline', 'Alle APIs offline - Prüfe Internetverbindung');
-            
-            // Show fallback price (last known or estimated)
-            if (currentPrice === 0) {
-                currentPrice = 119540; // Fallback price
-                document.getElementById('btcPrice').textContent = `~$${currentPrice.toLocaleString()}`;
-                document.getElementById('btcPrice').classList.add('error');
-                document.getElementById('priceChange').textContent = 'Offline - Geschätzter Preis';
-                debugLog('Zeige Fallback-Preis an');
-            }
-            
-            return false;
-        }
+        });
 
-        // Fear & Greed with fallback
-        async function fetchFearGreedIndex() {
-            try {
-                debugLog('Lade Fear & Greed Index...');
-                const response = await fetch('https://api.alternative.me/fng/', {
-                    method: 'GET',
-                    headers: { 'Accept': 'application/json' }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`Fear & Greed API: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                const fngData = data.data[0];
-                
-                fearGreedData = {
-                    value: parseInt(fngData.value),
-                    classification: fngData.value_classification,
-                    timestamp: fngData.timestamp
-                };
-                
-                debugLog(`Fear & Greed geladen: ${fearGreedData.value} (${fearGreedData.classification})`);
-                return true;
-                
-            } catch (error) {
-                debugLog(`Fear & Greed Fehler: ${error.message}`);
-                // Fallback estimation
-                fearGreedData = {
-                    value: 45, // Neutral fallback
-                    classification: 'Estimated',
-                    timestamp: Date.now()
-                };
-                return false;
-            }
-        }
+        // Mode Switching
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.dataset.mode;
+                updateModeContent();
+            });
+        });
 
-        function updatePriceDisplay() {
-            const priceEl = document.getElementById('btcPrice');
-            const changeEl = document.getElementById('priceChange');
-            
-            priceEl.textContent = `$${currentPrice.toLocaleString(undefined, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            })}`;
-            priceEl.classList.remove('loading', 'error');
-            
-            const change = priceData.change24h || 0;
-            const source = priceData.source || 'Unknown';
-            changeEl.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}% (24h) • ${source}`;
-            changeEl.style.color = change >= 0 ? '#10b981' : '#ef4444';
-            
-            // Update content
-            updateModeContent();
-        }
-
-        function updateAPIStatus(status, message = '') {
-            const statusEl = document.getElementById('apiStatus');
-            const dotEl = document.getElementById('statusDot');
-            const infoEl = document.getElementById('apiInfo');
-            const updateEl = document.getElementById('lastApiUpdate');
-            
-            statusEl.className = `api-status ${status}`;
-            dotEl.className = `status-dot ${status}`;
-            infoEl.textContent = message;
-            
-            const now = new Date();
-            updateEl.textContent = now.toLocaleTimeString();
-            
-            if (status === 'online') {
-                apiOnline = true;
-            } else {
-                apiOnline = false;
-            }
-        }
-
-        // Force retry all APIs
-        async function forceRetry() {
-            debugLog('=== MANUELLER RETRY GESTARTET ===');
-            apiAttempts = 0;
-            document.getElementById('btcPrice').classList.add('loading');
-            document.getElementById('priceChange').textContent = 'Versuche alle APIs erneut...';
-            
-            await fetchBTCPrice();
-            await fetchFearGreedIndex();
-            
-            debugLog('=== RETRY ABGESCHLOSSEN ===');
-        }
-
-        // Fed Countdown
+        // Fed Countdown (Das funktioniert perfekt!)
         function updateFedCountdown() {
             const now = new Date();
             const nextMeeting = FED_MEETINGS.find(meeting => meeting.date > now);
@@ -683,128 +488,409 @@
             });
         }
 
-        // Simple content for demonstration
+        // Dynamic Content Based on Mode
         function updateModeContent() {
             const grid = document.getElementById('dynamicGrid');
+            const features = MODES[currentMode].features;
             
-            if (currentPrice === 0) {
-                grid.innerHTML = `
-                    <div class="card">
-                        <div class="card-title">⚠️ Verbindungsproblem</div>
-                        <div class="error-message">
-                            <strong>API-Verbindung fehlgeschlagen</strong><br>
-                            Mögliche Ursachen:<br>
-                            • CORS-Blockierung durch Browser<br>
-                            • Firewall/Proxy-Einstellungen<br>
-                            • Temporärer API-Ausfall<br><br>
-                            <button class="retry-btn" onclick="forceRetry()">🔄 Erneut versuchen</button>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
+            grid.innerHTML = '';
             
-            // Show basic info when price is available
-            grid.innerHTML = `
-                <div class="card">
-                    <div class="card-title">💰 Live BTC Preis</div>
-                    <div style="text-align: center; padding: 20px;">
-                        <div style="font-size: 2rem; font-weight: bold; color: #10b981;">
-                            $${currentPrice.toLocaleString()}
-                        </div>
-                        <div style="margin-top: 10px; color: #6b7280;">
-                            24h Änderung: ${priceData.change24h ? priceData.change24h.toFixed(2) + '%' : 'N/A'}<br>
-                            Quelle: ${priceData.source || 'Unknown'}<br>
-                            <small>Letztes Update: ${priceData.lastUpdated ? new Date(priceData.lastUpdated).toLocaleTimeString() : 'N/A'}</small>
-                        </div>
+            features.forEach(feature => {
+                switch(feature) {
+                    case 'dca':
+                        grid.appendChild(createDCACalculator());
+                        break;
+                    case 'accumulation':
+                        grid.appendChild(createAccumulationZones());
+                        break;
+                    case 'ath':
+                        grid.appendChild(createATHTracker());
+                        break;
+                    case 'fibonacci':
+                        grid.appendChild(createFibonacciLevels());
+                        break;
+                    case 'levels':
+                        grid.appendChild(createTradingLevels());
+                        break;
+                    case 'support':
+                        grid.appendChild(createSupportLevels());
+                        break;
+                    case 'resistance':
+                        grid.appendChild(createResistanceLevels());
+                        break;
+                    case 'profits':
+                        grid.appendChild(createProfitZones());
+                        break;
+                }
+            });
+        }
+
+        // DCA Calculator
+        function createDCACalculator() {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-title">💰 DCA Calculator</div>
+                <div class="calculator">
+                    <div class="calc-input">
+                        <input type="number" id="dcaAmount" value="500" placeholder="Betrag ($)" min="1">
+                        <select id="dcaFreq">
+                            <option value="weekly">Wöchentlich</option>
+                            <option value="monthly">Monatlich</option>
+                            <option value="daily">Täglich</option>
+                        </select>
                     </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-title">😱 Fear & Greed Index</div>
-                    <div style="text-align: center; padding: 20px;">
-                        <div style="font-size: 2rem; font-weight: bold; color: #f59e0b;">
-                            ${fearGreedData.value || 45}
-                        </div>
-                        <div style="margin-top: 10px; color: #6b7280;">
-                            ${fearGreedData.classification || 'Neutral'}<br>
-                            <small>${fearGreedData.classification === 'Estimated' ? 'Geschätzt' : 'Alternative.me'}</small>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-title">📊 Status</div>
-                    <div style="padding: 15px;">
-                        <p><strong>API Status:</strong> ${apiOnline ? '🟢 Online' : '🔴 Offline'}</p>
-                        <p><strong>Versuche:</strong> ${apiAttempts}</p>
-                        <p><strong>Modus:</strong> ${currentMode.toUpperCase()}</p>
-                        <p><strong>Monitoring:</strong> ${isMonitoring ? '▶️ Aktiv' : '⏸️ Pausiert'}</p>
+                    <div class="calc-result" id="dcaResult">
+                        Bei $500 wöchentlich: ${(500 / currentPrice).toFixed(6)} BTC/Woche
                     </div>
                 </div>
             `;
+            
+            const updateDCA = () => {
+                const amount = parseFloat(card.querySelector('#dcaAmount').value) || 500;
+                const freq = card.querySelector('#dcaFreq').value;
+                const btcAmount = amount / currentPrice;
+                const periodsPerYear = freq === 'daily' ? 365 : freq === 'weekly' ? 52 : 12;
+                const yearlyBTC = btcAmount * periodsPerYear;
+                
+                const freqText = freq === 'daily' ? 'täglich' : freq === 'weekly' ? 'wöchentlich' : 'monatlich';
+                
+                card.querySelector('#dcaResult').innerHTML = `
+                    Bei $${amount} ${freqText}: ${btcAmount.toFixed(6)} BTC<br>
+                    Jahresertrag: ~${yearlyBTC.toFixed(3)} BTC ($${Math.round(yearlyBTC * currentPrice).toLocaleString()})<br>
+                    <small>Basis: $${currentPrice.toLocaleString()}</small>
+                `;
+            };
+            
+            card.querySelector('#dcaAmount').addEventListener('input', updateDCA);
+            card.querySelector('#dcaFreq').addEventListener('change', updateDCA);
+            
+            return card;
         }
 
-        // Event Listeners
-        document.getElementById('debugBtn').addEventListener('click', () => {
-            debugMode = !debugMode;
-            const panel = document.getElementById('debugPanel');
-            panel.style.display = debugMode ? 'block' : 'none';
+        // Accumulation Zones
+        function createAccumulationZones() {
+            const card = document.createElement('div');
+            card.className = 'card';
             
-            if (debugMode) {
-                debugLog('Debug-Modus aktiviert');
-            }
-        });
+            const zones = [
+                { 
+                    range: `$${Math.round(currentPrice * 0.7 / 1000) * 1000}k-$${Math.round(currentPrice * 0.8 / 1000) * 1000}k`, 
+                    active: false,
+                    desc: 'Extreme Value Zone'
+                },
+                { 
+                    range: `$${Math.round(currentPrice * 0.8 / 1000) * 1000}k-$${Math.round(currentPrice * 0.9 / 1000) * 1000}k`, 
+                    active: false,
+                    desc: 'Strong Accumulation'
+                },
+                { 
+                    range: `$${Math.round(currentPrice * 0.9 / 1000) * 1000}k-$${Math.round(currentPrice * 1.05 / 1000) * 1000}k`, 
+                    active: true,
+                    desc: 'DCA Zone - AKTIV'
+                }
+            ];
+            
+            let zonesHTML = zones.map(zone => `
+                <div class="phase-item ${zone.active ? 'phase-active' : ''}">
+                    <div class="phase-title">${zone.range}</div>
+                    <div class="phase-range">${zone.desc}</div>
+                    ${zone.active ? '<div class="phase-status status-active">🎯 Aktueller Bereich</div>' : ''}
+                </div>
+            `).join('');
+            
+            card.innerHTML = `
+                <div class="card-title">🎯 Accumulation Zones</div>
+                ${zonesHTML}
+                <div style="font-size: 0.8rem; color: #6b7280; margin-top: 10px;">
+                    Basiert auf: $${currentPrice.toLocaleString()}
+                </div>
+            `;
+            
+            return card;
+        }
 
-        document.getElementById('refreshBtn').addEventListener('click', async () => {
-            const btn = document.getElementById('refreshBtn');
-            btn.innerHTML = '🔄 Lade...';
-            btn.disabled = true;
+        // ATH Tracker
+        function createATHTracker() {
+            const card = document.createElement('div');
+            card.className = 'card';
             
-            await forceRetry();
+            const athPrice = 73737;
+            const progress = (currentPrice / athPrice) * 100;
+            const distance = ((athPrice - currentPrice) / currentPrice) * 100;
             
+            card.innerHTML = `
+                <div class="card-title">🏆 ATH Tracker</div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 1.2rem; margin-bottom: 10px;">
+                        ATH: $${athPrice.toLocaleString()} (Nov 2021)
+                    </div>
+                    <div style="font-size: 2rem; font-weight: bold; color: #f59e0b;">
+                        ${distance > 0 ? `${distance.toFixed(1)}% to go` : 'NEW ATH! 🚀'}
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <div style="background: #e5e7eb; height: 10px; border-radius: 5px; overflow: hidden;">
+                            <div style="background: #10b981; height: 100%; width: ${Math.min(100, progress)}%; transition: width 0.5s ease;"></div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.9rem; color: #6b7280;">
+                        Fortschritt: ${progress.toFixed(1)}%
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Support/Resistance Levels
+        function createSupportLevels() {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            const supports = [
+                { level: Math.round((currentPrice * 0.98) / 100) * 100, strength: 'Immediate' },
+                { level: Math.round((currentPrice * 0.95) / 1000) * 1000, strength: 'Strong' },
+                { level: Math.round((currentPrice * 0.90) / 1000) * 1000, strength: 'Major' },
+                { level: 100000, strength: 'Psychological' }
+            ];
+            
+            let supportsHTML = supports.map(support => {
+                const distance = ((currentPrice - support.level) / currentPrice * 100);
+                const isNear = Math.abs(distance) < 5;
+                
+                return `
+                    <div class="level-item ${isNear ? 'level-active' : ''}">
+                        <span>${support.strength} Support</span>
+                        <span>$${support.level.toLocaleString()} (${distance.toFixed(1)}%)</span>
+                    </div>
+                `;
+            }).join('');
+            
+            card.innerHTML = `
+                <div class="card-title">📉 Support Levels</div>
+                ${supportsHTML}
+            `;
+            
+            return card;
+        }
+
+        function createResistanceLevels() {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            const resistances = [
+                { level: Math.round((currentPrice * 1.02) / 100) * 100, strength: 'Immediate' },
+                { level: Math.round((currentPrice * 1.05) / 1000) * 1000, strength: 'Strong' },
+                { level: Math.round((currentPrice * 1.10) / 1000) * 1000, strength: 'Major' },
+                { level: 150000, strength: 'Psychological' }
+            ];
+            
+            let resistancesHTML = resistances.map(resistance => {
+                const distance = ((resistance.level - currentPrice) / currentPrice * 100);
+                const isNear = Math.abs(distance) < 5;
+                
+                return `
+                    <div class="level-item ${isNear ? 'level-active' : ''}">
+                        <span>${resistance.strength} Resistance</span>
+                        <span>$${resistance.level.toLocaleString()} (+${distance.toFixed(1)}%)</span>
+                    </div>
+                `;
+            }).join('');
+            
+            card.innerHTML = `
+                <div class="card-title">📈 Resistance Levels</div>
+                ${resistancesHTML}
+            `;
+            
+            return card;
+        }
+
+        // Fibonacci Levels
+        function createFibonacciLevels() {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            const high = 73737;
+            const low = 15477;
+            const diff = high - low;
+            
+            const fibLevels = [
+                { name: '0% (ATH)', level: high },
+                { name: '23.6%', level: high - (diff * 0.236) },
+                { name: '38.2%', level: high - (diff * 0.382) },
+                { name: '50%', level: high - (diff * 0.5) },
+                { name: '61.8%', level: high - (diff * 0.618) },
+                { name: '78.6%', level: high - (diff * 0.786) },
+                { name: '100% (Low)', level: low }
+            ];
+            
+            let levelsHTML = fibLevels.map(level => {
+                const isSupport = currentPrice > level.level;
+                const distance = Math.abs(currentPrice - level.level);
+                const isNear = distance < (currentPrice * 0.05);
+                
+                return `
+                    <div class="level-item ${isNear ? 'level-active' : ''}" style="border-left: 3px solid ${isSupport ? '#10b981' : '#ef4444'};">
+                        <span>${level.name}</span>
+                        <span>$${Math.round(level.level).toLocaleString()}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            card.innerHTML = `
+                <div class="card-title">📐 Fibonacci Retracements</div>
+                ${levelsHTML}
+                <div style="font-size: 0.8rem; color: #6b7280; margin-top: 10px;">
+                    Swing: $${high.toLocaleString()} → $${low.toLocaleString()}
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Trading Levels
+        function createTradingLevels() {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            const levels = [
+                { type: 'Take Profit', level: currentPrice * 1.05, color: '#10b981' },
+                { type: 'Resistance', level: currentPrice * 1.02, color: '#ef4444' },
+                { type: 'Current Price', level: currentPrice, color: '#3b82f6' },
+                { type: 'Support', level: currentPrice * 0.98, color: '#10b981' },
+                { type: 'Stop Loss', level: currentPrice * 0.95, color: '#ef4444' }
+            ];
+            
+            let levelsHTML = levels.map(level => {
+                const isCurrent = level.type === 'Current Price';
+                return `
+                    <div class="level-item ${isCurrent ? 'level-active' : ''}" style="border-left: 3px solid ${level.color};">
+                        <span>${level.type}</span>
+                        <span>${Math.round(level.level).toLocaleString()}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            card.innerHTML = `
+                <div class="card-title">⚡ Day Trading Levels</div>
+                ${levelsHTML}
+                <div style="font-size: 0.8rem; color: #6b7280; margin-top: 10px;">
+                    Basiert auf aktuellem Preis: ${currentPrice.toLocaleString()}
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Profit Taking Zones
+        function createProfitZones() {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            const entryPrice = 45000; // Angenommener Durchschnittseinstieg
+            const currentGain = ((currentPrice - entryPrice) / entryPrice * 100);
+            
+            const zones = [
+                { name: 'Zone 1 (25%)', target: entryPrice * 2, percent: 25, gain: 100 },
+                { name: 'Zone 2 (25%)', target: entryPrice * 3, percent: 25, gain: 200 },
+                { name: 'Zone 3 (25%)', target: entryPrice * 4, percent: 25, gain: 300 },
+                { name: 'Zone 4 (25%)', target: entryPrice * 5, percent: 25, gain: 400 }
+            ];
+            
+            let zonesHTML = zones.map(zone => {
+                const reached = currentPrice >= zone.target;
+                return `
+                    <div class="level-item" style="border-left: 3px solid ${reached ? '#10b981' : '#6b7280'};">
+                        <span>${zone.name}</span>
+                        <span>${Math.round(zone.target).toLocaleString()} (+${zone.gain}%)</span>
+                    </div>
+                `;
+            }).join('');
+            
+            card.innerHTML = `
+                <div class="card-title">💰 Profit Taking Zones</div>
+                <div style="background: #f0fdf4; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center;">
+                    <div style="font-size: 0.9rem; color: #6b7280;">Aktueller Gewinn/Verlust</div>
+                    <div style="font-size: 1.8rem; font-weight: bold; color: ${currentGain >= 0 ? '#10b981' : '#ef4444'};">
+                        ${currentGain >= 0 ? '+' : ''}${currentGain.toFixed(1)}%
+                    </div>
+                </div>
+                ${zonesHTML}
+                <div style="font-size: 0.8rem; color: #6b7280; margin-top: 10px;">
+                    Basis: ${entryPrice.toLocaleString()} Einstieg
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Update all calculations when price changes
+        function updateAllCalculations() {
+            updateModeContent();
+            
+            // Update price display feedback
+            const priceInput = document.getElementById('priceInput');
+            priceInput.style.color = '#10b981';
+            priceInput.style.borderColor = '#10b981';
+            
+            // Brief animation to show update
             setTimeout(() => {
-                btn.innerHTML = '🔄 Aktualisieren';
-                btn.disabled = false;
-            }, 2000);
-        });
+                priceInput.style.borderColor = '#059669';
+            }, 200);
+        }
 
-        document.getElementById('monitorBtn').addEventListener('click', () => {
-            isMonitoring = !isMonitoring;
-            const btn = document.getElementById('monitorBtn');
-            
-            if (isMonitoring) {
-                btn.innerHTML = '⏸️ Pausieren';
-                btn.className = 'btn btn-warning';
-                debugLog('Monitoring gestartet');
-                fetchBTCPrice();
-            } else {
-                btn.innerHTML = '▶️ Starten';
-                btn.className = 'btn btn-success';
-                debugLog('Monitoring pausiert');
+        // Push Notifications (simplified, no API needed)
+        function enablePush() {
+            if (!('Notification' in window)) {
+                alert('❌ Ihr Browser unterstützt keine Push-Benachrichtigungen.');
+                return;
             }
-        });
-
-        // Mode switching
-        document.querySelectorAll('.mode-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentMode = btn.dataset.mode;
-                document.getElementById('modeDescription').textContent = 
-                    `${btn.textContent} - ${getCurrentModeDescription()}`;
-                debugLog(`Modus gewechselt zu: ${currentMode}`);
+            
+            if (Notification.permission === 'granted') {
+                pushEnabled = true;
+                updatePushButton();
+                sendNotification('BTC Monitor bereit!', 'Manuelle Überwachung aktiv!');
+                return;
+            }
+            
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    pushEnabled = true;
+                    updatePushButton();
+                    sendNotification('Setup Complete!', 'BTC Trading Monitor ist bereit!');
+                } else {
+                    alert('❌ Push-Benachrichtigungen wurden abgelehnt.');
+                }
             });
-        });
+        }
 
-        function getCurrentModeDescription() {
-            const descriptions = {
-                bear: 'DCA & Accumulation Focus',
-                bull: 'ATH & Fibonacci Targets',
-                day: 'Live Updates & Volume',
-                hodl: 'Langfristige Perspektive'
-            };
-            return descriptions[currentMode] || 'Unbekannter Modus';
+        function updatePushButton() {
+            const btn = document.getElementById('pushBtn');
+            if (pushEnabled) {
+                btn.innerHTML = '✅ Push aktiv';
+                btn.className = 'btn btn-success';
+            }
+        }
+
+        function sendNotification(title, body) {
+            if (!pushEnabled || Notification.permission !== 'granted') return;
+            
+            try {
+                const notification = new Notification(`🚨 ${title}`, {
+                    body: body,
+                    icon: '/favicon.ico',
+                    tag: 'btc-monitor'
+                });
+                
+                notification.onclick = () => {
+                    window.focus();
+                    notification.close();
+                };
+                
+                setTimeout(() => notification.close(), 8000);
+            } catch (error) {
+                console.log('Notification error:', error);
+            }
         }
 
         // PWA Installation
@@ -821,89 +907,50 @@
                 
                 if (outcome === 'accepted') {
                     document.getElementById('installBanner').style.display = 'none';
-                    debugLog('PWA erfolgreich installiert');
+                    if (pushEnabled) {
+                        sendNotification('App installiert!', 'BTC Monitor ist jetzt verfügbar!');
+                    }
                 }
                 deferredPrompt = null;
             }
         });
 
-        // Push Notifications (simplified)
-        document.getElementById('pushBtn').addEventListener('click', () => {
-            if (!('Notification' in window)) {
-                alert('❌ Ihr Browser unterstützt keine Push-Benachrichtigungen.');
-                return;
+        // Event Listeners
+        document.getElementById('pushBtn').addEventListener('click', enablePush);
+        
+        document.getElementById('updateBtn').addEventListener('click', () => {
+            updateAllCalculations();
+            
+            // Visual feedback
+            const btn = document.getElementById('updateBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✅ Aktualisiert!';
+            btn.className = 'btn btn-success';
+            
+            if (pushEnabled) {
+                sendNotification('Berechnungen aktualisiert', `Neue Werte für ${currentPrice.toLocaleString()}`);
             }
             
-            if (Notification.permission === 'granted') {
-                pushEnabled = true;
-                document.getElementById('pushBtn').innerHTML = '✅ Push aktiv';
-                document.getElementById('pushBtn').className = 'btn btn-success';
-                debugLog('Push-Benachrichtigungen aktiviert');
-                
-                // Test notification
-                new Notification('🚀 BTC Monitor', {
-                    body: 'Push-Benachrichtigungen sind jetzt aktiv!',
-                    icon: '/favicon.ico'
-                });
-                return;
-            }
-            
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    pushEnabled = true;
-                    document.getElementById('pushBtn').innerHTML = '✅ Push aktiv';
-                    document.getElementById('pushBtn').className = 'btn btn-success';
-                    debugLog('Push-Berechtigung erhalten');
-                    
-                    new Notification('🚀 BTC Monitor', {
-                        body: 'Setup abgeschlossen - Push-Alerts sind aktiv!',
-                        icon: '/favicon.ico'
-                    });
-                } else {
-                    debugLog('Push-Berechtigung abgelehnt');
-                    alert('❌ Push-Benachrichtigungen wurden abgelehnt.');
-                }
-            });
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.className = 'btn btn-success';
+            }, 2000);
         });
 
         // Service Worker Registration
         function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const swCode = `
-                    const CACHE_NAME = 'btc-monitor-cors-fix-v1.0';
+                    const CACHE_NAME = 'btc-simple-monitor-v1.0';
                     const urlsToCache = ['/'];
 
                     self.addEventListener('install', event => {
                         event.waitUntil(
                             caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
                         );
-                        self.skipWaiting();
-                    });
-
-                    self.addEventListener('activate', event => {
-                        event.waitUntil(
-                            caches.keys().then(cacheNames => {
-                                return Promise.all(
-                                    cacheNames.map(cacheName => {
-                                        if (cacheName !== CACHE_NAME) {
-                                            return caches.delete(cacheName);
-                                        }
-                                    })
-                                );
-                            })
-                        );
-                        self.clients.claim();
                     });
 
                     self.addEventListener('fetch', event => {
-                        // Don't cache API requests
-                        if (event.request.url.includes('api.') || 
-                            event.request.url.includes('cors-anywhere') ||
-                            event.request.method !== 'GET') {
-                            event.respondWith(fetch(event.request));
-                            return;
-                        }
-                        
                         event.respondWith(
                             caches.match(event.request).then(response => {
                                 return response || fetch(event.request);
@@ -916,9 +963,7 @@
                 const swUrl = URL.createObjectURL(blob);
                 
                 navigator.serviceWorker.register(swUrl).then(() => {
-                    debugLog('Service Worker registriert');
-                }).catch(error => {
-                    debugLog(`Service Worker Fehler: ${error.message}`);
+                    console.log('Service Worker registered');
                 });
             }
         }
@@ -926,9 +971,9 @@
         // Generate PWA Manifest
         function generateManifest() {
             const manifest = {
-                "name": "BTC Live Trading Monitor",
-                "short_name": "BTC Live",
-                "description": "Live Bitcoin Trading Monitor mit CORS-Fix",
+                "name": "BTC Trading Monitor",
+                "short_name": "BTC Monitor",
+                "description": "Professionelles BTC Trading Tool ohne API-Abhängigkeiten",
                 "start_url": "/",
                 "display": "standalone",
                 "background_color": "#667eea",
@@ -951,97 +996,72 @@
             document.head.appendChild(link);
         }
 
-        // Network status monitoring
-        window.addEventListener('online', () => {
-            debugLog('Internetverbindung wiederhergestellt');
-            updateAPIStatus('loading', 'Verbindung wiederhergestellt - Lade Daten...');
-            setTimeout(() => fetchBTCPrice(), 1000);
-        });
-
-        window.addEventListener('offline', () => {
-            debugLog('Internetverbindung verloren');
-            updateAPIStatus('offline', 'Keine Internetverbindung');
-        });
-
-        // Initialize
-        async function init() {
-            debugLog('=== BTC LIVE MONITOR CORS-FIX GESTARTET ===');
-            debugLog(`Browser: ${navigator.userAgent.substring(0, 50)}...`);
-            debugLog(`Online: ${navigator.onLine}`);
-            debugLog(`Hostname: ${window.location.hostname}`);
+        // Price Alerts (based on manual price input)
+        function checkPriceAlerts() {
+            if (!pushEnabled) return;
             
-            generateManifest();
-            registerServiceWorker();
-            updateFedCountdown();
+            const alerts = [
+                { threshold: 100000, message: 'BTC erreicht $100k!' },
+                { threshold: 120000, message: 'BTC über $120k!' },
+                { threshold: 150000, message: 'BTC erreicht $150k!' }
+            ];
             
-            // Show debug panel initially if there are issues
-            debugLog('Starte erste API-Abfrage...');
-            
-            // Try to fetch data
-            const success = await fetchBTCPrice();
-            if (!success) {
-                // Show debug panel if APIs fail
-                document.getElementById('debugPanel').style.display = 'block';
-                debugMode = true;
-                debugLog('⚠️ Alle APIs fehlgeschlagen - Debug-Panel aktiviert');
-            } else {
-                await fetchFearGreedIndex();
-            }
-            
-            // Set up intervals
-            setInterval(() => {
-                updateFedCountdown();
-            }, 1000);
-            
-            // Try to update every 60 seconds (less aggressive)
-            setInterval(async () => {
-                if (isMonitoring && apiOnline) {
-                    debugLog('Automatisches Update...');
-                    await fetchBTCPrice();
+            alerts.forEach(alert => {
+                if (currentPrice >= alert.threshold && Math.random() < 0.3) {
+                    sendNotification('🎯 Preis-Alert!', alert.message);
                 }
-            }, 60000);
-            
-            // Retry failed APIs every 5 minutes
-            setInterval(async () => {
-                if (!apiOnline && isMonitoring) {
-                    debugLog('Retry-Versuch nach API-Ausfall...');
-                    await fetchBTCPrice();
-                }
-            }, 300000);
-            
-            debugLog('=== INITIALISIERUNG ABGESCHLOSSEN ===');
+            });
         }
-
-        // Error handling
-        window.addEventListener('error', (event) => {
-            debugLog(`JavaScript Fehler: ${event.error?.message || event.message}`);
-            console.error('Global Error:', event.error);
-        });
-
-        window.addEventListener('unhandledrejection', (event) => {
-            debugLog(`Promise Rejection: ${event.reason}`);
-            console.error('Unhandled Promise Rejection:', event.reason);
-        });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (event) => {
             if (event.ctrlKey || event.metaKey) {
                 switch (event.key) {
-                    case 'r':
+                    case 'u':
                         event.preventDefault();
-                        forceRetry();
+                        document.getElementById('updateBtn').click();
                         break;
-                    case 'd':
+                    case '1':
                         event.preventDefault();
-                        document.getElementById('debugBtn').click();
+                        document.querySelector('[data-mode="bear"]').click();
                         break;
-                    case ' ':
+                    case '2':
                         event.preventDefault();
-                        document.getElementById('monitorBtn').click();
+                        document.querySelector('[data-mode="bull"]').click();
+                        break;
+                    case '3':
+                        event.preventDefault();
+                        document.querySelector('[data-mode="day"]').click();
+                        break;
+                    case '4':
+                        event.preventDefault();
+                        document.querySelector('[data-mode="hodl"]').click();
                         break;
                 }
             }
         });
+
+        // Initialize
+        function init() {
+            console.log('🚀 BTC Simple Trading Monitor gestartet');
+            
+            generateManifest();
+            registerServiceWorker();
+            updateModeContent();
+            updateFedCountdown();
+            
+            // Set up Fed countdown interval (this works perfectly!)
+            setInterval(() => {
+                updateFedCountdown();
+            }, 1000);
+            
+            // Check for price alerts periodically
+            setInterval(() => {
+                checkPriceAlerts();
+            }, 30000);
+            
+            console.log('✅ Einfaches System online - Keine API-Abhängigkeiten');
+        }
 
         // Initialize app when DOM is ready
         if (document.readyState === 'loading') {
@@ -1050,13 +1070,15 @@
             init();
         }
 
-        // Expose debug functions globally
-        window.btcDebug = {
-            forceRetry: forceRetry,
-            currentPrice: () => currentPrice,
-            priceData: () => priceData,
-            apiStatus: () => apiOnline,
-            logs: () => document.getElementById('debugLog').innerHTML
+        // Expose functions for manual testing
+        window.btcSimple = {
+            updatePrice: (price) => {
+                currentPrice = price;
+                document.getElementById('priceInput').value = price;
+                updateAllCalculations();
+            },
+            getCurrentPrice: () => currentPrice,
+            testNotification: () => sendNotification('Test', 'Notification funktioniert!')
         };
     </script>
 </body>
