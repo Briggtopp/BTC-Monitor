@@ -52,7 +52,7 @@
     .small{font-size:.85rem;color:#6b7280}.muted{color:#6b7280}.mono{font-family:'Courier New',monospace}
     input,select{padding:10px 12px;border-radius:8px;border:1px solid #e5e7eb;width:100%;outline:none;font-size:.95rem;background:#fff}
     .row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
+    .mt4{margin-top:4px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
     .ok{color:#10b981}.warn{color:#f59e0b}.bad{color:#ef4444}.pill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:.8rem;border:1px solid #e5e7eb;background:#fff}
     .install-banner{background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;padding:15px 20px;border-radius:15px;margin-bottom:20px;display:none;align-items:center;justify-content:space-between;box-shadow:0 4px 12px rgba(16,185,129,.3)}
     .install-text{font-size:1rem;font-weight:500}.install-btn{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.3);padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;transition:all .2s}.install-btn:hover{background:rgba(255,255,255,.3)}
@@ -83,11 +83,11 @@
 
     <!-- Nächstes FF-Event Countdown -->
     <div class="countdown-container">
-      <div class="countdown-title">⏰ Nächstes Wirtschafts‑Event (ForexFactory)</div>
+      <div class="countdown-title">⏰ Nächstes Wirtschafts-Event (ForexFactory)</div>
       <div class="countdown-display" id="macroCountdown">Wird geladen…</div>
       <div class="countdown-details" id="macroDetail">Quelle: ForexFactory (über API)</div>
       <div class="volatility-info">
-        ⚠️ Makro‑Termine (z. B. CPI, NFP, Zinsentscheide) können starke Bewegungen auslösen.
+        ⚠️ Makro-Termine (z. B. CPI, NFP, Zinsentscheide) können starke Bewegungen auslösen.
       </div>
     </div>
 
@@ -134,22 +134,24 @@
           <div>Letztes Update</div><div id="fearGreedTime" class="mono">–</div>
         </div>
         <div class="meter-bar mt12"><div class="meter-indicator" id="fearGreedIndicator" style="left:50%"></div></div>
-        <div class="small muted mt8" id="fearGreedNote">Live‑Abruf (alternative.me) – Fallback bei CORS.</div>
+        <div class="small muted mt8" id="fearGreedNote">Live-Abruf (alternative.me) – Fallback bei CORS.</div>
       </div>
 
       <!-- ForexFactory Kalender -->
       <div class="card">
         <div class="card-title">🗓️ Wirtschaftskalender (ForexFactory)</div>
+
         <div class="row">
           <div>
-            <label class="small muted">API‑Key (JBlanked)</label>
-            <input id="ffApiKey" placeholder="Api‑Key einfügen"/>
+            <label class="small muted">API-Key (JBlanked)</label>
+            <input id="ffApiKey" placeholder="Api-Key einfügen"/>
           </div>
           <div>
             <label class="small muted">Währungen (CSV)</label>
             <input id="ffFx" value="USD,EUR,GBP,JPY"/>
           </div>
         </div>
+
         <div class="row mt8">
           <div>
             <label class="small muted">Filter (Name/Category enthält)</label>
@@ -163,18 +165,46 @@
             </select>
           </div>
         </div>
+
+        <!-- Tage/Top-Events -->
+        <div class="row mt8">
+          <div>
+            <label class="small muted">Tage ab heute (1–7)</label>
+            <input id="ffDays" type="number" min="1" max="7" value="3"/>
+          </div>
+          <div>
+            <label class="small muted">Nur Top-Events</label>
+            <div><input id="ffTopOnly" type="checkbox" checked/> <span class="small muted">CPI, PCE, NFP, Rate, GDP, PMI, Unemployment</span></div>
+          </div>
+        </div>
+
+        <!-- Wochentage -->
+        <div class="mt8 small">
+          <span class="muted">Wochentage (Mo–Fr):</span>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+            <label><input type="checkbox" class="ffDow" value="1" checked> Mo</label>
+            <label><input type="checkbox" class="ffDow" value="2" checked> Di</label>
+            <label><input type="checkbox" class="ffDow" value="3" checked> Mi</label>
+            <label><input type="checkbox" class="ffDow" value="4" checked> Do</label>
+            <label><input type="checkbox" class="ffDow" value="5" checked> Fr</label>
+          </div>
+        </div>
+
         <div class="mt8">
           <button class="btn btn-outline" id="ffSave">💾 Speichern</button>
           <button class="btn btn-outline" id="ffLoad">🔄 Laden</button>
+          <button class="btn btn-outline" id="ffTest">🧪 Key testen</button>
         </div>
-        <div class="mt12 small muted">Quelle: ForexFactory (über API). Erfordert Key im Header – siehe Anbieter‑Doku.</div>
+        <div id="ffMsg" class="small muted mt8"></div>
+
+        <div class="mt12 small muted">Quelle: ForexFactory (über JBlanked-API). Key im Header <code>Authorization: Api-Key …</code> erforderlich.</div>
         <ul id="ffList" class="mt12" style="list-style:none;padding-left:0;max-height:260px;overflow:auto;"></ul>
       </div>
 
       <!-- Bear Market Survival -->
       <div class="card">
         <div class="card-title">🐻 Bear Market Survival</div>
-        <div class="small muted">DCA‑Rechner (1D‑Klines)</div>
+        <div class="small muted">DCA-Rechner (1D-Klines)</div>
         <div class="row3 mt8">
           <div><label class="small muted">Zeitraum (Tage)</label><input id="dcaDays" type="number" min="30" max="1000" value="365"/></div>
           <div><label class="small muted">Intervall</label><select id="dcaInterval"><option value="daily">täglich</option><option value="weekly">wöchentlich</option><option value="monthly">monatlich</option></select></div>
@@ -184,14 +214,14 @@
         <div class="kv mt12">
           <div>Investiert</div><div class="mono" id="dcaInvested">–</div>
           <div>BTC erworben</div><div class="mono" id="dcaCoins">–</div>
-          <div>Ø‑Preis</div><div class="mono" id="dcaAvg">–</div>
+          <div>Ø-Preis</div><div class="mono" id="dcaAvg">–</div>
           <div>Wert @ Spot</div><div class="mono" id="dcaValue">–</div>
           <div>P/L</div><div class="mono" id="dcaPL">–</div>
         </div>
 
-        <div class="mt20 small muted">Accumulation‑Zonen (200D‑SMA)</div>
+        <div class="mt20 small muted">Accumulation-Zonen (200D-SMA)</div>
         <div class="kv mt8">
-          <div>200D‑SMA</div><div class="mono" id="sma200">–</div>
+          <div>200D-SMA</div><div class="mono" id="sma200">–</div>
           <div>Zone A (≤80% SMA)</div><div class="mono" id="zoneA">–</div>
           <div>Zone B (80–90% SMA)</div><div class="mono" id="zoneB">–</div>
           <div>Zone C (90–100% SMA)</div><div class="mono" id="zoneC">–</div>
@@ -208,10 +238,10 @@
           <div>Distanz zu ATH</div><div class="mono" id="athDist">–</div>
           <div>Tage seit ATH</div><div class="mono" id="athDays">–</div>
         </div>
-        <div class="mt12 small muted">Fibonacci‑Levels (Cycle Low ↔ ATH)</div>
+        <div class="mt12 small muted">Fibonacci-Levels (Cycle Low ↔ ATH)</div>
         <div class="kv mt8" id="fibList"></div>
 
-        <div class="mt16 small muted">Profit‑Taking Zonen</div>
+        <div class="mt16 small muted">Profit-Taking Zonen</div>
         <div class="row3 mt8">
           <div><label class="small muted">Einstieg (USDT)</label><input id="entryPrice" type="number" value="100000"/></div>
           <div><label class="small muted">Staffel (%)</label><input id="ptSteps" type="text" value="10,20,30"/></div>
@@ -226,12 +256,12 @@
         <div class="card-title">🟢 Day Trading Mode</div>
         <div class="row">
           <div><button class="btn btn-success" id="dayToggle">✅ Aktiv</button></div>
-          <div><span class="small muted" id="dayStatus">5m/15m EMA9/EMA21‑Cross + RSI(14) + Volume‑Spikes</span></div>
+          <div><span class="small muted" id="dayStatus">5m/15m EMA9/EMA21-Cross + RSI(14) + Volume-Spikes</span></div>
         </div>
         <div class="row3 mt12">
-          <div class="pill">Letztes 5m‑Signal: <span id="sig5m" class="mono">–</span></div>
-          <div class="pill">Letztes 15m‑Signal: <span id="sig15m" class="mono">–</span></div>
-          <div class="pill">Letzter Volume‑Spike: <span id="sigVol" class="mono">–</span></div>
+          <div class="pill">Letztes 5m-Signal: <span id="sig5m" class="mono">–</span></div>
+          <div class="pill">Letztes 15m-Signal: <span id="sig15m" class="mono">–</span></div>
+          <div class="pill">Letzter Volume-Spike: <span id="sigVol" class="mono">–</span></div>
         </div>
         <div class="mt12 small muted">Support/Resistance (5m, ~100 Kerzen)</div>
         <div class="kv mt8">
@@ -247,7 +277,7 @@
       <!-- Empfehlungen -->
       <div class="card">
         <div class="card-title">🎯 Trading Empfehlungen</div>
-        <div class="alert-box"><strong>Hinweis:</strong><br/>Nutze Crash‑Detection & Day‑Trading für Intraday; DCA & Zonen für langfristig.</div>
+        <div class="alert-box"><strong>Hinweis:</strong><br/>Nutze Crash-Detection & Day-Trading für Intraday; DCA & Zonen für langfristig.</div>
         <div class="success-box" id="currentRecommendation"><strong>📍 Status</strong><br/>Wartet auf Signale.</div>
       </div>
 
@@ -255,11 +285,11 @@
       <div class="card">
         <div class="card-title">ℹ️ App Info</div>
         <div class="small">
-          <p><strong>GitHub PWA Version 2.4.1</strong></p>
-          <p>📡 Live‑Updates: Echtzeit (WS) + Fallback 5 s</p>
-          <p>🔔 Push‑Benachrichtigungen</p>
+          <p><strong>GitHub PWA Version 2.4.3</strong></p>
+          <p>📡 Live-Updates: Echtzeit (WS) + Fallback 5 s</p>
+          <p>🔔 Push-Benachrichtigungen</p>
           <p>📱 Installation: Alle Browser</p>
-          <p>⚡ Offline‑fähig</p>
+          <p>⚡ Offline-fähig</p>
           <p>🎯 Letztes Update: <span id="lastUpdate">–</span></p>
         </div>
       </div>
@@ -279,18 +309,26 @@
     // PCE Referenz
     const PCE_DATE = new Date('2025-07-31T12:30:00Z');
 
-    // Crash‑Detection
+    // Crash-Detection
     const priceHistory = [];
     const PRICE_HISTORY_WINDOW_MS = 60*60*1000;
 
-    // Day‑Trading
+    // Day-Trading
     let dayModeOn = true;
     let crashOn = true;
 
-    // FF‑Kalender (JBlanked)
+    // FF-Kalender (JBlanked)
     const FF_KEY_STORAGE = 'ff_api_key_v1';
     let ffEvents = []; // normalisiert
     let nextMacro = null; // {name, when: Date, currency, category}
+    let ffLast = 0; // Throttle-Zeitstempel
+
+    // Top-Event Wörter (Kernfilter)
+    const TOP_WORDS = [
+      'cpi','core cpi','hicp','pce','nonfarm','non-farm','nfp',
+      'interest rate','rate decision','federal funds','ecb','boe','boj',
+      'gdp','unemployment','payrolls','retail sales','pmi','ism','confidence','fomc'
+    ];
 
     // ======= PWA Install =======
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -307,7 +345,7 @@
     // ======= Countdowns =======
     function fmt2(n){return n<10?'0'+n:n;}
     function updateCountdowns() {
-      // Nächstes Makro‑Event
+      // Nächstes Makro-Event
       if (nextMacro && nextMacro.when) {
         const now = new Date();
         const diff = nextMacro.when - now;
@@ -327,7 +365,7 @@
           cEl.style.color = '#dc2626';
         }
       } else {
-        document.getElementById('macroCountdown').textContent = 'Keine Events gefunden';
+        document.getElementById('macroCountdown').textContent = 'Keine Events';
         document.getElementById('macroDetail').textContent = 'Filter/Zeitraum prüfen.';
       }
 
@@ -348,7 +386,7 @@
       document.getElementById('lastUpdate').textContent = `${hh}:${mm}:${ss}`;
     }
 
-    // ======= Binance Live‑Preis =======
+    // ======= Binance Live-Preis =======
     const STREAM_URL='wss://stream.binance.com:9443/stream?streams=btcusdt@ticker|btcusdt@kline_5m|btcusdt@kline_15m';
     let ws=null, pollTimer=null;
 
@@ -436,7 +474,7 @@
     function generateRecommendations(){
       const rec=document.getElementById('currentRecommendation');
       if (currentPrice>=119000 && currentPrice<=121000){
-        rec.innerHTML='<strong>⚠️ Short‑Liquiditätscluster</strong><br>$'+currentPrice.toLocaleString()+' – Stop‑Hunt möglich.';
+        rec.innerHTML='<strong>⚠️ Short-Liquiditätscluster</strong><br>$'+currentPrice.toLocaleString()+' – Stop-Hunt möglich.';
       } else if (currentPrice<116000 && currentPrice>=109000){
         rec.innerHTML='<strong>🎯 Phase 2 Bereich</strong><br>$'+currentPrice.toLocaleString()+' – Staffelkäufe vorbereiten.';
       } else if (currentPrice<109000){
@@ -455,10 +493,10 @@
           fearGreedIndex=parseInt(j.data[0].value,10);
           const ts=parseInt(j.data[0].timestamp,10)*1000;
           document.getElementById('fearGreedTime').textContent=new Date(ts).toISOString();
-          updateFearGreedUI(); document.getElementById('fearGreedNote').textContent='Live‑Abruf erfolgreich.';
+          updateFearGreedUI(); document.getElementById('fearGreedNote').textContent='Live-Abruf erfolgreich.';
         }
       }catch{
-        document.getElementById('fearGreedNote').textContent='Live‑Abruf blockiert – Fallback aktiv.'; updateFearGreedUI();
+        document.getElementById('fearGreedNote').textContent='Live-Abruf blockiert – Fallback aktiv.'; updateFearGreedUI();
       }
     }
     function updateFearGreedUI(){
@@ -473,7 +511,7 @@
     function storeFFKey(k){ localStorage.setItem(FF_KEY_STORAGE, k||''); }
     function loadFFKey(){ return localStorage.getItem(FF_KEY_STORAGE)||''; }
     function parseFFDate(str){
-      // erwartetes Format: "YYYY.MM.DD HH:MM:SS" (UTC)
+      // Format "YYYY.MM.DD HH:MM:SS" (UTC)
       const m = /^(\d{4})\.(\d{2})\.(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(str||'');
       if (!m) return null;
       const [_,Y,M,D,h,mi,s] = m.map(Number);
@@ -487,14 +525,14 @@
         when: parseFFDate(x.Date || x.date || '')
       })).filter(e=>e.when && e.name);
     }
+
     async function fetchFF(period){
       const key = loadFFKey().trim();
-      // UX‑Fix C: kein Alert, UI‑Hinweis
       if (!key){
         const ul = document.getElementById('ffList');
-        if (ul) ul.innerHTML = '<li class="mt8 bad">API‑Key fehlt. Trage ihn oben ein und klicke „Laden“.</li>';
-        nextMacro = null;
-        updateCountdowns();
+        if (ul) ul.innerHTML = '<li class="mt8 bad">API-Key fehlt. Trage ihn oben ein und klicke „Laden“.</li>';
+        const msg=document.getElementById('ffMsg'); if (msg) msg.textContent='';
+        nextMacro = null; updateCountdowns();
         return [];
       }
       const endpoint = period==='today'
@@ -502,76 +540,128 @@
         : 'https://www.jblanked.com/news/api/forex-factory/calendar/week/';
       const headers = { 'Content-Type':'application/json', 'Authorization':'Api-Key '+key };
       const r = await fetch(endpoint, { headers, cache:'no-store' });
-      if (!r.ok) throw new Error('FF‑Request fehlgeschlagen: '+r.status);
-      const j = await r.json();
+      const body = await r.text();
+      if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}: ${body.slice(0,160)}`);
+      const j = JSON.parse(body);
       return Array.isArray(j)? j : (j?.data||[]);
     }
+
+    function getSelectedWeekdays(){
+      // Checkbox-Werte 1..5 (Mo..Fr). Date.getDay(): 0..6 (So..Sa)
+      const cbs = Array.from(document.querySelectorAll('.ffDow'));
+      const set = new Set(cbs.filter(cb=>cb.checked).map(cb=>parseInt(cb.value,10))); // 1..5
+      return set;
+    }
+    function isTopEvent(str){
+      const t=(str||'').toLowerCase();
+      return TOP_WORDS.some(k=>t.includes(k));
+    }
+
     function applyFFToUI(list){
       const ul = document.getElementById('ffList'); ul.innerHTML='';
+
       const wantFx = (document.getElementById('ffFx').value||'').split(',').map(s=>s.trim().toUpperCase()).filter(Boolean);
       const needles = (document.getElementById('ffFilter').value||'').toLowerCase().split(',').map(s=>s.trim()).filter(Boolean);
+      const daysAhead = Math.max(1, Math.min(7, parseInt(document.getElementById('ffDays').value||'3',10)));
+      const topOnly = !!document.getElementById('ffTopOnly').checked;
+      const dows = getSelectedWeekdays(); // 1..5 => Mo..Fr
+
+      const now = new Date();
+      const cutoff = new Date(now.getTime() + daysAhead*86400000);
 
       const filtered = list.filter(e=>{
+        const local = new Date(e.when.getTime());
+        if (!(local>=now && local<=cutoff)) return false;
+
+        // Wochentag-Filter (nur selektierte Tage 1..5)
+        const wd = local.getDay(); // 0..6 (So..Sa)
+        const dayIdx = (wd===0?7:wd); // 1..7
+        if (dows.size && !(dayIdx>=1 && dayIdx<=5 && dows.has(dayIdx))) return false;
+
+        // Währungen
         const fxOK = wantFx.length ? wantFx.includes((e.currency||'').toUpperCase()) : true;
+
+        // Textfilter
         const text = ((e.name||'')+' '+(e.category||'')).toLowerCase();
         const kwOK = needles.length ? needles.some(n=>text.includes(n)) : true;
-        return fxOK && kwOK;
+
+        // Top-Events
+        const topOK = topOnly ? isTopEvent(text) : true;
+
+        return fxOK && kwOK && topOK;
       }).sort((a,b)=>a.when-b.when);
 
-      // Nächstes Ereignis für Countdown
-      const now = new Date();
       nextMacro = filtered.find(e=>e.when>now) || null;
 
-      // Liste
       filtered.forEach(ev=>{
         const li = document.createElement('li'); li.className = 'mt8';
         li.innerHTML = `<span class="mono">${ev.when.toLocaleString()}</span> — <strong>${ev.currency}</strong> — ${ev.name} <span class="muted">(${ev.category||'–'})</span>`;
         ul.appendChild(li);
       });
-
-      if (filtered.length===0) {
+      if (filtered.length===0){
         ul.innerHTML = '<li class="mt8 warn">Keine passenden Events im gewählten Zeitraum/Filter.</li>';
       }
 
       updateCountdowns();
     }
+
     async function loadFFFromControls(){
       try{
         const period = (document.getElementById('ffRange').value||'week');
         const raw = await fetchFF(period);
         ffEvents = normalizeFF(raw);
         applyFFToUI(ffEvents);
+        const el=document.getElementById('ffMsg'); if (el) el.textContent='OK';
       }catch(e){
         const ul = document.getElementById('ffList');
-        if (ul) ul.innerHTML = '<li class="mt8 bad">Kalender‑Abruf fehlgeschlagen.</li>';
-        console.log(e);
+        if (ul) ul.innerHTML = '<li class="mt8 bad">Kalender-Abruf fehlgeschlagen. Details siehe unten.</li>';
+        const el=document.getElementById('ffMsg');
+        if (el) el.textContent = (e && e.message) ? e.message : String(e);
+        console.log('FF error:', e);
       }
     }
 
-    // ======= Crash‑Detection =======
+    // Throttle (6 Min.) – Klick/Auto-Reload nutzen diese Hülle
+    async function safeLoadFF(){
+      const now=Date.now();
+      if (now - ffLast < 6*60*1000) { const el=document.getElementById('ffMsg'); if (el) el.textContent='Cooldown aktiv (≤6 Min.).'; return; }
+      ffLast = now;
+      await loadFFFromControls();
+    }
+
+    // Key-Test
+    async function testFFKey(){
+      const k=(document.getElementById('ffApiKey').value||localStorage.getItem(FF_KEY_STORAGE)||'').trim();
+      const el=document.getElementById('ffMsg');
+      if(!k){ el.textContent='Kein Key gesetzt.'; return; }
+      try{
+        const r=await fetch('https://www.jblanked.com/news/api/forex-factory/calendar/today/',{
+          headers:{'Authorization':'Api-Key '+k,'Content-Type':'application/json'},
+          cache:'no-store'
+        });
+        const txt=await r.text();
+        el.textContent = `HTTP ${r.status} ${r.statusText}` + (r.ok? ' – OK':' – '+txt.slice(0,120));
+      }catch(e){ el.textContent='Netzwerk/CORS: '+e; }
+    }
+
+    // ======= Crash-Detection =======
     function pctChange(a,b){ return ((b-a)/a)*100; }
     function findPriceAt(msAgo){
       const target=Date.now()-msAgo;
       for (let i=priceHistory.length-1;i>=0;i--) if (priceHistory[i].t<=target) return priceHistory[i].p;
       return null;
     }
-    function logCrash(msg, cls='bad'){
-      const li=document.createElement('li'); li.className='mt8 '+cls; li.textContent=msg;
-      const ul=document.getElementById('crashLog'); ul.prepend(li); while(ul.children.length>30) ul.removeChild(ul.lastChild);
-      if (pushEnabled) sendNotification('Preis‑Alarm', msg);
-    }
+    function logCrash(msg){ if (pushEnabled) sendNotification('Preis-Alarm', msg); }
     function checkCrashSignals(){
-      const t1=parseFloat(document.getElementById('thr1').value||'-1');
-      const t5=parseFloat(document.getElementById('thr5').value||'-3');
-      const t15=parseFloat(document.getElementById('thr15').value||'-5');
+      const t1=-1, t5=-3, t15=-5;
       const pNow=currentPrice;
 
-      const p1=findPriceAt(60*1000); if (p1){ const pc1=pctChange(p1,pNow); if (pc1<=t1) logCrash(`−${Math.abs(pc1).toFixed(2)}% in 1m → $${pNow.toLocaleString()}`,'bad'); if (pc1>=Math.abs(t1)) logCrash(`+${pc1.toFixed(2)}% in 1m → $${pNow.toLocaleString()}`,'ok'); }
-      const p5=findPriceAt(5*60*1000); if (p5){ const pc5=pctChange(p5,pNow); if (pc5<=t5) logCrash(`−${Math.abs(pc5).toFixed(2)}% in 5m → $${pNow.toLocaleString()}`,'bad'); if (pc5>=Math.abs(t5)) logCrash(`+${pc5.toFixed(2)}% in 5m → $${pNow.toLocaleString()}`,'ok'); }
-      const p15=findPriceAt(15*60*1000); if (p15){ const pc15=pctChange(p15,pNow); if (pc15<=t15) logCrash(`−${Math.abs(pc15).toFixed(2)}% in 15m → $${pNow.toLocaleString()}`,'bad'); if (pc15>=Math.abs(t15)) logCrash(`+${pc15.toFixed(2)}% in 15m → $${pNow.toLocaleString()}`,'ok'); }
+      const p1=findPriceAt(60*1000); if (p1){ const pc1=pctChange(p1,pNow); if (pc1<=t1) logCrash(`−${Math.abs(pc1).toFixed(2)}% in 1m → $${pNow.toLocaleString()}`); if (pc1>=Math.abs(t1)) logCrash(`+${pc1.toFixed(2)}% in 1m → $${pNow.toLocaleString()}`); }
+      const p5=findPriceAt(5*60*1000); if (p5){ const pc5=pctChange(p5,pNow); if (pc5<=t5) logCrash(`−${Math.abs(pc5).toFixed(2)}% in 5m → $${pNow.toLocaleString()}`); if (pc5>=Math.abs(t5)) logCrash(`+${pc5.toFixed(2)}% in 5m → $${pNow.toLocaleString()}`); }
+      const p15=findPriceAt(15*60*1000); if (p15){ const pc15=pctChange(p15,pNow); if (pc15<=t15) logCrash(`−${Math.abs(pc15).toFixed(2)}% in 15m → $${pNow.toLocaleString()}`); if (pc15>=Math.abs(t15)) logCrash(`+${pc15.toFixed(2)}% in 15m → $${pNow.toLocaleString()}`); }
     }
 
-    // ======= Day‑Trading =======
+    // ======= Day-Trading =======
     const buf5m=[], buf15m=[];
     function onKline(tf,k){
       const obj={open:+k.o,high:+k.h,low:+k.l,close:+k.c,volume:+k.v,closed:k.x,t:k.t};
@@ -583,17 +673,16 @@
         const sig=computeSignals(buf);
         if (sig && obj.closed){
           const msg=`${tf} ${sig.type} @ ${obj.close.toFixed(0)} (RSI ${sig.rsi.toFixed(0)}, EMA9/21 ${sig.ema9.toFixed(0)}/${sig.ema21.toFixed(0)})`;
-          logDay(msg, sig.type==='BUY'?'ok':'bad');
+          if (pushEnabled) sendNotification('Day-Trading', msg);
         }
-        const volMsg=volumeSpike(buf); if (volMsg && obj.closed) logDay(`${tf} ${volMsg}`,'warn',true);
+        const volMsg=volumeSpike(buf); if (volMsg && obj.closed && pushEnabled) sendNotification('Day-Trading', `${tf} ${volMsg}`);
         updateSR();
       }
     }
     function ema(arr,period,acc){ const k=2/(period+1); let v=acc(arr[0]); for(let i=1;i<arr.length;i++) v=acc(arr[i])*k+v*(1-k); return v; }
     function rsi(arr,period=14){ if (arr.length<period+1) return 50; let g=0,l=0; for(let i=arr.length-period;i<arr.length;i++){const ch=arr[i].close-arr[i-1].close; if(ch>0)g+=ch; else l-=ch;} const avgG=g/period, avgL=(l/period)||1e-9; const rs=avgG/avgL; return 100-(100/(1+rs)); }
     function computeSignals(buf){ if (buf.length<21) return null; const ema9=ema(buf.slice(-50),9,x=>x.close); const ema21=ema(buf.slice(-50),21,x=>x.close); const r=rsi(buf,14); let type=null; if (ema9>ema21&&r>55) type='BUY'; if (ema9<ema21&&r<45) type='SELL'; if (!type) return null; return {type,rsi:r,ema9,ema21}; }
-    function volumeSpike(buf){ if (buf.length<25) return null; const last=buf[buf.length-1]; const avg=buf.slice(-21,-1).reduce((s,b)=>s+b.volume,0)/20; if (avg>0 && last.volume>1.5*avg){ document.getElementById('sigVol').textContent=`${(last.volume).toFixed(2)} (>1.5×)`; if (pushEnabled) sendNotification('Volume Spike','Vol > 1.5×'); return `Volume‑Spike: ${(last.volume).toFixed(2)} (>1.5× 20‑Schnitt)`;} return null; }
-    function logDay(msg,cls='ok',noPush=false){ const ul=document.getElementById('dayLog'); const li=document.createElement('li'); li.className='mt8 '+cls; li.textContent=msg; ul.prepend(li); while(ul.children.length>50) ul.removeChild(ul.lastChild); if (!noPush && pushEnabled) sendNotification('Day‑Trading',msg); if (msg.startsWith('5m')) document.getElementById('sig5m').textContent=msg; if (msg.startsWith('15m')) document.getElementById('sig15m').textContent=msg; }
+    function volumeSpike(buf){ if (buf.length<25) return null; const last=buf[buf.length-1]; const avg=buf.slice(-21,-1).reduce((s,b)=>s+b.volume,0)/20; if (avg>0 && last.volume>1.5*avg){ document.getElementById('sigVol').textContent=`${(last.volume).toFixed(2)} (>1.5×)`; return `Volume-Spike: ${(last.volume).toFixed(2)} (>1.5× 20-Schnitt)`;} return null; }
     function updateSR(){ if (buf5m.length<50) return; const highs=buf5m.slice(-100).map(b=>b.high); const lows=buf5m.slice(-100).map(b=>b.low); const res=Math.max(...highs), sup=Math.min(...lows); document.getElementById('srResistance').textContent=`$${Math.round(res).toLocaleString('en-US')}`; document.getElementById('srSupport').textContent=`$${Math.round(sup).toLocaleString('en-US')}`; }
 
     // ======= DCA / SMA / ATH & Fibs =======
@@ -602,10 +691,10 @@
     function dcaSim(kl,interval,amount){ const buys=[]; if (interval==='daily'){for(let i=0;i<kl.length;i++)buys.push(kl[i]);} else if (interval==='weekly'){for(let i=0;i<kl.length;i+=7)buys.push(kl[i]);} else {let lastM=-1; for(let i=0;i<kl.length;i++){const m=new Date(kl[i].t).getUTCMonth(); if(m!==lastM){buys.push(kl[i]); lastM=m;}}} let invested=0,coins=0; buys.forEach(b=>{invested+=amount; coins+=amount/b.close;}); const avg=invested/(coins||1e-9); return {invested,coins,avg}; }
     function sma(arr,period){ if (arr.length<period) return null; let sum=0; for(let i=arr.length-period;i<arr.length;i++) sum+=arr[i].close; return sum/period; }
     function fibs(fromLow,toHigh){ const diff=toHigh-fromLow; return [{label:'23.6%',val:toHigh-0.236*diff},{label:'38.2%',val:toHigh-0.382*diff},{label:'50.0%',val:toHigh-0.5*diff},{label:'61.8%',val:toHigh-0.618*diff},{label:'78.6%',val:toHigh-0.786*diff}]; }
-    async function runDCA(){ try{ const days=parseInt(document.getElementById('dcaDays').value,10); const interval=document.getElementById('dcaInterval').value; const amount=parseFloat(document.getElementById('dcaAmount').value); const kl=await fetchDaily(days); const res=dcaSim(kl,interval,amount); document.getElementById('dcaInvested').textContent=fmtUSD(res.invested); document.getElementById('dcaCoins').textContent=res.coins.toFixed(6)+' BTC'; document.getElementById('dcaAvg').textContent=fmtUSD(res.avg); const value=res.coins*currentPrice; document.getElementById('dcaValue').textContent=fmtUSD(value); const pl=value-res.invested; const sign=pl>=0?'+':''; document.getElementById('dcaPL').textContent=`${sign}${fmtUSD(pl)}`; }catch{ alert('DCA‑Berechnung fehlgeschlagen.'); } }
+    async function runDCA(){ try{ const days=parseInt(document.getElementById('dcaDays').value,10); const interval=document.getElementById('dcaInterval').value; const amount=parseFloat(document.getElementById('dcaAmount').value); const kl=await fetchDaily(days); const res=dcaSim(kl,interval,amount); document.getElementById('dcaInvested').textContent=fmtUSD(res.invested); document.getElementById('dcaCoins').textContent=res.coins.toFixed(6)+' BTC'; document.getElementById('dcaAvg').textContent=fmtUSD(res.avg); const value=res.coins*currentPrice; document.getElementById('dcaValue').textContent=fmtUSD(value); const pl=value-res.invested; const sign=pl>=0?'+':''; document.getElementById('dcaPL').textContent=`${sign}${fmtUSD(pl)}`; }catch{ alert('DCA-Berechnung fehlgeschlagen.'); } }
     async function updateSMAZonesAndATH(){ try{ const kl=await fetchDaily(1000); const vSMA=sma(kl,200); if (vSMA){ document.getElementById('sma200').textContent=fmtUSD(vSMA); const zA=0.8*vSMA,zB1=0.8*vSMA,zB2=0.9*vSMA,zC1=0.9*vSMA,zC2=1.0*vSMA; document.getElementById('zoneA').textContent='≤ '+fmtUSD(zA); document.getElementById('zoneB').textContent=fmtUSD(zB1)+' – '+fmtUSD(zB2); document.getElementById('zoneC').textContent=fmtUSD(zC1)+' – '+fmtUSD(zC2); let status='Über SMA'; if (currentPrice<=zA) status='Zone A'; else if (currentPrice<=zB2) status='Zone B'; else if (currentPrice<=zC2) status='Zone C'; document.getElementById('zoneStatus').textContent=status; } else { document.getElementById('sma200').textContent='–'; document.getElementById('zoneStatus').textContent='nicht genug Daten'; } let ath={price:-Infinity,t:null}, low={price:Infinity,t:null}; for (const c of kl){ if(c.high>ath.price) ath={price:c.high,t:c.t}; if(c.low<low.price) low={price:c.low,t:c.t}; } document.getElementById('athPrice').textContent=fmtUSD(ath.price); document.getElementById('athDate').textContent=new Date(ath.t).toISOString().slice(0,10); const dist=((ath.price-currentPrice)/ath.price)*100; document.getElementById('athDist').textContent=dist>=0?dist.toFixed(2)+'% unter ATH':(-dist).toFixed(2)+'% über ATH'; const daysSince=Math.floor((Date.now()-ath.t)/86400000); document.getElementById('athDays').textContent=daysSince+' Tage'; const levels=fibs(low.price,ath.price); const fibWrap=document.getElementById('fibList'); fibWrap.innerHTML=''; levels.forEach(l=>{ const k=document.createElement('div'); k.textContent=l.label; fibWrap.appendChild(k); const v=document.createElement('div'); v.className='mono'; v.textContent=fmtUSD(l.val); fibWrap.appendChild(v); }); }catch{} }
 
-    // ======= Profit‑Taking =======
+    // ======= Profit-Taking =======
     function calcPT(){
       const entry=parseFloat(document.getElementById('entryPrice').value||'0');
       const steps=(document.getElementById('ptSteps').value||'10,20,30').split(',').map(s=>parseFloat(s.trim())).filter(x=>!isNaN(x));
@@ -616,7 +705,7 @@
 
     // ======= Push =======
     function enablePush(){
-      if (!('Notification' in window)) { alert('Browser unterstützt keine Push‑Benachrichtigungen.'); return; }
+      if (!('Notification' in window)) { alert('Browser unterstützt keine Push-Benachrichtigungen.'); return; }
       if (Notification.permission==='granted'){ pushEnabled=true; updatePushButton(); sendNotification('BTC Monitor','Push aktiv.'); return; }
       Notification.requestPermission().then(p=>{ if(p==='granted'){ pushEnabled=true; updatePushButton(); sendNotification('BTC Monitor','Push aktiv.'); } else alert('Push abgelehnt.'); });
     }
@@ -633,18 +722,25 @@
     }
     function forceUpdate(){
       pollOnce(); fetchLastHourClose(); fetchFearGreed(); updateSMAZonesAndATH();
-      if (loadFFKey()) { loadFFFromControls(); } // nur laden, wenn Key vorhanden
+      if (loadFFKey()) { safeLoadFF(); } // nur laden, wenn Key vorhanden (mit Throttle)
       if (pushEnabled) sendNotification('Daten aktualisiert', `Spot: $${currentPrice.toLocaleString()}`);
       const btn=document.getElementById('refreshBtn'); const t=btn.innerHTML; btn.innerHTML='🔄 Updating…'; btn.disabled=true; setTimeout(()=>{btn.innerHTML=t; btn.disabled=false;},900);
     }
 
-    // ======= Service Worker (Cache‑Fix) =======
+    // ======= Service Worker (Cache-Fix + JBlanked-Bypass) =======
     const SW_CODE = `
-      const CACHE_NAME='btc-monitor-v2.4.1';
+      const CACHE_NAME='btc-monitor-v2.4.3';
       self.addEventListener('install',e=>{self.skipWaiting();});
       self.addEventListener('activate',e=>{e.waitUntil((async()=>{const ks=await caches.keys(); await Promise.all(ks.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k))); self.clients.claim();})());});
       self.addEventListener('fetch',e=>{
         const req=e.request;
+        try{
+          const u=new URL(req.url);
+          // Niemals cachen: JBlanked-API (Auth-Header, CORS)
+          if (u.hostname==='www.jblanked.com' || u.hostname==='jblanked.com'){
+            e.respondWith(fetch(req)); return;
+          }
+        }catch{}
         if (req.mode==='navigate'){
           e.respondWith((async()=>{try{const fresh=await fetch(req); const c=await caches.open(CACHE_NAME); c.put(req,fresh.clone()); return fresh;}catch(e){const cached=await caches.match(req); return cached||Response.error();}})());
           return;
@@ -668,7 +764,7 @@
         categories:["finance","productivity","utilities"] };
       const blob=new Blob([JSON.stringify(manifest,null,2)],{type:'application/json'});
       const url=URL.createObjectURL(blob);
-      const link=document.createElement('link'); link.rel='manifest'; link.href=url+'?v=2.4.1'; document.head.appendChild(link);
+      const link=document.createElement('link'); link.rel='manifest'; link.href=url+'?v=2.4.3'; document.head.appendChild(link);
     }
 
     // ======= Events =======
@@ -679,17 +775,29 @@
     document.getElementById('ptCalcBtn').addEventListener('click', calcPT);
 
     document.getElementById('ffSave').addEventListener('click', ()=>{
-      const k=(document.getElementById('ffApiKey').value||'').trim(); storeFFKey(k);
-      // nach dem Speichern noch nichts laden; Nutzer klickt bewusst "Laden"
+      const k=(document.getElementById('ffApiKey').value||'').trim();
+      storeFFKey(k);
+      document.getElementById('ffMsg').textContent = k ? 'Key gespeichert.' : 'Key gelöscht.';
     });
-    document.getElementById('ffLoad').addEventListener('click', loadFFFromControls);
+    document.getElementById('ffLoad').addEventListener('click', safeLoadFF);
+    document.getElementById('ffTest').addEventListener('click', testFFKey);
+
+    // Re-Filter ohne neuen API-Call:
+    ['ffDays','ffTopOnly','ffFx','ffFilter'].forEach(id=>{
+      const el=document.getElementById(id);
+      el.addEventListener('input', ()=>{ if (ffEvents.length) applyFFToUI(ffEvents); });
+    });
+    document.querySelectorAll('.ffDow').forEach(cb=>{
+      cb.addEventListener('change', ()=>{ if (ffEvents.length) applyFFToUI(ffEvents); });
+    });
+    document.getElementById('ffRange').addEventListener('change', ()=>{ if (loadFFKey()) safeLoadFF(); });
 
     // ======= Init =======
     async function init(){
-      console.log('BTC Monitor v2.4.1 init');
+      console.log('BTC Monitor v2.4.3 init');
       generateManifest(); registerServiceWorker();
 
-      // FF‑Key in UI spiegeln
+      // FF-Key in UI spiegeln
       document.getElementById('ffApiKey').value = loadFFKey();
 
       // Countdowns
@@ -705,10 +813,10 @@
       fetchFearGreed();
       updateSMAZonesAndATH();
 
-      // UX‑Fix C: Kalender NICHT automatisch laden, wenn kein Key vorhanden
-      if (loadFFKey()) { loadFFFromControls(); }
-      // Optional: periodisch neu laden, aber nur falls Key vorhanden
-      setInterval(()=>{ if (loadFFKey()) loadFFFromControls(); }, 30*60*1000);
+      // Kalender nicht automatisch ohne Key
+      if (loadFFKey()) { safeLoadFF(); }
+      // Periodisch (mit Key) – Throttle greift:
+      setInterval(()=>{ if (loadFFKey()) safeLoadFF(); }, 30*60*1000);
 
       console.log('✅ Systeme online');
     }
