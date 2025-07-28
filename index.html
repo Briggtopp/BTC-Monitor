@@ -26,303 +26,76 @@
             color: #333;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            gap: 20px;
-        }
-
+        .container { max-width: 1200px; margin: 0 auto; display: grid; gap: 20px; }
         .header {
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
+            padding: 25px; border-radius: 20px; text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-
-        .price-display {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #10b981;
-            margin: 15px 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
+        .price-display { font-size: 3rem; font-weight: bold; color: #10b981; margin: 15px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .countdown-container {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            margin: 20px 0;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            padding: 25px; border-radius: 20px; text-align: center; margin: 20px 0;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
+        .countdown-title { font-size: 1.3rem; color: #374151; margin-bottom: 15px; font-weight: 600; }
+        .countdown-display { font-size: 2.5rem; font-weight: bold; color: #ef4444; margin: 10px 0; font-family: 'Courier New', monospace; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .countdown-details { font-size: 1rem; color: #6b7280; margin-top: 10px; }
+        .volatility-info { background: #fef3c7; border: 1px solid #f59e0b; padding: 12px; border-radius: 10px; margin-top: 15px; font-size: 0.9rem; color: #92400e; }
 
-        .countdown-title {
-            font-size: 1.3rem;
-            color: #374151;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .countdown-display {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #ef4444;
-            margin: 10px 0;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .countdown-details {
-            font-size: 1rem;
-            color: #6b7280;
-            margin-top: 10px;
-        }
-
-        .volatility-info {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            padding: 12px;
-            border-radius: 10px;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #92400e;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .card {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            padding: 25px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
+        .card-title { font-size: 1.2rem; font-weight: 600; color: #374151; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
 
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .phase-item { background: #f9fafb; border: 2px solid #e5e7eb; padding: 15px; border-radius: 10px; margin: 10px 0; transition: all 0.3s ease; }
+        .phase-active { background: #d1fae5; border-color: #10b981; transform: scale(1.02); }
+        .phase-title { font-weight: 600; font-size: 1rem; margin-bottom: 5px; }
+        .phase-range { font-size: 0.85rem; color: #6b7280; margin-bottom: 8px; }
+        .phase-status { font-size: 0.85rem; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-block; }
+        .status-active { background: #10b981; color: white; }
+        .status-waiting { background: #f3f4f6; color: #6b7280; }
 
-        .phase-item {
-            background: #f9fafb;
-            border: 2px solid #e5e7eb;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
-            transition: all 0.3s ease;
-        }
+        .trigger-list { display: grid; gap: 8px; }
+        .trigger-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9fafb; border-radius: 8px; font-size: 0.9rem; border: 1px solid transparent; transition: all 0.3s ease; }
+        .trigger-active { background: #d1fae5; border-color: #10b981; color: #065f46; animation: pulse 2s infinite; }
 
-        .phase-active {
-            background: #d1fae5;
-            border-color: #10b981;
-            transform: scale(1.02);
-        }
-
-        .phase-title {
-            font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 5px;
-        }
-
-        .phase-range {
-            font-size: 0.85rem;
-            color: #6b7280;
-            margin-bottom: 8px;
-        }
-
-        .phase-status {
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 4px 8px;
-            border-radius: 6px;
-            display: inline-block;
-        }
-
-        .status-active {
-            background: #10b981;
-            color: white;
-        }
-
-        .status-waiting {
-            background: #f3f4f6;
-            color: #6b7280;
-        }
-
-        .trigger-list {
-            display: grid;
-            gap: 8px;
-        }
-
-        .trigger-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: #f9fafb;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            border: 1px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .trigger-active {
-            background: #d1fae5;
-            border-color: #10b981;
-            color: #065f46;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #d1d5db;
-        }
-
-        .status-dot.active {
-            background: #10b981;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; background: #d1d5db; }
+        .status-dot.active { background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
 
         .btn {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin: 10px 5px;
-            min-height: 44px;
-            touch-action: manipulation;
+            background: #3b82f6; color: white; border: none; padding: 12px 20px; border-radius: 10px;
+            font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem;
+            display: flex; align-items: center; justify-content: center; gap: 8px; margin: 10px 5px; min-height: 44px; touch-action: manipulation;
         }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-        }
-
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
         .btn-success { background: #10b981; }
         .btn-warning { background: #f59e0b; }
         .btn-danger { background: #ef4444; }
 
-        .button-row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
+        .button-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 15px; }
 
-        .alert-box {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            font-size: 0.9rem;
-        }
-
-        .success-box {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #166534;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            font-size: 0.9rem;
-        }
+        .alert-box { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 15px; border-radius: 10px; margin: 15px 0; font-size: 0.9rem; }
+        .success-box { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 15px; border-radius: 10px; margin: 15px 0; font-size: 0.9rem; }
 
         .install-banner {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            display: none;
-            align-items: center;
-            justify-content: space-between;
+            color: white; padding: 15px 20px; border-radius: 15px; margin-bottom: 20px;
+            display: none; align-items: center; justify-content: space-between;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
+        .install-text { font-size: 1rem; font-weight: 500; }
+        .install-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
+        .install-btn:hover { background: rgba(255,255,255,0.3); }
 
-        .install-text {
-            font-size: 1rem;
-            font-weight: 500;
-        }
-
-        .install-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-
-        .install-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        .fear-greed-meter {
-            background: #f9fafb;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 15px 0;
-            text-align: center;
-        }
-
-        .meter-value {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .meter-bar {
-            height: 10px;
-            background: linear-gradient(90deg, #ef4444 0%, #f59e0b 25%, #eab308 50%, #84cc16 75%, #10b981 100%);
-            border-radius: 5px;
-            position: relative;
-            margin: 15px 0;
-        }
-
-        .meter-indicator {
-            position: absolute;
-            top: -5px;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border: 3px solid #374151;
-            border-radius: 50%;
-            transform: translateX(-50%);
-            transition: left 0.5s ease;
-        }
+        .fear-greed-meter { background: #f9fafb; padding: 20px; border-radius: 10px; margin: 15px 0; text-align: center; }
+        .meter-value { font-size: 2rem; font-weight: bold; margin: 10px 0; }
+        .meter-bar { height: 10px; background: linear-gradient(90deg, #ef4444 0%, #f59e0b 25%, #eab308 50%, #84cc16 75%, #10b981 100%); border-radius: 5px; position: relative; margin: 15px 0; }
+        .meter-indicator { position: absolute; top: -5px; width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; transform: translateX(-50%); transition: left 0.5s ease; }
 
         @media (max-width: 768px) {
             .price-display { font-size: 2.2rem; }
@@ -350,15 +123,9 @@
             <div id="priceChange">+1.03% (24h)</div>
             
             <div class="button-row">
-                <button class="btn btn-warning" id="pushBtn">
-                    🔔 Push aktivieren
-                </button>
-                <button class="btn btn-success" id="refreshBtn">
-                    🔄 Aktualisieren
-                </button>
-                <button class="btn" id="monitorBtn">
-                    ⏸️ Pausieren
-                </button>
+                <button class="btn btn-warning" id="pushBtn">🔔 Push aktivieren</button>
+                <button class="btn btn-success" id="refreshBtn">🔄 Aktualisieren</button>
+                <button class="btn" id="monitorBtn">⏸️ Pausieren</button>
             </div>
         </div>
         
@@ -366,9 +133,7 @@
         <div class="countdown-container">
             <div class="countdown-title">⏰ FOMC Meeting Countdown</div>
             <div class="countdown-display" id="fomcCountdown">Wird geladen...</div>
-            <div class="countdown-details">
-                30. Juli 2025, 14:00 UTC (16:00 MESZ)
-            </div>
+            <div class="countdown-details">30. Juli 2025, 14:00 UTC (16:00 MESZ)</div>
             <div class="volatility-info">
                 📊 Historische Daten: 78% Wahrscheinlichkeit für 8-12% Volatilität<br>
                 🎯 Target: $109k-$114k Bereich (Phase 2)
@@ -470,12 +235,10 @@
         <!-- Aktuelle Empfehlungen -->
         <div class="card">
             <div class="card-title">🎯 Trading Empfehlungen</div>
-            
             <div class="alert-box">
                 <strong>⏰ FOMC Event in Kürze!</strong><br>
-                Bereiten Sie 280k USDT für Phase 2 ($109k-$114k) vor. Historisch hohe Volatilität erwartet.
+                280k USDT für Phase 2 ($109k-$114k) bereithalten.
             </div>
-            
             <div class="success-box" id="currentRecommendation">
                 <strong>📍 Aktuelle Position: Short-Cluster Zone</strong><br>
                 $119,540 - Stop-Hunt möglich. Bereit für Dip-Kauf in tiefere Level.
@@ -487,7 +250,7 @@
             <div class="card-title">ℹ️ App Info</div>
             <div style="font-size: 0.9rem; color: #6b7280;">
                 <p><strong>GitHub PWA Version 2.1</strong></p>
-                <p>📡 Live-Updates: Alle 5 Sekunden</p>
+                <p>📡 Live-Updates: Echtzeit (WS) + Fallback 5s</p>
                 <p>🔔 Push-Notifications: Verfügbar</p>
                 <p>📱 Installation: Alle Browser</p>
                 <p>⚡ Offline-fähig</p>
@@ -497,7 +260,9 @@
     </div>
 
     <script>
+        // ------------------------
         // Global Variables
+        // ------------------------
         let currentPrice = 119540;
         let lastHourClose = 118062;
         let pushEnabled = false;
@@ -508,9 +273,11 @@
 
         // FOMC & PCE Termine
         const FOMC_DATE = new Date('2025-07-30T14:00:00Z');
-        const PCE_DATE = new Date('2025-07-31T12:30:00Z');
+        const PCE_DATE  = new Date('2025-07-31T12:30:00Z');
 
+        // ------------------------
         // PWA Installation Handler
+        // ------------------------
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -521,7 +288,6 @@
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
-                
                 if (outcome === 'accepted') {
                     document.getElementById('installBanner').style.display = 'none';
                     if (pushEnabled) {
@@ -532,7 +298,9 @@
             }
         });
 
-        // Countdown Functions
+        // ------------------------
+        // Countdowns
+        // ------------------------
         function updateCountdowns() {
             const now = new Date();
             
@@ -543,13 +311,10 @@
                 const hours = Math.floor((fomcDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((fomcDiff % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((fomcDiff % (1000 * 60)) / 1000);
-                
                 let fomcText = '';
                 if (days > 0) fomcText += `${days}d `;
                 fomcText += `${hours}h ${minutes}m ${seconds}s`;
-                
                 document.getElementById('fomcCountdown').textContent = fomcText;
-                
                 if (fomcDiff < 24 * 60 * 60 * 1000) {
                     document.getElementById('fomcCountdown').style.color = '#dc2626';
                 }
@@ -564,34 +329,35 @@
                 const days = Math.floor(pceDiff / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((pceDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((pceDiff % (1000 * 60 * 60)) / (1000 * 60));
-                
                 let pceText = '';
                 if (days > 0) pceText += `${days}d `;
                 pceText += `${hours}h ${minutes}m`;
-                
                 document.getElementById('pceCountdown').textContent = `PCE in ${pceText}`;
             } else {
                 document.getElementById('pceCountdown').textContent = 'PCE veröffentlicht';
             }
         }
 
-        // Price Simulation with more realistic behavior
-        function simulatePrice() {
-            if (!isMonitoring) return;
-            
-            const volatility = 0.0008 + (Math.random() * 0.0004); // Variable volatility
-            const trend = Math.sin(Date.now() / 300000) * 0.0002; // Subtle trend
-            const change = ((Math.random() - 0.5) * volatility) + trend;
-            
-            currentPrice = Math.max(100000, Math.round(currentPrice * (1 + change)));
-            
-            document.getElementById('btcPrice').textContent = `$${currentPrice.toLocaleString()}`;
-            
-            const change24h = ((currentPrice - 118321) / 118321) * 100;
+        // ------------------------
+        // LIVE-PREIS (Binance)
+        // ------------------------
+        const PRICE_SOURCE = 'binance';
+        let _priceWS = null;
+        let _pollTimer = null;
+
+        function applyPriceUpdate(priceFloat, changePctFloat) {
+            currentPrice = Math.round(priceFloat);
+
+            // Preisanzeige
+            document.getElementById('btcPrice').textContent = `$${currentPrice.toLocaleString('en-US')}`;
+
+            // 24h-Änderung
             const changeEl = document.getElementById('priceChange');
-            changeEl.textContent = `${change24h >= 0 ? '+' : ''}${change24h.toFixed(2)}% (24h)`;
-            changeEl.style.color = change24h >= 0 ? '#10b981' : '#ef4444';
-            
+            const sign = changePctFloat >= 0 ? '+' : '';
+            changeEl.textContent = `${sign}${changePctFloat.toFixed(2)}% (24h)`;
+            changeEl.style.color = changePctFloat >= 0 ? '#10b981' : '#ef4444';
+
+            // Folge-Updates
             updatePhases();
             updateTriggers();
             generateRecommendations();
@@ -599,23 +365,72 @@
             updateLastUpdateTime();
         }
 
+        function startBinancePriceStream() {
+            try {
+                _priceWS = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
+
+                _priceWS.onmessage = (evt) => {
+                    const d = JSON.parse(evt.data);
+                    const last = parseFloat(d.c); // lastPrice
+                    const pct  = parseFloat(d.P); // priceChangePercent (24h)
+                    if (Number.isFinite(last) && Number.isFinite(pct)) {
+                        applyPriceUpdate(last, pct);
+                    }
+                };
+
+                _priceWS.onclose = () => { startPricePollingFallback(); };
+                _priceWS.onerror = () => { try { _priceWS.close(); } catch(_) {} };
+            } catch (e) {
+                startPricePollingFallback();
+            }
+        }
+
+        async function pollOnce() {
+            try {
+                const r = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', { cache: 'no-store' });
+                const j = await r.json();
+                const last = parseFloat(j.lastPrice);
+                const pct  = parseFloat(j.priceChangePercent);
+                if (Number.isFinite(last) && Number.isFinite(pct)) {
+                    applyPriceUpdate(last, pct);
+                }
+            } catch (_) { /* retry via next tick */ }
+        }
+
+        function startPricePollingFallback() {
+            if (_pollTimer) clearInterval(_pollTimer);
+            pollOnce();
+            _pollTimer = setInterval(pollOnce, 5000);
+        }
+
+        async function fetchLastHourClose() {
+            try {
+                const r = await fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=2', { cache: 'no-store' });
+                const a = await r.json();
+                if (Array.isArray(a) && a.length >= 1) {
+                    const prevClose = parseFloat(a[0][4]); // Close vorherige 1h-Kerze
+                    if (Number.isFinite(prevClose)) {
+                        lastHourClose = Math.round(prevClose);
+                        document.getElementById('lastClose').textContent = `$${lastHourClose.toLocaleString('en-US')}`;
+                        updateTriggers();
+                    }
+                }
+            } catch (_) { /* try again on next interval */ }
+        }
+
+        // ------------------------
+        // Phasen / Trigger / Empfehlungen / Sonstiges (unverändert, aber ohne Simulations-Updates)
+        // ------------------------
         function updatePhases() {
-            // Phase 1: $116k-$119k
             const phase1Active = currentPrice >= 116000 && currentPrice <= 119000;
             updatePhase('phase1', 'phase1Status', phase1Active, '🎯 AKTIV', 'Bereit');
-            
-            // Phase 2: $109k-$114k
             const phase2Active = currentPrice >= 109000 && currentPrice <= 114000;
             updatePhase('phase2', 'phase2Status', phase2Active, '🚀 EXECUTE!', 'Wartend');
-            
             if (phase2Active && pushEnabled && updateCounter % 20 === 0) {
                 sendNotification('Phase 2 aktiviert!', `$${currentPrice.toLocaleString()} - Jetzt 280k USDT deployen!`);
             }
-            
-            // Phase 3: $103k-$108k
             const phase3Active = currentPrice >= 103000 && currentPrice <= 108000;
             updatePhase('phase3', 'phase3Status', phase3Active, '💎 DEEP VALUE!', 'Reserve');
-            
             if (phase3Active && pushEnabled && updateCounter % 30 === 0) {
                 sendNotification('Phase 3 Deep Value!', `$${currentPrice.toLocaleString()} - Finale 140k USDT aktivieren!`);
             }
@@ -624,7 +439,6 @@
         function updatePhase(phaseId, statusId, isActive, activeText, inactiveText) {
             const phaseEl = document.getElementById(phaseId);
             const statusEl = document.getElementById(statusId);
-            
             if (isActive) {
                 phaseEl.classList.add('phase-active');
                 statusEl.textContent = activeText;
@@ -643,18 +457,12 @@
             updateTrigger('trigger4', 'dot4', currentPrice >= 116400 && currentPrice <= 116900);
             updateTrigger('trigger5', 'dot5', currentPrice <= 116100);
             updateTrigger('trigger6', 'dot6', currentPrice <= 114500);
-            
-            // Simulate hourly close updates
-            if (Math.random() < 0.05) {
-                lastHourClose = Math.round(currentPrice * (0.998 + Math.random() * 0.004));
-                document.getElementById('lastClose').textContent = `$${lastHourClose.toLocaleString()}`;
-            }
+            // KEINE zufälligen 1h-Close-Updates mehr – wird jetzt von fetchLastHourClose() gesetzt
         }
 
         function updateTrigger(triggerId, dotId, isActive) {
             const triggerEl = document.getElementById(triggerId);
             const dotEl = document.getElementById(dotId);
-            
             if (isActive) {
                 triggerEl.classList.add('trigger-active');
                 dotEl.classList.add('active');
@@ -665,32 +473,25 @@
         }
 
         function updateFearGreed() {
-            // Simulate Fear & Greed Index changes
+            // leichte Variation beibehalten (optional)
             if (Math.random() < 0.1) {
                 const priceChange = (currentPrice - 119540) / 119540;
                 fearGreedIndex = Math.max(0, Math.min(100, 
                     fearGreedIndex + (priceChange * 20) + (Math.random() - 0.5) * 3
                 ));
-                
                 document.getElementById('fearGreedValue').textContent = Math.round(fearGreedIndex);
                 document.getElementById('fearGreedIndicator').style.left = fearGreedIndex + '%';
-                
-                // Update text based on value
-                const fearGreedText = fearGreedIndex < 25 ? 'Extreme Fear' :
-                                    fearGreedIndex < 45 ? 'Fear' :
-                                    fearGreedIndex < 55 ? 'Neutral' :
-                                    fearGreedIndex < 75 ? 'Greed' : 'Extreme Greed';
-                
-                document.querySelector('.meter-value').nextElementSibling.textContent = fearGreedText;
-                
-                // Update timestamp
+                const text = fearGreedIndex < 25 ? 'Extreme Fear' :
+                             fearGreedIndex < 45 ? 'Fear' :
+                             fearGreedIndex < 55 ? 'Neutral' :
+                             fearGreedIndex < 75 ? 'Greed' : 'Extreme Greed';
+                document.querySelector('.meter-value').nextElementSibling.textContent = text;
                 document.getElementById('fearGreedTime').textContent = 'vor ' + Math.floor(Math.random() * 3 + 1) + 'h';
             }
         }
 
         function generateRecommendations() {
             const recEl = document.getElementById('currentRecommendation');
-            
             if (currentPrice >= 119000 && currentPrice <= 121000) {
                 recEl.innerHTML = '<strong>⚠️ Short-Liquiditätscluster AKTIV</strong><br>' +
                     `$${currentPrice.toLocaleString()} - Stop-Hunt wahrscheinlich. Bereit für Dip-Kauf.`;
@@ -707,34 +508,33 @@
         }
 
         function updateLastUpdateTime() {
-            const now = new Date();
             const seconds = Math.floor((Date.now() / 1000) % 60);
             const timeText = seconds < 10 ? 'vor wenigen Sekunden' : `vor ${seconds}s`;
             document.getElementById('lastUpdate').textContent = timeText;
         }
 
+        // ------------------------
         // Push Notifications
+        // ------------------------
         function enablePush() {
             if (!('Notification' in window)) {
                 alert('❌ Ihr Browser unterstützt keine Push-Benachrichtigungen.');
                 return;
             }
-            
             if (Notification.permission === 'granted') {
                 pushEnabled = true;
                 updatePushButton();
                 sendNotification('BTC Monitor bereit!', 'Push-Benachrichtigungen sind aktiv!');
                 return;
             }
-            
             Notification.requestPermission().then(permission => {
                 if (permission === 'granted') {
                     pushEnabled = true;
                     updatePushButton();
                     sendNotification('Setup Complete!', 'GitHub PWA BTC Trading Alerts sind jetzt aktiv!');
-                    alert('✅ Push-Benachrichtigungen aktiviert!\n\nSie erhalten jetzt Alerts bei wichtigen Trading-Signalen!');
+                    alert('✅ Push-Benachrichtigungen aktiviert!');
                 } else {
-                    alert('❌ Push-Benachrichtigungen wurden abgelehnt.\n\nAktivieren Sie sie in den Browser-Einstellungen.');
+                    alert('❌ Push-Benachrichtigungen wurden abgelehnt.');
                 }
             });
         }
@@ -749,33 +549,24 @@
 
         function sendNotification(title, body) {
             if (!pushEnabled || Notification.permission !== 'granted') return;
-            
             try {
                 const notification = new Notification(`🚨 ${title}`, {
-                    body: body,
-                    icon: '/favicon.ico',
-                    tag: 'btc-monitor',
-                    requireInteraction: true,
-                    vibrate: [200, 100, 200],
-                    timestamp: Date.now()
+                    body, icon: '/favicon.ico', tag: 'btc-monitor',
+                    requireInteraction: true, vibrate: [200, 100, 200], timestamp: Date.now()
                 });
-                
-                notification.onclick = () => {
-                    window.focus();
-                    notification.close();
-                };
-                
+                notification.onclick = () => { window.focus(); notification.close(); };
                 setTimeout(() => notification.close(), 10000);
             } catch (error) {
                 console.log('Notification error:', error);
             }
         }
 
+        // ------------------------
         // Control Functions
+        // ------------------------
         function toggleMonitoring() {
             isMonitoring = !isMonitoring;
             const btn = document.getElementById('monitorBtn');
-            
             if (isMonitoring) {
                 btn.innerHTML = '⏸️ Pausieren';
                 btn.className = 'btn btn-warning';
@@ -783,7 +574,6 @@
                 btn.innerHTML = '▶️ Starten';
                 btn.className = 'btn btn-success';
             }
-            
             if (pushEnabled) {
                 const status = isMonitoring ? 'gestartet' : 'pausiert';
                 sendNotification('Monitor Status', `BTC Monitor wurde ${status}`);
@@ -791,76 +581,51 @@
         }
 
         function forceUpdate() {
-            simulatePrice();
-            updateCountdowns();
+            // Sofort neu laden: Preis (REST) + 1h Close
+            pollOnce();
+            fetchLastHourClose();
             if (pushEnabled) {
                 sendNotification('Daten aktualisiert', `Aktueller BTC Preis: ${currentPrice.toLocaleString()}`);
             }
-            
-            // Visual feedback
             const btn = document.getElementById('refreshBtn');
             const originalText = btn.innerHTML;
             btn.innerHTML = '🔄 Updating...';
             btn.disabled = true;
-            
             setTimeout(() => {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }, 1000);
         }
 
-        // Service Worker for PWA functionality
+        // ------------------------
+        // Service Worker (inline)
+        // ------------------------
         const SW_CODE = `
             const CACHE_NAME = 'btc-monitor-v2.1';
-            const urlsToCache = [
-                '/',
-                '/index.html'
-            ];
+            const urlsToCache = ['/', '/index.html'];
 
             self.addEventListener('install', event => {
-                event.waitUntil(
-                    caches.open(CACHE_NAME)
-                        .then(cache => cache.addAll(urlsToCache))
-                );
+                event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
             });
 
             self.addEventListener('fetch', event => {
-                event.respondWith(
-                    caches.match(event.request)
-                        .then(response => {
-                            if (response) {
-                                return response;
-                            }
-                            return fetch(event.request);
-                        }
-                    )
-                );
+                event.respondWith(caches.match(event.request).then(response => response || fetch(event.request)));
             });
 
             self.addEventListener('push', event => {
                 const options = {
                     body: event.data ? event.data.text() : 'BTC Monitor Update',
-                    icon: '/favicon.ico',
-                    badge: '/favicon.ico',
-                    vibrate: [100, 50, 100],
-                    data: {
-                        dateOfArrival: Date.now(),
-                        primaryKey: 1
-                    }
+                    icon: '/favicon.ico', badge: '/favicon.ico', vibrate: [100, 50, 100],
+                    data: { dateOfArrival: Date.now(), primaryKey: 1 }
                 };
-
-                event.waitUntil(
-                    self.registration.showNotification('🚨 BTC Monitor', options)
-                );
+                event.waitUntil(self.registration.showNotification('🚨 BTC Monitor', options));
             });
         `;
 
-        // Register Service Worker
         function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const blob = new Blob([SW_CODE], { type: 'application/javascript' });
                 const swUrl = URL.createObjectURL(blob);
-                
                 navigator.serviceWorker.register(swUrl).then(() => {
                     console.log('Service Worker registered successfully');
                 }).catch(error => {
@@ -869,7 +634,9 @@
             }
         }
 
+        // ------------------------
         // PWA Manifest generator
+        // ------------------------
         function generateManifest() {
             const manifest = {
                 "name": "BTC Trading Monitor",
@@ -895,56 +662,45 @@
                 "categories": ["finance", "productivity", "utilities"],
                 "screenshots": [],
                 "shortcuts": [
-                    {
-                        "name": "Aktuelle Trigger",
-                        "short_name": "Trigger",
-                        "description": "Zeige aktuelle Trading Trigger",
-                        "url": "/#triggers"
-                    }
+                    { "name": "Aktuelle Trigger", "short_name": "Trigger", "description": "Zeige aktuelle Trading Trigger", "url": "/#triggers" }
                 ]
             };
-            
             const manifestBlob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
             const manifestUrl = URL.createObjectURL(manifestBlob);
-            
             const link = document.createElement('link');
             link.rel = 'manifest';
             link.href = manifestUrl;
             document.head.appendChild(link);
         }
 
+        // ------------------------
         // Event Listeners
+        // ------------------------
         document.getElementById('pushBtn').addEventListener('click', enablePush);
         document.getElementById('monitorBtn').addEventListener('click', toggleMonitoring);
         document.getElementById('refreshBtn').addEventListener('click', forceUpdate);
 
-        // Advanced Trading Analysis
+        // ------------------------
+        // Advanced Trading Analysis (dein Original; optional)
+        // ------------------------
         function performTechnicalAnalysis() {
             const prices = [];
             const basePrice = 119540;
-            
-            // Generate last 20 prices for analysis
             for (let i = 19; i >= 0; i--) {
                 const variation = (Math.random() - 0.5) * 0.02;
                 prices.push(basePrice * (1 + variation * (i / 20)));
             }
             prices.push(currentPrice);
-            
-            // Simple Moving Average
             const sma20 = prices.reduce((sum, price) => sum + price, 0) / prices.length;
-            
-            // RSI calculation (simplified)
             let gains = 0, losses = 0;
             for (let i = 1; i < prices.length; i++) {
                 const change = prices[i] - prices[i - 1];
-                if (change > 0) gains += change;
-                else losses -= change;
+                if (change > 0) gains += change; else losses -= change;
             }
             const avgGain = gains / 14;
-            const avgLoss = losses / 14;
+            const avgLoss = losses / 14 || 1e-9;
             const rs = avgGain / avgLoss;
             const rsi = 100 - (100 / (1 + rs));
-            
             return {
                 sma20: Math.round(sma20),
                 rsi: Math.round(rsi),
@@ -953,90 +709,67 @@
             };
         }
 
-        // Initialize everything
+        // ------------------------
+        // Kritische Level Monitoring
+        // ------------------------
+        function checkCriticalLevels() {
+            const criticalLevels = [116000, 114000, 109000, 103000];
+            criticalLevels.forEach(level => {
+                const diff = Math.abs(currentPrice - level);
+                const threshold = level * 0.001; // 0.1%
+                if (diff < threshold && Math.random() < 0.1) {
+                    sendNotification('Kritisches Level erreicht!', `BTC bei ${currentPrice.toLocaleString()} - Nahe ${level.toLocaleString()}`);
+                }
+            });
+        }
+
+        // ------------------------
+        // Fehler-Handling & Shortcuts
+        // ------------------------
+        window.addEventListener('error', (event) => { console.error('App Error:', event.error); });
+        window.addEventListener('unhandledrejection', (event) => { console.error('Unhandled Promise Rejection:', event.reason); });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.ctrlKey || event.metaKey) {
+                switch (event.key) {
+                    case 'r': event.preventDefault(); forceUpdate(); break;
+                    case ' ': event.preventDefault(); toggleMonitoring(); break;
+                }
+            }
+        });
+
+        // ------------------------
+        // Init
+        // ------------------------
         function init() {
             console.log('🚀 BTC Trading Monitor PWA gestartet');
-            
-            // Generate PWA manifest
             generateManifest();
-            
-            // Register service worker
             registerServiceWorker();
-            
-            // Start main loops
+
+            // Countdowns
             updateCountdowns();
-            simulatePrice();
-            
-            // Set up intervals
-            setInterval(() => {
-                updateCountdowns();
-                updateCounter++;
-            }, 1000);
-            
-            setInterval(() => {
-                if (isMonitoring) {
-                    simulatePrice();
-                }
-            }, 5000);
-            
-            // Performance monitoring
+            setInterval(() => { updateCountdowns(); updateCounter++; }, 1000);
+
+            // Live-Preis
+            startBinancePriceStream();
+            fetchLastHourClose();
+            setInterval(fetchLastHourClose, 60 * 1000);
+
+            // Optional: Logs & Alerts
             setInterval(() => {
                 const analysis = performTechnicalAnalysis();
                 console.log('📊 Technical Analysis:', analysis);
             }, 30000);
-            
-            // Check for important price alerts
+
             setInterval(() => {
                 if (pushEnabled && isMonitoring) {
                     checkCriticalLevels();
                 }
             }, 15000);
-            
-            console.log('✅ Alle Systeme online');
+
+            console.log('✅ Alle Systeme online (Live-Preis aktiviert)');
         }
 
-        function checkCriticalLevels() {
-            const criticalLevels = [116000, 114000, 109000, 103000];
-            
-            criticalLevels.forEach(level => {
-                const diff = Math.abs(currentPrice - level);
-                const threshold = level * 0.001; // 0.1% threshold
-                
-                if (diff < threshold && Math.random() < 0.1) {
-                    sendNotification(
-                        'Kritisches Level erreicht!',
-                        `BTC bei ${currentPrice.toLocaleString()} - Nahe ${level.toLocaleString()}`
-                    );
-                }
-            });
-        }
-
-        // Error handling
-        window.addEventListener('error', (event) => {
-            console.error('App Error:', event.error);
-        });
-
-        window.addEventListener('unhandledrejection', (event) => {
-            console.error('Unhandled Promise Rejection:', event.reason);
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (event) => {
-            if (event.ctrlKey || event.metaKey) {
-                switch (event.key) {
-                    case 'r':
-                        event.preventDefault();
-                        forceUpdate();
-                        break;
-                    case ' ':
-                        event.preventDefault();
-                        toggleMonitoring();
-                        break;
-                }
-            }
-        });
-
-        // Initialize the app when DOM is loaded
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
         } else {
