@@ -79,9 +79,9 @@
 
     <!-- Nächstes Macro-Event -->
     <div class="countdown-container">
-      <div class="countdown-title">⏰ Nächstes Wirtschafts‑Event (ForexFactory)</div>
-      <div class="countdown-display" id="macroCountdown">Wird geladen…</div>
-      <div class="countdown-details" id="macroDetail">Quelle: Proxy → JBlanked → ForexFactory</div>
+      <div class="countdown-title">⏰ Nächstes Wirtschafts‑Event (manuell)</div>
+      <div class="countdown-display" id="macroCountdown">Kein Termin hinterlegt</div>
+      <div class="countdown-details" id="macroDetail">Trage unten Termine ein. Speicherung lokal im Browser.</div>
       <div class="volatility-info">
         ⚠️ Makro‑Termine (CPI, NFP, Zinsentscheide etc.) können starke Bewegungen auslösen.
       </div>
@@ -111,16 +111,6 @@
         <div class="mt12 small">Letzter 1h Close: <strong id="lastClose">$118,062</strong></div>
       </div>
 
-      <!-- PCE -->
-      <div class="card">
-        <div class="card-title">📊 PCE Data Countdown</div>
-        <div style="text-align:center;padding:20px;">
-          <div style="font-size:1.8rem;font-weight:bold;color:#f59e0b;" id="pceCountdown">Wird geladen…</div>
-          <div class="small">31. Juli 2025, 12:30 UTC</div>
-          <div class="small ok mt8">Hinweis: Makrodaten können starke Bewegungen auslösen.</div>
-        </div>
-      </div>
-
       <!-- Fear & Greed -->
       <div class="card">
         <div class="card-title">😱 Fear & Greed Index</div>
@@ -129,70 +119,44 @@
           <div>Interpretation</div><div id="fearGreedText" class="mono">–</div>
           <div>Letztes Update</div><div id="fearGreedTime" class="mono">–</div>
         </div>
-        <div class="meter-bar mt12"><div class="meter-indicator" id="fearGreedIndicator" style="left:50%"></div></div>
+        <div class="meter-bar mt12" style="height:10px;background:linear-gradient(90deg,#ef4444 0%,#f59e0b 25%,#eab308 50%,#84cc16 75%,#10b981 100%);border-radius:5px;position:relative;margin:15px 0;">
+          <div class="meter-indicator" id="fearGreedIndicator" style="position:absolute;top:-5px;width:20px;height:20px;background:#fff;border:3px solid #374151;border-radius:50%;transform:translateX(-50%);left:50%;transition:left .5s"></div>
+        </div>
         <div class="small muted mt8" id="fearGreedNote">Live‑Abruf (alternative.me) – Fallback bei CORS.</div>
       </div>
 
-      <!-- ForexFactory Kalender -->
+      <!-- Makro-Termine (manuell) -->
       <div class="card">
-        <div class="card-title">🗓️ Wirtschaftskalender (via Proxy)</div>
-
+        <div class="card-title">🗓️ Makro‑Termine (manuell, lokal gespeichert)</div>
         <div class="row">
           <div>
-            <label class="small muted">Währungen (CSV)</label>
-            <input id="ffFx" value="USD,EUR,GBP,JPY"/>
+            <label class="small muted">Event</label>
+            <input id="meName" placeholder="z. B. US CPI (YoY)"/>
           </div>
           <div>
-            <label class="small muted">Zeitraum</label>
-            <select id="ffRange">
-              <option value="today">Heute</option>
-              <option value="week" selected>Woche</option>
-            </select>
+            <label class="small muted">Datum/Zeit</label>
+            <input id="meWhen" type="datetime-local"/>
           </div>
         </div>
-
         <div class="row mt8">
           <div>
-            <label class="small muted">Filter (Name/Category enthält)</label>
-            <input id="ffFilter" placeholder="CPI, NFP, Rate, GDP"/>
+            <label class="small muted">Währung/Region</label>
+            <input id="meCcy" value="USD"/>
           </div>
           <div>
-            <label class="small muted">Tage ab heute (1–7)</label>
-            <input id="ffDays" type="number" min="1" max="7" value="3"/>
+            <label class="small muted">Kategorie</label>
+            <input id="meCat" value="CPI"/>
           </div>
         </div>
-
-        <div class="row mt8">
-          <div>
-            <label class="small muted">Nur Top‑Events</label>
-            <div><input id="ffTopOnly" type="checkbox" checked/> <span class="small muted">CPI, PCE, NFP, Rate, GDP, PMI, Unemployment</span></div>
-          </div>
-          <div>
-            <label class="small muted">Proxy testen</label><br/>
-            <button class="btn btn-outline mt4" id="ffTest">🧪 Test</button>
-          </div>
-        </div>
-
-        <div class="mt8 small">
-          <span class="muted">Wochentage (Mo–Fr):</span>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
-            <label><input type="checkbox" class="ffDow" value="1" checked> Mo</label>
-            <label><input type="checkbox" class="ffDow" value="2" checked> Di</label>
-            <label><input type="checkbox" class="ffDow" value="3" checked> Mi</label>
-            <label><input type="checkbox" class="ffDow" value="4" checked> Do</label>
-            <label><input type="checkbox" class="ffDow" value="5" checked> Fr</label>
-          </div>
-        </div>
-
         <div class="mt8">
-          <button class="btn btn-outline" id="ffLoad">🔄 Laden</button>
+          <button class="btn btn-outline" id="meAdd">➕ Hinzufügen</button>
+          <button class="btn btn-outline" id="meClear">🗑️ Alle löschen</button>
         </div>
-        <div id="ffMsg" class="small muted mt8"></div>
-
-        <ul id="ffList" class="mt12" style="list-style:none;padding-left:0;max-height:260px;overflow:auto;"></ul>
+        <div class="small muted mt8">Hinweis: Zeiten sind lokale Zeit deines Geräts. Speicherung nur in diesem Browser (localStorage).</div>
+        <ul id="meList" class="mt12" style="list-style:none;padding-left:0;max-height:260px;overflow:auto;"></ul>
       </div>
 
-      <!-- Bear Market, Bull Run, Day Trading – unverändert -->
+      <!-- Bear Market Survival -->
       <div class="card">
         <div class="card-title">🐻 Bear Market Survival</div>
         <div class="small muted">DCA‑Rechner (1D‑Klines)</div>
@@ -209,7 +173,6 @@
           <div>Wert @ Spot</div><div class="mono" id="dcaValue">–</div>
           <div>P/L</div><div class="mono" id="dcaPL">–</div>
         </div>
-
         <div class="mt20 small muted">Accumulation‑Zonen (200D‑SMA)</div>
         <div class="kv mt8">
           <div>200D‑SMA</div><div class="mono" id="sma200">–</div>
@@ -220,6 +183,7 @@
         </div>
       </div>
 
+      <!-- Bull Run Tracker -->
       <div class="card">
         <div class="card-title">🐂 Bull Run Tracker</div>
         <div class="kv">
@@ -241,6 +205,7 @@
         <ul id="ptList" class="mt8" style="list-style:none;padding-left:0;"></ul>
       </div>
 
+      <!-- Day Trading -->
       <div class="card">
         <div class="card-title">🟢 Day Trading Mode</div>
         <div class="row">
@@ -262,16 +227,18 @@
         </div>
       </div>
 
+      <!-- Empfehlungen -->
       <div class="card">
         <div class="card-title">🎯 Trading Empfehlungen</div>
-        <div class="alert-box"><strong>Hinweis:</strong><br/>Nutze Crash‑Detection & Day‑Trading für Intraday; DCA & Zonen für langfristig.</div>
+        <div class="alert-box"><strong>Hinweis:</strong><br/>Crash‑Detection & Day‑Trading für Intraday; DCA & Zonen für langfristig.</div>
         <div class="success-box" id="currentRecommendation"><strong>📍 Status</strong><br/>Wartet auf Signale.</div>
       </div>
 
+      <!-- App Info -->
       <div class="card">
         <div class="card-title">ℹ️ App Info</div>
         <div class="small">
-          <p><strong>GitHub PWA Version 2.4.4</strong></p>
+          <p><strong>GitHub PWA Version 2.5.0‑lite</strong></p>
           <p>📡 Live‑Updates: Echtzeit (WS) + Fallback 5 s</p>
           <p>🔔 Push‑Benachrichtigungen</p>
           <p>📱 Installation: Alle Browser</p>
@@ -283,17 +250,10 @@
   </div>
 
   <script>
-    // ===== Proxy-Konfiguration =====
-    // Vercel-API:
-    const FF_PROXY = '/api/ff';
-    // Falls Cloudflare Worker:
-    // const FF_PROXY = 'https://DEIN-WORKER.workers.dev/ff';
-
     // ===== Globale =====
     let currentPrice = 119540, lastHourClose = 118062;
     let pushEnabled = false, isMonitoring = true, deferredPrompt;
     let updateCounter = 0, fearGreedIndex = 50;
-    const PCE_DATE = new Date('2025-07-31T12:30:00Z');
 
     // Crash-Detection
     const priceHistory = [];
@@ -302,11 +262,10 @@
     // Day-Trading
     let dayModeOn = true, crashOn = true;
 
-    // Kalender
-    let ffEvents = [], nextMacro = null, ffLast = 0;
-
-    // Top-Event Keywords
-    const TOP_WORDS = ['cpi','core cpi','hicp','pce','nonfarm','non-farm','nfp','interest rate','rate decision','federal funds','ecb','boe','boj','gdp','unemployment','payrolls','retail sales','pmi','ism','confidence','fomc'];
+    // Manuelle Makro-Termine
+    const EVENTS_STORAGE = 'macro_events_v1';
+    let macroEvents = [];  // [{name, whenISO, currency, category}]
+    let nextMacro = null;
 
     // ===== PWA Install =====
     window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBanner').style.display = 'flex'; });
@@ -318,21 +277,24 @@
     // ===== Countdowns =====
     function fmt2(n){return n<10?'0'+n:n;}
     function updateCountdowns(){
+      const cEl=document.getElementById('macroCountdown'), dEl=document.getElementById('macroDetail');
       if (nextMacro && nextMacro.when){
         const now = new Date(), diff = nextMacro.when - now;
-        const cEl = document.getElementById('macroCountdown'), dEl = document.getElementById('macroDetail');
         if (diff>0){
           const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
           cEl.textContent = `${d>0?d+'d ':''}${fmt2(h)}h ${fmt2(m)}m ${fmt2(s)}s`;
-          dEl.textContent = `${nextMacro.currency} — ${nextMacro.name} (${nextMacro.category||'–'}) • ${nextMacro.when.toLocaleString()}`;
+          dEl.textContent = `${nextMacro.currency||'-'} — ${nextMacro.name} (${nextMacro.category||'–'}) • ${nextMacro.when.toLocaleString()}`;
           if (diff<24*3600000) cEl.style.color='#dc2626';
-        } else { cEl.textContent='LIVE'; dEl.textContent=`${nextMacro.currency} — ${nextMacro.name} (läuft)`; cEl.style.color='#dc2626'; }
+        } else {
+          cEl.textContent='LIVE';
+          dEl.textContent=`${nextMacro.currency||'-'} — ${nextMacro.name} (läuft)`;
+          cEl.style.color='#dc2626';
+        }
       } else {
-        document.getElementById('macroCountdown').textContent='Keine Events';
-        document.getElementById('macroDetail').textContent='Filter/Zeitraum prüfen.';
+        cEl.textContent='Kein Termin hinterlegt';
+        dEl.textContent='Trage unten Termine ein. Speicherung lokal im Browser.';
+        cEl.style.color='#ef4444';
       }
-      const now = new Date(), pceDiff = PCE_DATE - now;
-      document.getElementById('pceCountdown').textContent = pceDiff>0 ? `PCE in ${Math.floor(pceDiff/86400000)>0?Math.floor(pceDiff/86400000)+'d ':''}${fmt2(Math.floor((pceDiff%86400000)/3600000))}h ${fmt2(Math.floor((pceDiff%3600000)/60000))}m` : 'PCE veröffentlicht';
     }
     function updateLastUpdateTime(){ const ts=new Date(); document.getElementById('lastUpdate').textContent = `${fmt2(ts.getHours())}:${fmt2(ts.getMinutes())}:${fmt2(ts.getSeconds())}`; }
 
@@ -342,8 +304,10 @@
     function applyPriceUpdate(priceFloat, changePctFloat){
       currentPrice = Math.round(priceFloat);
       document.getElementById('btcPrice').textContent = `$${currentPrice.toLocaleString('en-US')}`;
-      const changeEl=document.getElementById('priceChange'); const sign = changePctFloat>=0?'+':'';
-      changeEl.textContent = `${sign}${changePctFloat.toFixed(2)}% (24h)`; changeEl.style.color = changePctFloat>=0?'#10b981':'#ef4444';
+      const changeEl=document.getElementById('priceChange');
+      const sign = changePctFloat>=0?'+':'';
+      changeEl.textContent = `${sign}${changePctFloat.toFixed(2)}% (24h)`;
+      changeEl.style.color = changePctFloat>=0?'#10b981':'#ef4444';
       const now=Date.now(); priceHistory.push({t:now,p:currentPrice}); while(priceHistory.length && (now-priceHistory[0].t)>PRICE_HISTORY_WINDOW_MS) priceHistory.shift();
       if (crashOn) checkCrashSignals();
       updatePhases(); updateTriggers(); generateRecommendations(); updateFearGreedUI(); updateLastUpdateTime();
@@ -374,81 +338,66 @@
     async function fetchFearGreed(){ try{ const r=await fetch('https://api.alternative.me/fng/?limit=1&format=json',{cache:'no-store'}); const j=await r.json(); if (j&&j.data&&j.data[0]){ fearGreedIndex=parseInt(j.data[0].value,10); const ts=parseInt(j.data[0].timestamp,10)*1000; document.getElementById('fearGreedTime').textContent=new Date(ts).toISOString(); updateFearGreedUI(); document.getElementById('fearGreedNote').textContent='Live‑Abruf erfolgreich.'; } }catch{ document.getElementById('fearGreedNote').textContent='Live‑Abruf blockiert – Fallback aktiv.'; updateFearGreedUI(); } }
     function updateFearGreedUI(){ const v=Math.max(0,Math.min(100,Math.round(fearGreedIndex))); document.getElementById('fearGreedValue').textContent=v; document.getElementById('fearGreedIndicator').style.left=v+'%'; document.getElementById('fearGreedText').textContent=v<25?'Extreme Fear':v<45?'Fear':v<55?'Neutral':v<75?'Greed':'Extreme Greed'; }
 
-    // ===== FF über Proxy =====
-    function parseFFDate(str){ const m=/^(\d{4})\.(\d{2})\.(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(str||''); if(!m) return null; const [_,Y,M,D,h,mi,s]=m.map(Number); return new Date(Date.UTC(Y,M-1,D,h,mi,s)); }
-    function normalizeFF(items){ return items.map(x=>({ name:x.Name||x.name||'', currency:(x.Currency||x.currency||''), category:(x.Category||x.category||''), when:parseFFDate(x.Date||x.date||'') })).filter(e=>e.when&&e.name); }
+    // ===== Manuelle Makro-Termine (localStorage) =====
+    function loadEvents(){ try{ return JSON.parse(localStorage.getItem(EVENTS_STORAGE))||[]; }catch{ return []; } }
+    function saveEvents(arr){ localStorage.setItem(EVENTS_STORAGE, JSON.stringify(arr)); }
+    function refreshEventList(){
+      const ul=document.getElementById('meList'); ul.innerHTML='';
+      macroEvents.sort((a,b)=>new Date(a.whenISO)-new Date(b.whenISO));
+      const now=new Date();
+      nextMacro = null;
 
-    async function fetchFF(period){
-      const endpoint = `${FF_PROXY}?period=${period==='today'?'today':'week'}`;
-      const r = await fetch(endpoint, { cache:'no-store' });
-      const body = await r.text();
-      if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}: ${body.slice(0,160)}`);
-      const j = JSON.parse(body);
-      return Array.isArray(j) ? j : (j?.data||[]);
-    }
-
-    function getSelectedWeekdays(){ const cbs=Array.from(document.querySelectorAll('.ffDow')); return new Set(cbs.filter(cb=>cb.checked).map(cb=>parseInt(cb.value,10))); }
-    function isTopEvent(str){ const t=(str||'').toLowerCase(); return TOP_WORDS.some(k=>t.includes(k)); }
-
-    function applyFFToUI(list){
-      const ul=document.getElementById('ffList'); ul.innerHTML='';
-      const wantFx=(document.getElementById('ffFx').value||'').split(',').map(s=>s.trim().toUpperCase()).filter(Boolean);
-      const needles=(document.getElementById('ffFilter').value||'').toLowerCase().split(',').map(s=>s.trim()).filter(Boolean);
-      const daysAhead=Math.max(1,Math.min(7,parseInt(document.getElementById('ffDays').value||'3',10)));
-      const topOnly=!!document.getElementById('ffTopOnly').checked;
-      const dows=getSelectedWeekdays();
-      const now=new Date(), cutoff=new Date(now.getTime()+daysAhead*86400000);
-
-      const filtered=list.filter(e=>{
-        const local=new Date(e.when.getTime());
-        if(!(local>=now&&local<=cutoff)) return false;
-        const wd=local.getDay(); const dayIdx=(wd===0?7:wd);
-        if (dows.size && !(dayIdx>=1 && dayIdx<=5 && dows.has(dayIdx))) return false;
-        const fxOK=wantFx.length? wantFx.includes((e.currency||'').toUpperCase()) : true;
-        const text=((e.name||'')+' '+(e.category||'')).toLowerCase();
-        const kwOK=needles.length? needles.some(n=>text.includes(n)) : true;
-        const topOK=topOnly? isTopEvent(text) : true;
-        return fxOK && kwOK && topOK;
-      }).sort((a,b)=>a.when-b.when);
-
-      nextMacro = filtered.find(e=>e.when>now) || null;
-
-      filtered.forEach(ev=>{
+      macroEvents.forEach((ev,idx)=>{
+        const when=new Date(ev.whenISO);
+        if (!nextMacro && when>now) nextMacro={ name:ev.name, currency:ev.currency, category:ev.category, when };
         const li=document.createElement('li'); li.className='mt8';
-        li.innerHTML=`<span class="mono">${ev.when.toLocaleString()}</span> — <strong>${ev.currency}</strong> — ${ev.name} <span class="muted">(${ev.category||'–'})</span>`;
+        li.innerHTML = `<span class="mono">${when.toLocaleString()}</span> — <strong>${ev.currency||'-'}</strong> — ${ev.name} <span class="muted">(${ev.category||'–'})</span>
+                        <button class="btn btn-outline" data-del="${idx}" style="margin-left:10px;padding:4px 8px">Löschen</button>`;
         ul.appendChild(li);
       });
-      if (!filtered.length) ul.innerHTML='<li class="mt8 warn">Keine passenden Events im gewählten Zeitraum/Filter.</li>';
+      if (!macroEvents.length) ul.innerHTML='<li class="mt8 warn">Keine Termine gespeichert.</li>';
+      // Delete-Listener
+      Array.from(ul.querySelectorAll('button[data-del]')).forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const i=parseInt(btn.getAttribute('data-del'),10);
+          if (!isNaN(i)){ macroEvents.splice(i,1); saveEvents(macroEvents); refreshEventList(); }
+        });
+      });
 
       updateCountdowns();
     }
-
-    async function loadFFFromControls(){
-      try{
-        const period=(document.getElementById('ffRange').value||'week');
-        const raw=await fetchFF(period);
-        ffEvents=normalizeFF(raw);
-        applyFFToUI(ffEvents);
-        const el=document.getElementById('ffMsg'); if (el) el.textContent='OK';
-      }catch(e){
-        document.getElementById('ffList').innerHTML='<li class="mt8 bad">Kalender‑Abruf fehlgeschlagen. Details siehe unten.</li>';
-        const el=document.getElementById('ffMsg'); if (el) el.textContent=(e&&e.message)? e.message:String(e);
-        console.log('FF error:',e);
-      }
+    function addEvent(){
+      const name=(document.getElementById('meName').value||'').trim();
+      const whenStr=(document.getElementById('meWhen').value||'').trim(); // datetime-local (lokal)
+      const ccy=(document.getElementById('meCcy').value||'').trim().toUpperCase();
+      const cat=(document.getElementById('meCat').value||'').trim();
+      if (!name || !whenStr){ alert('Eventname und Datum/Zeit sind erforderlich.'); return; }
+      // datetime-local → lokale Zeit -> ISO
+      const whenLocal = new Date(whenStr);
+      if (isNaN(whenLocal.getTime())){ alert('Ungültiges Datum/Zeit.'); return; }
+      macroEvents.push({ name, whenISO: whenLocal.toISOString(), currency: ccy, category: cat });
+      saveEvents(macroEvents); clearEventInputs(); refreshEventList();
     }
-    async function safeLoadFF(){ const now=Date.now(); if (now-ffLast<6*60*1000){ const el=document.getElementById('ffMsg'); if (el) el.textContent='Cooldown aktiv (≤6 Min.).'; return; } ffLast=now; await loadFFFromControls(); }
-    async function testFFKey(){ const el=document.getElementById('ffMsg'); try{ const r=await fetch(`${FF_PROXY}?period=today`,{cache:'no-store'}); const t=await r.text(); el.textContent=`HTTP ${r.status} ${r.statusText}`+(r.ok?' – OK':' – '+t.slice(0,120)); }catch(e){ el.textContent='Netzwerk/CORS: '+e; } }
+    function clearEventInputs(){ ['meName','meWhen','meCcy','meCat'].forEach(id=>{ const el=document.getElementById(id); if (id==='meCcy') el.value='USD'; else if (id==='meCat') el.value='CPI'; else el.value=''; }); }
+    function clearAllEvents(){ if (confirm('Alle Termine löschen?')){ macroEvents=[]; saveEvents(macroEvents); refreshEventList(); } }
 
-    // ===== Crash-Detection =====
-    function pctChange(a,b){ return ((b-a)/a)*100; }
-    function findPriceAt(msAgo){ const target=Date.now()-msAgo; for (let i=priceHistory.length-1;i>=0;i--) if (priceHistory[i].t<=target) return priceHistory[i].p; return null; }
-    function logCrash(msg){ if (pushEnabled) sendNotification('Preis‑Alarm', msg); }
-    function checkCrashSignals(){
-      const t1=-1, t5=-3, t15=-5, pNow=currentPrice;
-      const p1=findPriceAt(60*1000); if (p1){ const pc1=pctChange(p1,pNow); if (pc1<=t1) logCrash(`−${Math.abs(pc1).toFixed(2)}% in 1m → $${pNow.toLocaleString()}`); if (pc1>=Math.abs(t1)) logCrash(`+${pc1.toFixed(2)}% in 1m → $${pNow.toLocaleString()}`); }
-      const p5=findPriceAt(5*60*1000); if (p5){ const pc5=pctChange(p5,pNow); if (pc5<=t5) logCrash(`−${Math.abs(pc5).toFixed(2)}% in 5m → $${pNow.toLocaleString()}`); if (pc5>=Math.abs(t5)) logCrash(`+${pc5.toFixed(2)}% in 5m → $${pNow.toLocaleString()}`); }
-      const p15=findPriceAt(15*60*1000); if (p15){ const pc15=pctChange(p15,pNow); if (pc15<=t15) logCrash(`−${Math.abs(pc15).toFixed(2)}% in 15m → $${pNow.toLocaleString()}`); if (pc15>=Math.abs(t15)) logCrash(`+${pc15.toFixed(2)}% in 15m → $${pNow.toLocaleString()}`); }
-    }
+    // ===== DCA / SMA / ATH & Fibs =====
+    async function fetchDaily(limit=365){ const lim=Math.max(30,Math.min(1000,limit)); const url=`https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=${lim}`; const r=await fetch(url,{cache:'no-store'}); const a=await r.json(); return a.map(x=>({open:+x[1],high:+x[2],low:+x[3],close:+x[4],vol:+x[5],t:+x[0]})); }
+    function fmtUSD(n){ return '$'+Math.round(n).toLocaleString('en-US'); }
+    function dcaSim(kl,interval,amount){ const buys=[]; if (interval==='daily'){for(let i=0;i<kl.length;i++)buys.push(kl[i]);} else if (interval==='weekly'){for(let i=0;i<kl.length;i+=7)buys.push(kl[i]);} else {let lastM=-1; for(let i=0;i<kl.length;i++){const m=new Date(kl[i].t).getUTCMonth(); if(m!==lastM){buys.push(kl[i]); lastM=m;}}} let invested=0,coins=0; buys.forEach(b=>{invested+=amount; coins+=amount/b.close;}); const avg=invested/(coins||1e-9); return {invested,coins,avg}; }
+    async function runDCA(){ try{ const days=parseInt(document.getElementById('dcaDays').value,10); const interval=document.getElementById('dcaInterval').value; const amount=parseFloat(document.getElementById('dcaAmount').value); const kl=await fetchDaily(days); const res=dcaSim(kl,interval,amount); document.getElementById('dcaInvested').textContent=fmtUSD(res.invested); document.getElementById('dcaCoins').textContent=res.coins.toFixed(6)+' BTC'; document.getElementById('dcaAvg').textContent=fmtUSD(res.avg); const value=res.coins*currentPrice; document.getElementById('dcaValue').textContent=fmtUSD(value); const pl=value-res.invested; const sign=pl>=0?'+':''; document.getElementById('dcaPL').textContent=`${sign}${fmtUSD(pl)}`; }catch{ alert('DCA‑Berechnung fehlgeschlagen.'); } }
+    function sma(arr,period){ if (arr.length<period) return null; let sum=0; for(let i=arr.length-period;i<arr.length;i++) sum+=arr[i].close; return sum/period; }
+    function fibs(fromLow,toHigh){ const diff=toHigh-fromLow; return [{label:'23.6%',val:toHigh-0.236*diff},{label:'38.2%',val:toHigh-0.382*diff},{label:'50.0%',val:toHigh-0.5*diff},{label:'61.8%',val:toHigh-0.618*diff},{label:'78.6%',val:toHigh-0.786*diff}]; }
+    async function updateSMAZonesAndATH(){ try{ const kl=await fetchDaily(1000); const vSMA=sma(kl,200); if (vSMA){ document.getElementById('sma200').textContent=fmtUSD(vSMA); const zA=0.8*vSMA,zB2=0.9*vSMA,zC2=1.0*vSMA; document.getElementById('zoneA').textContent='≤ '+fmtUSD(zA); document.getElementById('zoneB').textContent=fmtUSD(0.8*vSMA)+' – '+fmtUSD(zB2); document.getElementById('zoneC').textContent=fmtUSD(0.9*vSMA)+' – '+fmtUSD(zC2); let status='Über SMA'; if (currentPrice<=zA) status='Zone A'; else if (currentPrice<=zB2) status='Zone B'; else if (currentPrice<=zC2) status='Zone C'; document.getElementById('zoneStatus').textContent=status; }
+      let ath={price:-Infinity,t:null}, low={price:Infinity,t:null}; for (const c of kl){ if(c.high>ath.price) ath={price:c.high,t:c.t}; if(c.low<low.price) low={price:c.low,t:c.t}; }
+      document.getElementById('athPrice').textContent=fmtUSD(ath.price); document.getElementById('athDate').textContent=new Date(ath.t).toISOString().slice(0,10);
+      const dist=((ath.price-currentPrice)/ath.price)*100; document.getElementById('athDist').textContent=dist>=0?dist.toFixed(2)+'% unter ATH':(-dist).toFixed(2)+'% über ATH';
+      const daysSince=Math.floor((Date.now()-ath.t)/86400000); document.getElementById('athDays').textContent=daysSince+' Tage';
+      const levels=fibs(low.price,ath.price); const fibWrap=document.getElementById('fibList'); fibWrap.innerHTML=''; levels.forEach(l=>{ const k=document.createElement('div'); k.textContent=l.label; fibWrap.appendChild(k); const v=document.createElement('div'); v.className='mono'; v.textContent=fmtUSD(l.val); fibWrap.appendChild(v); });
+    }catch{} }
+
+    // ===== Profit-Taking =====
+    function calcPT(){ const entry=parseFloat(document.getElementById('entryPrice').value||'0'); const steps=(document.getElementById('ptSteps').value||'10,20,30').split(',').map(s=>parseFloat(s.trim())).filter(x=>!isNaN(x)); const size=parseFloat(document.getElementById('ptSize').value||'0'); const ul=document.getElementById('ptList'); ul.innerHTML=''; steps.forEach(p=>{ const lvl=entry*(1+p/100); const li=document.createElement('li'); li.className='mt8'; const diff=((currentPrice-lvl)/lvl)*100; li.textContent=`${p}% → ${fmtUSD(lvl)} (${diff>=0?'+':''}${diff.toFixed(2)}% vs Spot) — Teilverkauf: ${(size*0.3333).toFixed(4)} BTC`; ul.appendChild(li); }); }
 
     // ===== Day-Trading =====
     const buf5m=[], buf15m=[];
@@ -464,18 +413,6 @@
     function volumeSpike(buf){ if (buf.length<25) return null; const last=buf[buf.length-1]; const avg=buf.slice(-21,-1).reduce((s,b)=>s+b.volume,0)/20; if (avg>0 && last.volume>1.5*avg){ document.getElementById('sigVol').textContent=`${(last.volume).toFixed(2)} (>1.5×)`; return `Volume‑Spike: ${(last.volume).toFixed(2)} (>1.5× 20‑Schnitt)`;} return null; }
     function updateSR(){ if (buf5m.length<50) return; const highs=buf5m.slice(-100).map(b=>b.high); const lows=buf5m.slice(-100).map(b=>b.low); const res=Math.max(...highs), sup=Math.min(...lows); document.getElementById('srResistance').textContent=`$${Math.round(res).toLocaleString('en-US')}`; document.getElementById('srSupport').textContent=`$${Math.round(sup).toLocaleString('en-US')}`; }
 
-    // ===== DCA / SMA / ATH & Fibs =====
-    async function fetchDaily(limit=365){ const lim=Math.max(30,Math.min(1000,limit)); const url=`https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=${lim}`; const r=await fetch(url,{cache:'no-store'}); const a=await r.json(); return a.map(x=>({open:+x[1],high:+x[2],low:+x[3],close:+x[4],vol:+x[5],t:+x[0]})); }
-    function fmtUSD(n){ return '$'+Math.round(n).toLocaleString('en-US'); }
-    function dcaSim(kl,interval,amount){ const buys=[]; if (interval==='daily'){for(let i=0;i<kl.length;i++)buys.push(kl[i]);} else if (interval==='weekly'){for(let i=0;i<kl.length;i+=7)buys.push(kl[i]);} else {let lastM=-1; for(let i=0;i<kl.length;i++){const m=new Date(kl[i].t).getUTCMonth(); if(m!==lastM){buys.push(kl[i]); lastM=m;}}} let invested=0,coins=0; buys.forEach(b=>{invested+=amount; coins+=amount/b.close;}); const avg=invested/(coins||1e-9); return {invested,coins,avg}; }
-    async function runDCA(){ try{ const days=parseInt(document.getElementById('dcaDays').value,10); const interval=document.getElementById('dcaInterval').value; const amount=parseFloat(document.getElementById('dcaAmount').value); const kl=await fetchDaily(days); const res=dcaSim(kl,interval,amount); document.getElementById('dcaInvested').textContent=fmtUSD(res.invested); document.getElementById('dcaCoins').textContent=res.coins.toFixed(6)+' BTC'; document.getElementById('dcaAvg').textContent=fmtUSD(res.avg); const value=res.coins*currentPrice; document.getElementById('dcaValue').textContent=fmtUSD(value); const pl=value-res.invested; const sign=pl>=0?'+':''; document.getElementById('dcaPL').textContent=`${sign}${fmtUSD(pl)}`; }catch{ alert('DCA‑Berechnung fehlgeschlagen.'); } }
-    function sma(arr,period){ if (arr.length<period) return null; let sum=0; for(let i=arr.length-period;i<arr.length;i++) sum+=arr[i].close; return sum/period; }
-    function fibs(fromLow,toHigh){ const diff=toHigh-fromLow; return [{label:'23.6%',val:toHigh-0.236*diff},{label:'38.2%',val:toHigh-0.382*diff},{label:'50.0%',val:toHigh-0.5*diff},{label:'61.8%',val:toHigh-0.618*diff},{label:'78.6%',val:toHigh-0.786*diff}]; }
-    async function updateSMAZonesAndATH(){ try{ const kl=await fetchDaily(1000); const vSMA=sma(kl,200); if (vSMA){ document.getElementById('sma200').textContent=fmtUSD(vSMA); const zA=0.8*vSMA,zB2=0.9*vSMA,zC2=1.0*vSMA; document.getElementById('zoneA').textContent='≤ '+fmtUSD(zA); document.getElementById('zoneB').textContent=fmtUSD(0.8*vSMA)+' – '+fmtUSD(zB2); document.getElementById('zoneC').textContent=fmtUSD(0.9*vSMA)+' – '+fmtUSD(zC2); let status='Über SMA'; if (currentPrice<=zA) status='Zone A'; else if (currentPrice<=zB2) status='Zone B'; else if (currentPrice<=zC2) status='Zone C'; document.getElementById('zoneStatus').textContent=status; } let ath={price:-Infinity,t:null}, low={price:Infinity,t:null}; const kl2=await fetchDaily(1000); for (const c of kl2){ if(c.high>ath.price) ath={price:c.high,t:c.t}; if(c.low<low.price) low={price:c.low,t:c.t}; } document.getElementById('athPrice').textContent=fmtUSD(ath.price); document.getElementById('athDate').textContent=new Date(ath.t).toISOString().slice(0,10); const dist=((ath.price-currentPrice)/ath.price)*100; document.getElementById('athDist').textContent=dist>=0?dist.toFixed(2)+'% unter ATH':(-dist).toFixed(2)+'% über ATH'; const daysSince=Math.floor((Date.now()-ath.t)/86400000); document.getElementById('athDays').textContent=daysSince+' Tage'; const levels=fibs(low.price,ath.price); const fibWrap=document.getElementById('fibList'); fibWrap.innerHTML=''; levels.forEach(l=>{ const k=document.createElement('div'); k.textContent=l.label; fibWrap.appendChild(k); const v=document.createElement('div'); v.className='mono'; v.textContent=fmtUSD(l.val); fibWrap.appendChild(v); }); }catch{} }
-
-    // ===== Profit-Taking =====
-    function calcPT(){ const entry=parseFloat(document.getElementById('entryPrice').value||'0'); const steps=(document.getElementById('ptSteps').value||'10,20,30').split(',').map(s=>parseFloat(s.trim())).filter(x=>!isNaN(x)); const size=parseFloat(document.getElementById('ptSize').value||'0'); const ul=document.getElementById('ptList'); ul.innerHTML=''; steps.forEach(p=>{ const lvl=entry*(1+p/100); const li=document.createElement('li'); li.className='mt8'; const diff=((currentPrice-lvl)/lvl)*100; li.textContent=`${p}% → ${fmtUSD(lvl)} (${diff>=0?'+':''}${diff.toFixed(2)}% vs Spot) — Teilverkauf: ${(size*0.3333).toFixed(4)} BTC`; ul.appendChild(li); }); }
-
     // ===== Push =====
     function enablePush(){ if (!('Notification' in window)) { alert('Browser unterstützt keine Push‑Benachrichtigungen.'); return; } if (Notification.permission==='granted'){ pushEnabled=true; updatePushButton(); sendNotification('BTC Monitor','Push aktiv.'); return; } Notification.requestPermission().then(p=>{ if(p==='granted'){ pushEnabled=true; updatePushButton(); sendNotification('BTC Monitor','Push aktiv.'); } else alert('Push abgelehnt.'); }); }
     function updatePushButton(){ const btn=document.getElementById('pushBtn'); if (pushEnabled){ btn.innerHTML='✅ Push aktiv'; btn.className='btn btn-success'; } }
@@ -483,19 +420,15 @@
 
     // ===== Controls =====
     function toggleMonitoring(){ isMonitoring=!isMonitoring; const btn=document.getElementById('monitorBtn'); if (isMonitoring){ btn.innerHTML='⏸️ Pausieren'; btn.className='btn btn-warning'; } else { btn.innerHTML='▶️ Starten'; btn.className='btn btn-success'; } if (pushEnabled) sendNotification('Monitor', isMonitoring?'gestartet':'pausiert'); }
-    function forceUpdate(){ pollOnce(); fetchLastHourClose(); fetchFearGreed(); updateSMAZonesAndATH(); safeLoadFF(); if (pushEnabled) sendNotification('Daten aktualisiert', `Spot: $${currentPrice.toLocaleString()}`); const btn=document.getElementById('refreshBtn'); const t=btn.innerHTML; btn.innerHTML='🔄 Updating…'; btn.disabled=true; setTimeout(()=>{btn.innerHTML=t; btn.disabled=false;},900); }
+    function forceUpdate(){ pollOnce(); fetchLastHourClose(); fetchFearGreed(); updateSMAZonesAndATH(); refreshEventList(); if (pushEnabled) sendNotification('Daten aktualisiert', `Spot: $${currentPrice.toLocaleString()}`); const btn=document.getElementById('refreshBtn'); const t=btn.innerHTML; btn.innerHTML='🔄 Updating…'; btn.disabled=true; setTimeout(()=>{btn.innerHTML=t; btn.disabled=false;},900); }
 
-    // ===== Service Worker (kein Cache für /api/ff) =====
+    // ===== Service Worker (Standard) =====
     const SW_CODE = `
-      const CACHE_NAME='btc-monitor-v2.4.4';
+      const CACHE_NAME='btc-monitor-v2.5.0-lite';
       self.addEventListener('install',e=>{self.skipWaiting();});
       self.addEventListener('activate',e=>{e.waitUntil((async()=>{const ks=await caches.keys(); await Promise.all(ks.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k))); self.clients.claim();})());});
       self.addEventListener('fetch',e=>{
         const req=e.request;
-        try{
-          const u=new URL(req.url);
-          if (u.pathname.startsWith('/api/ff')){ e.respondWith(fetch(req)); return; }
-        }catch{}
         if (req.mode==='navigate'){
           e.respondWith((async()=>{try{const fresh=await fetch(req); const c=await caches.open(CACHE_NAME); c.put(req,fresh.clone()); return fresh;}catch(e){const cached=await caches.match(req); return cached||Response.error();}})()); return;
         }
@@ -512,33 +445,83 @@
         categories:["finance","productivity","utilities"] };
       const blob=new Blob([JSON.stringify(manifest,null,2)],{type:'application/json'});
       const url=URL.createObjectURL(blob);
-      const link=document.createElement('link'); link.rel='manifest'; link.href=url+'?v=2.4.4'; document.head.appendChild(link);
+      const link=document.createElement('link'); link.rel='manifest'; link.href=url+'?v=2.5.0-lite'; document.head.appendChild(link);
     }
 
-    // ===== Events =====
-    document.getElementById('pushBtn').addEventListener('click', enablePush);
-    document.getElementById('monitorBtn').addEventListener('click', toggleMonitoring);
-    document.getElementById('refreshBtn').addEventListener('click', forceUpdate);
-    document.getElementById('dcaCalcBtn').addEventListener('click', runDCA);
-    document.getElementById('ptCalcBtn').addEventListener('click', calcPT);
-    document.getElementById('ffLoad').addEventListener('click', safeLoadFF);
-    document.getElementById('ffTest').addEventListener('click', testFFKey);
-    ['ffDays','ffTopOnly','ffFx','ffFilter'].forEach(id=>{
-      const el=document.getElementById(id); el.addEventListener('input', ()=>{ if (ffEvents.length) applyFFToUI(ffEvents); });
-    });
-    document.querySelectorAll('.ffDow').forEach(cb=>cb.addEventListener('change', ()=>{ if (ffEvents.length) applyFFToUI(ffEvents); }));
-    document.getElementById('ffRange').addEventListener('change', ()=>{ safeLoadFF(); });
+    // ===== Day-Trading Helfer =====
+    const buf5m=[], buf15m=[];
+    function onKlineWrapper(tf,k){ onKline(tf,k); } // alias, falls erweitert
+
+    function onKline(tf,k){
+      const obj={open:+k.o,high:+k.h,low:+k.l,close:+k.c,volume:+k.v,closed:k.x,t:k.t};
+      const buf=tf==='5m'?buf5m:buf15m;
+      if (buf.length && buf[buf.length-1].t===obj.t) buf[buf.length-1]=obj; else buf.push(obj);
+      while (buf.length>200) buf.shift();
+
+      if (dayModeOn){
+        const sig=computeSignals(buf);
+        if (sig && obj.closed){
+          const msg=`${tf} ${sig.type} @ ${obj.close.toFixed(0)} (RSI ${sig.rsi.toFixed(0)}, EMA9/21 ${sig.ema9.toFixed(0)}/${sig.ema21.toFixed(0)})`;
+          if (pushEnabled) sendNotification('Day‑Trading', msg);
+        }
+        const volMsg=volumeSpike(buf); if (volMsg && obj.closed && pushEnabled) sendNotification('Day‑Trading', `${tf} ${volMsg}`);
+        updateSR();
+      }
+    }
 
     // ===== Init =====
+    function generateWSURL(){
+      return 'wss://stream.binance.com:9443/stream?streams=btcusdt@ticker|btcusdt@kline_5m|btcusdt@kline_15m';
+    }
+
+    // EMA/RSI/Volume (oben schon definiert)
+
     async function init(){
       generateManifest(); registerServiceWorker();
+
+      // Manuelle Events laden
+      macroEvents = loadEvents();
+      refreshEventList();
+
+      // UI-Events
+      document.getElementById('meAdd').addEventListener('click', addEvent);
+      document.getElementById('meClear').addEventListener('click', clearAllEvents);
+
+      // Countdowns
       updateCountdowns(); setInterval(()=>{ updateCountdowns(); updateCounter++; }, 1000);
+
+      // Live Daten
       startPriceStream(); fetchLastHourClose(); setInterval(fetchLastHourClose, 60*1000);
+
+      // Fear & Greed + SMA/ATH
       fetchFearGreed(); updateSMAZonesAndATH();
-      safeLoadFF(); setInterval(()=>{ safeLoadFF(); }, 30*60*1000);
+
+      // Controls
+      document.getElementById('pushBtn').addEventListener('click', enablePush);
+      document.getElementById('monitorBtn').addEventListener('click', toggleMonitoring);
+      document.getElementById('refreshBtn').addEventListener('click', forceUpdate);
+      document.getElementById('dcaCalcBtn').addEventListener('click', runDCA);
+      document.getElementById('ptCalcBtn').addEventListener('click', calcPT);
+
+      console.log('✅ BTC Monitor v2.5.0‑lite gestartet');
     }
+
     if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
+
+    // ===== Indikator-/Signal-Funktionen (aus Platzgründen hier kompakt) =====
+    function ema(arr,period,acc){ const k=2/(period+1); let v=acc(arr[0]); for(let i=1;i<arr.length;i++) v=acc(arr[i])*k+v*(1-k); return v; }
+    function rsi(arr,period=14){ if (arr.length<period+1) return 50; let g=0,l=0; for(let i=arr.length-period;i<arr.length;i++){const ch=arr[i].close-arr[i-1].close; if(ch>0)g+=ch; else l-=ch;} const avgG=g/period, avgL=(l/period)||1e-9; const rs=avgG/avgL; return 100-(100/(1+rs)); }
+    function computeSignals(buf){ if (buf.length<21) return null; const ema9=ema(buf.slice(-50),9,x=>x.close); const ema21=ema(buf.slice(-50),21,x=>x.close); const r=rsi(buf,14); let type=null; if (ema9>ema21&&r>55) type='BUY'; if (ema9<ema21&&r<45) type='SELL'; if (!type) return null; return {type,rsi:r,ema9,ema21}; }
+    function volumeSpike(buf){ if (buf.length<25) return null; const last=buf[buf.length-1]; const avg=buf.slice(-21,-1).reduce((s,b)=>s+b.volume,0)/20; if (avg>0 && last.volume>1.5*avg){ document.getElementById('sigVol').textContent=`${(last.volume).toFixed(2)} (>1.5×)`; return `Volume‑Spike: ${(last.volume).toFixed(2)} (>1.5× 20‑Schnitt)`;} return null; }
+    function updateSR(){ if (buf5m.length<50) return; const highs=buf5m.slice(-100).map(b=>b.high); const lows=buf5m.slice(-100).map(b=>b.low); const res=Math.max(...highs), sup=Math.min(...lows); document.getElementById('srResistance').textContent=`$${Math.round(res).toLocaleString('en-US')}`; document.getElementById('srSupport').textContent=`$${Math.round(sup).toLocaleString('en-US')}`; }
+    function pctChange(a,b){ return ((b-a)/a)*100; }
+    function findPriceAt(msAgo){ const target=Date.now()-msAgo; for (let i=priceHistory.length-1;i>=0;i--) if (priceHistory[i].t<=target) return priceHistory[i].p; return null; }
+    function logCrash(msg){ if (pushEnabled) sendNotification('Preis‑Alarm', msg); }
+    function checkCrashSignals(){ const t1=-1, t5=-3, t15=-5, pNow=currentPrice;
+      const p1=findPriceAt(60*1000); if (p1){ const pc1=pctChange(p1,pNow); if (pc1<=t1) logCrash(`−${Math.abs(pc1).toFixed(2)}% in 1m → $${pNow.toLocaleString()}`); if (pc1>=Math.abs(t1)) logCrash(`+${pc1.toFixed(2)}% in 1m → $${pNow.toLocaleString()}`); }
+      const p5=findPriceAt(5*60*1000); if (p5){ const pc5=pctChange(p5,pNow); if (pc5<=t5) logCrash(`−${Math.abs(pc5).toFixed(2)}% in 5m → $${pNow.toLocaleString()}`); if (pc5>=Math.abs(t5)) logCrash(`+${pc5.toFixed(2)}% in 5m → $${pNow.toLocaleString()}`); }
+      const p15=findPriceAt(15*60*1000); if (p15){ const pc15=pctChange(p15,pNow); if (pc15<=t15) logCrash(`−${Math.abs(pc15).toFixed(2)}% in 15m → $${pNow.toLocaleString()}`); if (pc15>=Math.abs(t15)) logCrash(`+${pc15.toFixed(2)}% in 15m → $${pNow.toLocaleString()}`); }
+    }
   </script>
 </body>
 </html>
-
