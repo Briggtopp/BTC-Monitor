@@ -1,780 +1,1005 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- PWA Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="BTC Monitor">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="BTC Monitor">
-    <meta name="theme-color" content="#10b981">
-    <meta name="msapplication-TileColor" content="#10b981">
-    
-    <title>🚀 BTC Trading Monitor</title>
-    
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 15px;
-            color: #333;
-        }
+  <!-- PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="BTC Monitor" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="BTC Monitor" />
+  <meta name="theme-color" content="#10b981" />
+  <meta name="msapplication-TileColor" content="#10b981" />
 
-        .container { max-width: 1200px; margin: 0 auto; display: grid; gap: 20px; }
-        .header {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            padding: 25px; border-radius: 20px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .price-display { font-size: 3rem; font-weight: bold; color: #10b981; margin: 15px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .countdown-container {
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
-            padding: 25px; border-radius: 20px; text-align: center; margin: 20px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .countdown-title { font-size: 1.3rem; color: #374151; margin-bottom: 15px; font-weight: 600; }
-        .countdown-display { font-size: 2.5rem; font-weight: bold; color: #ef4444; margin: 10px 0; font-family: 'Courier New', monospace; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .countdown-details { font-size: 1rem; color: #6b7280; margin-top: 10px; }
-        .volatility-info { background: #fef3c7; border: 1px solid #f59e0b; padding: 12px; border-radius: 10px; margin-top: 15px; font-size: 0.9rem; color: #92400e; }
+  <title>🚀 BTC Trading Monitor</title>
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card {
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
-            padding: 25px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-        .card-title { font-size: 1.2rem; font-weight: 600; color: #374151; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh; padding: 15px; color: #333;
+    }
+    .container { max-width: 1260px; margin: 0 auto; display: grid; gap: 20px; }
+    .header {
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+      padding: 25px; border-radius: 20px; text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .price-display { font-size: 3rem; font-weight: bold; color: #10b981; margin: 15px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .countdown-container {
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+      padding: 25px; border-radius: 20px; text-align: center; margin: 20px 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .countdown-title { font-size: 1.3rem; color: #374151; margin-bottom: 15px; font-weight: 600; }
+    .countdown-display { font-size: 2.5rem; font-weight: bold; color: #ef4444; margin: 10px 0; font-family: 'Courier New', monospace; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .countdown-details { font-size: 1rem; color: #6b7280; margin-top: 10px; }
+    .volatility-info { background: #fef3c7; border: 1px solid #f59e0b; padding: 12px; border-radius: 10px; margin-top: 15px; font-size: 0.9rem; color: #92400e; }
 
-        .phase-item { background: #f9fafb; border: 2px solid #e5e7eb; padding: 15px; border-radius: 10px; margin: 10px 0; transition: all 0.3s ease; }
-        .phase-active { background: #d1fae5; border-color: #10b981; transform: scale(1.02); }
-        .phase-title { font-weight: 600; font-size: 1rem; margin-bottom: 5px; }
-        .phase-range { font-size: 0.85rem; color: #6b7280; margin-bottom: 8px; }
-        .phase-status { font-size: 0.85rem; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-block; }
-        .status-active { background: #10b981; color: white; }
-        .status-waiting { background: #f3f4f6; color: #6b7280; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+    .card {
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+      padding: 25px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    .card-title { font-size: 1.2rem; font-weight: 600; color: #374151; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
 
-        .trigger-list { display: grid; gap: 8px; }
-        .trigger-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9fafb; border-radius: 8px; font-size: 0.9rem; border: 1px solid transparent; transition: all 0.3s ease; }
-        .trigger-active { background: #d1fae5; border-color: #10b981; color: #065f46; animation: pulse 2s infinite; }
+    .phase-item { background: #f9fafb; border: 2px solid #e5e7eb; padding: 15px; border-radius: 10px; margin: 10px 0; transition: all 0.3s ease; }
+    .phase-active { background: #d1fae5; border-color: #10b981; transform: scale(1.02); }
+    .phase-title { font-weight: 600; font-size: 1rem; margin-bottom: 5px; }
+    .phase-range { font-size: 0.85rem; color: #6b7280; margin-bottom: 8px; }
+    .phase-status { font-size: 0.85rem; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-block; }
+    .status-active { background: #10b981; color: #fff; }
+    .status-waiting { background: #f3f4f6; color: #6b7280; }
 
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-        .status-dot { width: 12px; height: 12px; border-radius: 50%; background: #d1d5db; }
-        .status-dot.active { background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+    .trigger-list { display: grid; gap: 8px; }
+    .trigger-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9fafb; border-radius: 8px; font-size: 0.9rem; border: 1px solid transparent; transition: all 0.3s ease; }
+    .trigger-active { background: #d1fae5; border-color: #10b981; color: #065f46; animation: pulse 2s infinite; }
 
-        .btn {
-            background: #3b82f6; color: white; border: none; padding: 12px 20px; border-radius: 10px;
-            font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem;
-            display: flex; align-items: center; justify-content: center; gap: 8px; margin: 10px 5px; min-height: 44px; touch-action: manipulation;
-        }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
-        .btn-success { background: #10b981; }
-        .btn-warning { background: #f59e0b; }
-        .btn-danger { background: #ef4444; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    .status-dot { width: 12px; height: 12px; border-radius: 50%; background: #d1d5db; }
+    .status-dot.active { background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
 
-        .button-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 15px; }
+    .btn {
+      background: #3b82f6; color: #fff; border: none; padding: 12px 20px; border-radius: 10px;
+      font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin: 6px 6px; min-height: 44px; touch-action: manipulation;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59,130,246,0.4); }
+    .btn-success { background: #10b981; }
+    .btn-warning { background: #f59e0b; }
+    .btn-danger { background: #ef4444; }
+    .btn-outline { background: #fff; color: #374151; border: 1px solid #e5e7eb; }
 
-        .alert-box { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 15px; border-radius: 10px; margin: 15px 0; font-size: 0.9rem; }
-        .success-box { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 15px; border-radius: 10px; margin: 15px 0; font-size: 0.9rem; }
+    .button-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 15px; }
 
-        .install-banner {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white; padding: 15px 20px; border-radius: 15px; margin-bottom: 20px;
-            display: none; align-items: center; justify-content: space-between;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-        .install-text { font-size: 1rem; font-weight: 500; }
-        .install-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
-        .install-btn:hover { background: rgba(255,255,255,0.3); }
+    .alert-box { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 15px; border-radius: 10px; margin: 15px 0; font-size: 0.9rem; }
+    .success-box { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 15px; border-radius: 10px; margin: 15px 0; font-size: 0.9rem; }
 
-        .fear-greed-meter { background: #f9fafb; padding: 20px; border-radius: 10px; margin: 15px 0; text-align: center; }
-        .meter-value { font-size: 2rem; font-weight: bold; margin: 10px 0; }
-        .meter-bar { height: 10px; background: linear-gradient(90deg, #ef4444 0%, #f59e0b 25%, #eab308 50%, #84cc16 75%, #10b981 100%); border-radius: 5px; position: relative; margin: 15px 0; }
-        .meter-indicator { position: absolute; top: -5px; width: 20px; height: 20px; background: white; border: 3px solid #374151; border-radius: 50%; transform: translateX(-50%); transition: left 0.5s ease; }
+    .kv { display: grid; grid-template-columns: 1fr auto; gap: 6px 10px; font-size: 0.9rem; }
+    .small { font-size: 0.85rem; color: #6b7280; }
+    .muted { color: #6b7280; }
+    .mono { font-family: 'Courier New', monospace; }
 
-        @media (max-width: 768px) {
-            .price-display { font-size: 2.2rem; }
-            .countdown-display { font-size: 1.8rem; }
-            .grid { grid-template-columns: 1fr; }
-            .container { padding: 10px; }
-            .button-row { flex-direction: column; }
-            .install-banner { flex-direction: column; text-align: center; gap: 10px; }
-        }
-    </style>
+    input, select {
+      padding: 10px 12px; border-radius: 8px; border: 1px solid #e5e7eb;
+      width: 100%; outline: none; font-size: 0.95rem; background: #fff;
+    }
+    .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .mt8 { margin-top: 8px; } .mt12 { margin-top: 12px; } .mt16 { margin-top: 16px; } .mt20 { margin-top: 20px; }
+    .ok { color: #10b981; } .warn { color: #f59e0b; } .bad { color: #ef4444; }
+    .pill { display:inline-block; padding: 4px 8px; border-radius: 999px; font-size: 0.8rem; border:1px solid #e5e7eb; background:#fff; }
+
+    @media (max-width: 768px) {
+      .price-display { font-size: 2.2rem; }
+      .countdown-display { font-size: 1.8rem; }
+      .grid { grid-template-columns: 1fr; }
+      .container { padding: 10px; }
+      .button-row { flex-direction: column; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Installation Banner -->
-        <div class="install-banner" id="installBanner">
-            <div class="install-text">📱 Als App installieren für beste Erfahrung</div>
-            <button class="install-btn" id="installBtn">Installieren</button>
-        </div>
-        
-        <!-- Header -->
-        <div class="header">
-            <h1>🚀 BTC Trading Monitor</h1>
-            <p>GitHub PWA - 560k USDT → 5.05 BTC Ziel</p>
-            <div class="price-display" id="btcPrice">$119,540</div>
-            <div id="priceChange">+1.03% (24h)</div>
-            
-            <div class="button-row">
-                <button class="btn btn-warning" id="pushBtn">🔔 Push aktivieren</button>
-                <button class="btn btn-success" id="refreshBtn">🔄 Aktualisieren</button>
-                <button class="btn" id="monitorBtn">⏸️ Pausieren</button>
-            </div>
-        </div>
-        
-        <!-- FOMC Countdown -->
-        <div class="countdown-container">
-            <div class="countdown-title">⏰ FOMC Meeting Countdown</div>
-            <div class="countdown-display" id="fomcCountdown">Wird geladen...</div>
-            <div class="countdown-details">30. Juli 2025, 14:00 UTC (16:00 MESZ)</div>
-            <div class="volatility-info">
-                📊 Historische Daten: 78% Wahrscheinlichkeit für 8-12% Volatilität<br>
-                🎯 Target: $109k-$114k Bereich (Phase 2)
-            </div>
-        </div>
-        
-        <!-- Main Grid -->
-        <div class="grid">
-            <!-- Trading Phasen -->
-            <div class="card">
-                <div class="card-title">💰 Trading Phasen</div>
-                
-                <div class="phase-item phase-active" id="phase1">
-                    <div class="phase-title">Phase 1 (25%)</div>
-                    <div class="phase-range">$116,000 - $119,000 | 140k USDT</div>
-                    <div class="phase-status status-active" id="phase1Status">🎯 AKTIV</div>
-                </div>
-                
-                <div class="phase-item" id="phase2">
-                    <div class="phase-title">Phase 2 (50%)</div>
-                    <div class="phase-range">$109,000 - $114,000 | 280k USDT</div>
-                    <div class="phase-status status-waiting" id="phase2Status">Wartend</div>
-                </div>
-                
-                <div class="phase-item" id="phase3">
-                    <div class="phase-title">Phase 3 (25%)</div>
-                    <div class="phase-range">$103,000 - $108,000 | 140k USDT</div>
-                    <div class="phase-status status-waiting" id="phase3Status">Reserve</div>
-                </div>
-            </div>
-            
-            <!-- Trigger Status -->
-            <div class="card">
-                <div class="card-title">📊 Trigger Status</div>
-                <div class="trigger-list">
-                    <div class="trigger-item" id="trigger1">
-                        <span>1h Close > $118,400</span>
-                        <div class="status-dot" id="dot1"></div>
-                    </div>
-                    <div class="trigger-item trigger-active" id="trigger2">
-                        <span>Spot ≥ $119,100</span>
-                        <div class="status-dot active" id="dot2"></div>
-                    </div>
-                    <div class="trigger-item" id="trigger3">
-                        <span>Spot ≤ $117,200</span>
-                        <div class="status-dot" id="dot3"></div>
-                    </div>
-                    <div class="trigger-item" id="trigger4">
-                        <span>Zone $116.4k-$116.9k</span>
-                        <div class="status-dot" id="dot4"></div>
-                    </div>
-                    <div class="trigger-item" id="trigger5">
-                        <span>Spot ≤ $116,100</span>
-                        <div class="status-dot" id="dot5"></div>
-                    </div>
-                    <div class="trigger-item" id="trigger6">
-                        <span>Spot ≤ $114,500</span>
-                        <div class="status-dot" id="dot6"></div>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 0.9rem; color: #6b7280;">
-                    Letzter 1h Close: <strong id="lastClose">$118,062</strong>
-                </div>
-            </div>
-            
-            <!-- PCE Countdown -->
-            <div class="card">
-                <div class="card-title">📊 PCE Data Countdown</div>
-                <div style="text-align: center; padding: 20px;">
-                    <div style="font-size: 1.8rem; font-weight: bold; color: #f59e0b;" id="pceCountdown">
-                        Wird geladen...
-                    </div>
-                    <div style="font-size: 0.9rem; color: #6b7280; margin-top: 5px;">
-                        31. Juli 2025, 12:30 UTC
-                    </div>
-                    <div style="font-size: 0.9rem; color: #059669; margin-top: 10px;">
-                        45% Wahrscheinlichkeit für Phase 3 Level
-                    </div>
-                </div>
-            </div>
-
-            <!-- Fear & Greed Meter -->
-            <div class="card">
-                <div class="card-title">😱 Fear & Greed Index</div>
-                <div class="fear-greed-meter">
-                    <div class="meter-value" id="fearGreedValue">72</div>
-                    <div style="font-size: 0.9rem; color: #6b7280; margin-bottom: 15px;">Greed</div>
-                    <div class="meter-bar">
-                        <div class="meter-indicator" id="fearGreedIndicator" style="left: 72%;"></div>
-                    </div>
-                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 10px;">
-                        Letztes Update: <span id="fearGreedTime">vor 2h</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Aktuelle Empfehlungen -->
-        <div class="card">
-            <div class="card-title">🎯 Trading Empfehlungen</div>
-            <div class="alert-box">
-                <strong>⏰ FOMC Event in Kürze!</strong><br>
-                280k USDT für Phase 2 ($109k-$114k) bereithalten.
-            </div>
-            <div class="success-box" id="currentRecommendation">
-                <strong>📍 Aktuelle Position: Short-Cluster Zone</strong><br>
-                $119,540 - Stop-Hunt möglich. Bereit für Dip-Kauf in tiefere Level.
-            </div>
-        </div>
-        
-        <!-- GitHub Info -->
-        <div class="card">
-            <div class="card-title">ℹ️ App Info</div>
-            <div style="font-size: 0.9rem; color: #6b7280;">
-                <p><strong>GitHub PWA Version 2.1</strong></p>
-                <p>📡 Live-Updates: Echtzeit (WS) + Fallback 5s</p>
-                <p>🔔 Push-Notifications: Verfügbar</p>
-                <p>📱 Installation: Alle Browser</p>
-                <p>⚡ Offline-fähig</p>
-                <p>🎯 Letztes Update: <span id="lastUpdate">vor wenigen Sekunden</span></p>
-            </div>
-        </div>
+  <div class="container">
+    <!-- Install Banner -->
+    <div class="install-banner" id="installBanner" style="display:none">
+      <div class="install-text">📱 Als App installieren</div>
+      <button class="install-btn btn btn-outline" id="installBtn">Installieren</button>
     </div>
 
-    <script>
-        // ------------------------
-        // Global Variables
-        // ------------------------
-        let currentPrice = 119540;
-        let lastHourClose = 118062;
-        let pushEnabled = false;
-        let isMonitoring = true;
-        let deferredPrompt;
-        let updateCounter = 0;
-        let fearGreedIndex = 72;
+    <!-- Header -->
+    <div class="header">
+      <h1>🚀 BTC Trading Monitor</h1>
+      <p>GitHub PWA — Live BTC/USDT</p>
+      <div class="price-display" id="btcPrice">$119,540</div>
+      <div id="priceChange">+1.03% (24h)</div>
 
-        // FOMC & PCE Termine
-        const FOMC_DATE = new Date('2025-07-30T14:00:00Z');
-        const PCE_DATE  = new Date('2025-07-31T12:30:00Z');
+      <div class="button-row">
+        <button class="btn btn-warning" id="pushBtn">🔔 Push aktivieren</button>
+        <button class="btn btn-success" id="refreshBtn">🔄 Aktualisieren</button>
+        <button class="btn" id="monitorBtn">⏸️ Pausieren</button>
+      </div>
+    </div>
 
-        // ------------------------
-        // PWA Installation Handler
-        // ------------------------
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installBanner').style.display = 'flex';
-        });
+    <!-- FOMC Countdown -->
+    <div class="countdown-container">
+      <div class="countdown-title">⏰ Nächster FOMC Countdown</div>
+      <div class="countdown-display" id="fomcCountdown">Wird geladen...</div>
+      <div class="countdown-details" id="fomcDetail">Konfiguriert über Fed‑Termine unten</div>
+      <div class="volatility-info">
+        ⚠️ An FOMC‑Tagen ist erhöhte Volatilität üblich. Crash‑Detection & Alerts helfen, schnelle Moves zu erfassen.
+      </div>
+    </div>
 
-        document.getElementById('installBtn').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    document.getElementById('installBanner').style.display = 'none';
-                    if (pushEnabled) {
-                        sendNotification('App installiert!', 'BTC Monitor wurde erfolgreich installiert!');
-                    }
-                }
-                deferredPrompt = null;
-            }
-        });
+    <!-- Grid -->
+    <div class="grid">
+      <!-- Trading Phasen -->
+      <div class="card">
+        <div class="card-title">💰 Trading Phasen</div>
+        <div class="phase-item" id="phase1">
+          <div class="phase-title">Phase 1 (25%)</div>
+          <div class="phase-range">$116,000 – $119,000 | 140k USDT</div>
+          <div class="phase-status status-waiting" id="phase1Status">Bereit</div>
+        </div>
+        <div class="phase-item" id="phase2">
+          <div class="phase-title">Phase 2 (50%)</div>
+          <div class="phase-range">$109,000 – $114,000 | 280k USDT</div>
+          <div class="phase-status status-waiting" id="phase2Status">Wartend</div>
+        </div>
+        <div class="phase-item" id="phase3">
+          <div class="phase-title">Phase 3 (25%)</div>
+          <div class="phase-range">$103,000 – $108,000 | 140k USDT</div>
+          <div class="phase-status status-waiting" id="phase3Status">Reserve</div>
+        </div>
+      </div>
 
-        // ------------------------
-        // Countdowns
-        // ------------------------
-        function updateCountdowns() {
-            const now = new Date();
-            
-            // FOMC Countdown
-            const fomcDiff = FOMC_DATE - now;
-            if (fomcDiff > 0) {
-                const days = Math.floor(fomcDiff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((fomcDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((fomcDiff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((fomcDiff % (1000 * 60)) / 1000);
-                let fomcText = '';
-                if (days > 0) fomcText += `${days}d `;
-                fomcText += `${hours}h ${minutes}m ${seconds}s`;
-                document.getElementById('fomcCountdown').textContent = fomcText;
-                if (fomcDiff < 24 * 60 * 60 * 1000) {
-                    document.getElementById('fomcCountdown').style.color = '#dc2626';
-                }
-            } else {
-                document.getElementById('fomcCountdown').textContent = 'FOMC LIVE!';
-                document.getElementById('fomcCountdown').style.color = '#dc2626';
-            }
-            
-            // PCE Countdown
-            const pceDiff = PCE_DATE - now;
-            if (pceDiff > 0) {
-                const days = Math.floor(pceDiff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((pceDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((pceDiff % (1000 * 60 * 60)) / (1000 * 60));
-                let pceText = '';
-                if (days > 0) pceText += `${days}d `;
-                pceText += `${hours}h ${minutes}m`;
-                document.getElementById('pceCountdown').textContent = `PCE in ${pceText}`;
-            } else {
-                document.getElementById('pceCountdown').textContent = 'PCE veröffentlicht';
-            }
-        }
+      <!-- Trigger Status -->
+      <div class="card">
+        <div class="card-title">📊 Trigger Status</div>
+        <div class="trigger-list">
+          <div class="trigger-item" id="trigger1">
+            <span>1h Close > $118,400</span><div class="status-dot" id="dot1"></div>
+          </div>
+          <div class="trigger-item" id="trigger2">
+            <span>Spot ≥ $119,100</span><div class="status-dot" id="dot2"></div>
+          </div>
+          <div class="trigger-item" id="trigger3">
+            <span>Spot ≤ $117,200</span><div class="status-dot" id="dot3"></div>
+          </div>
+          <div class="trigger-item" id="trigger4">
+            <span>Zone $116.4k–$116.9k</span><div class="status-dot" id="dot4"></div>
+          </div>
+          <div class="trigger-item" id="trigger5">
+            <span>Spot ≤ $116,100</span><div class="status-dot" id="dot5"></div>
+          </div>
+          <div class="trigger-item" id="trigger6">
+            <span>Spot ≤ $114,500</span><div class="status-dot" id="dot6"></div>
+          </div>
+        </div>
+        <div class="mt12 small">
+          Letzter 1h Close: <strong id="lastClose">$118,062</strong>
+        </div>
+      </div>
 
-        // ------------------------
-        // LIVE-PREIS (Binance)
-        // ------------------------
-        const PRICE_SOURCE = 'binance';
-        let _priceWS = null;
-        let _pollTimer = null;
+      <!-- PCE Countdown -->
+      <div class="card">
+        <div class="card-title">📊 PCE Data Countdown</div>
+        <div style="text-align:center; padding: 20px;">
+          <div style="font-size:1.8rem; font-weight:bold; color:#f59e0b;" id="pceCountdown">Wird geladen…</div>
+          <div class="small">31. Juli 2025, 12:30 UTC</div>
+          <div class="small ok mt8">Hinweis: Makrodaten können starke Bewegungen auslösen.</div>
+        </div>
+      </div>
 
-        function applyPriceUpdate(priceFloat, changePctFloat) {
-            currentPrice = Math.round(priceFloat);
+      <!-- Fear & Greed -->
+      <div class="card">
+        <div class="card-title">😱 Fear & Greed Index</div>
+        <div class="kv">
+          <div>Aktueller Wert</div><div class="mono" id="fearGreedValue">–</div>
+          <div>Interpretation</div><div id="fearGreedText" class="mono">–</div>
+          <div>Letztes Update</div><div id="fearGreedTime" class="mono">–</div>
+        </div>
+        <div class="meter-bar mt12"><div class="meter-indicator" id="fearGreedIndicator" style="left:50%"></div></div>
+        <div class="small muted mt8" id="fearGreedNote">Versuch Live‑Abruf (alternative.me). Fallback bei CORS.</div>
+      </div>
 
-            // Preisanzeige
-            document.getElementById('btcPrice').textContent = `$${currentPrice.toLocaleString('en-US')}`;
+      <!-- Fed-Termine -->
+      <div class="card">
+        <div class="card-title">🗓️ Nächste Fed‑Termine</div>
+        <div class="row">
+          <div>
+            <label class="small muted">Neuer Termin (UTC, ISO 8601)</label>
+            <input id="fedInput" placeholder="2025-07-30T14:00:00Z" />
+          </div>
+          <div>
+            <label class="small muted">Bezeichnung</label>
+            <input id="fedLabel" placeholder="FOMC Meeting" />
+          </div>
+        </div>
+        <div class="mt8">
+          <button class="btn btn-outline" id="fedAddBtn">➕ Termin hinzufügen</button>
+          <button class="btn btn-outline" id="fedClearBtn">🗑️ Alle löschen</button>
+        </div>
+        <div class="mt12 small muted">Gespeichert in LocalStorage. Der nächste Termin steuert den großen Countdown oben.</div>
+        <div class="mt12">
+          <div class="small muted">Termine:</div>
+          <ul id="fedList" class="mt8" style="list-style: none; padding-left: 0;"></ul>
+        </div>
+      </div>
 
-            // 24h-Änderung
-            const changeEl = document.getElementById('priceChange');
-            const sign = changePctFloat >= 0 ? '+' : '';
-            changeEl.textContent = `${sign}${changePctFloat.toFixed(2)}% (24h)`;
-            changeEl.style.color = changePctFloat >= 0 ? '#10b981' : '#ef4444';
+      <!-- Crash Detection -->
+      <div class="card">
+        <div class="card-title">🧯 Crash‑Detection</div>
+        <div class="row3">
+          <div><label class="small muted">1 min Schwelle (%)</label><input id="thr1" type="number" value="-1.0" /></div>
+          <div><label class="small muted">5 min Schwelle (%)</label><input id="thr5" type="number" value="-3.0" /></div>
+          <div><label class="small muted">15 min Schwelle (%)</label><input id="thr15" type="number" value="-5.0" /></div>
+        </div>
+        <div class="mt8">
+          <button class="btn btn-success" id="crashToggle">✅ Aktiv</button>
+          <span class="small muted" id="crashStatus">Überwacht Preisänderungen und sendet Push.</span>
+        </div>
+        <div class="mt12">
+          <div class="small muted">Letzte Signale:</div>
+          <ul id="crashLog" style="list-style:none; padding-left:0; max-height:160px; overflow:auto;"></ul>
+        </div>
+      </div>
 
-            // Folge-Updates
-            updatePhases();
-            updateTriggers();
-            generateRecommendations();
-            updateFearGreed();
-            updateLastUpdateTime();
-        }
+      <!-- Bear Market Survival -->
+      <div class="card">
+        <div class="card-title">🐻 Bear Market Survival</div>
 
-        function startBinancePriceStream() {
-            try {
-                _priceWS = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
+        <!-- DCA -->
+        <div class="small muted">DCA‑Rechner (holt 1D‑Klines; Close‑Preis je Intervall)</div>
+        <div class="row3 mt8">
+          <div>
+            <label class="small muted">Zeitraum (Tage)</label>
+            <input id="dcaDays" type="number" min="30" max="1000" value="365" />
+          </div>
+          <div>
+            <label class="small muted">Intervall</label>
+            <select id="dcaInterval">
+              <option value="daily">täglich</option>
+              <option value="weekly">wöchentlich</option>
+              <option value="monthly">monatlich</option>
+            </select>
+          </div>
+          <div>
+            <label class="small muted">Betrag je Kauf (USDT)</label>
+            <input id="dcaAmount" type="number" min="1" value="100" />
+          </div>
+        </div>
+        <button class="btn mt8" id="dcaCalcBtn">🧮 DCA berechnen</button>
+        <div class="kv mt12" id="dcaOut">
+          <div>Investiert</div><div class="mono" id="dcaInvested">–</div>
+          <div>BTC erworben</div><div class="mono" id="dcaCoins">–</div>
+          <div>Ø‑Preis</div><div class="mono" id="dcaAvg">–</div>
+          <div>Wert @ Spot</div><div class="mono" id="dcaValue">–</div>
+          <div>P/L</div><div class="mono" id="dcaPL">–</div>
+        </div>
 
-                _priceWS.onmessage = (evt) => {
-                    const d = JSON.parse(evt.data);
-                    const last = parseFloat(d.c); // lastPrice
-                    const pct  = parseFloat(d.P); // priceChangePercent (24h)
-                    if (Number.isFinite(last) && Number.isFinite(pct)) {
-                        applyPriceUpdate(last, pct);
-                    }
-                };
+        <!-- Accumulation Zonen -->
+        <div class="mt20 small muted">Accumulation‑Zonen (200D‑SMA)</div>
+        <div class="kv mt8">
+          <div>200D‑SMA</div><div class="mono" id="sma200">–</div>
+          <div>Zone A (≤80% SMA)</div><div class="mono" id="zoneA">–</div>
+          <div>Zone B (80–90% SMA)</div><div class="mono" id="zoneB">–</div>
+          <div>Zone C (90–100% SMA)</div><div class="mono" id="zoneC">–</div>
+          <div>Status @ Spot</div><div class="mono" id="zoneStatus">–</div>
+        </div>
+      </div>
 
-                _priceWS.onclose = () => { startPricePollingFallback(); };
-                _priceWS.onerror = () => { try { _priceWS.close(); } catch(_) {} };
-            } catch (e) {
-                startPricePollingFallback();
-            }
-        }
+      <!-- Bull Run Tracker -->
+      <div class="card">
+        <div class="card-title">🐂 Bull Run Tracker</div>
+        <div class="kv">
+          <div>ATH (High)</div><div class="mono" id="athPrice">–</div>
+          <div>ATH Datum</div><div class="mono" id="athDate">–</div>
+          <div>Distanz zu ATH</div><div class="mono" id="athDist">–</div>
+          <div>Tage seit ATH</div><div class="mono" id="athDays">–</div>
+        </div>
+        <div class="mt12 small muted">Fibonacci‑Levels (Cycle Low ↔ ATH)</div>
+        <div class="kv mt8" id="fibList"></div>
 
-        async function pollOnce() {
-            try {
-                const r = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', { cache: 'no-store' });
-                const j = await r.json();
-                const last = parseFloat(j.lastPrice);
-                const pct  = parseFloat(j.priceChangePercent);
-                if (Number.isFinite(last) && Number.isFinite(pct)) {
-                    applyPriceUpdate(last, pct);
-                }
-            } catch (_) { /* retry via next tick */ }
-        }
+        <div class="mt16 small muted">Profit‑Taking Zonen</div>
+        <div class="row3 mt8">
+          <div><label class="small muted">Einstieg (USDT)</label><input id="entryPrice" type="number" value="100000" /></div>
+          <div><label class="small muted">Staffel (%)</label><input id="ptSteps" type="text" value="10,20,30" /></div>
+          <div><label class="small muted">Menge (BTC)</label><input id="ptSize" type="number" value="0.5" /></div>
+        </div>
+        <button class="btn mt8" id="ptCalcBtn">🎯 Zonen berechnen</button>
+        <ul id="ptList" class="mt8" style="list-style:none; padding-left:0;"></ul>
+      </div>
 
-        function startPricePollingFallback() {
-            if (_pollTimer) clearInterval(_pollTimer);
-            pollOnce();
-            _pollTimer = setInterval(pollOnce, 5000);
-        }
+      <!-- Day Trading Mode -->
+      <div class="card">
+        <div class="card-title">🟢 Day Trading Mode</div>
+        <div class="row">
+          <div><button class="btn btn-success" id="dayToggle">✅ Aktiv</button></div>
+          <div><span class="small muted" id="dayStatus">5m/15m EMA9/EMA21‑Cross + RSI(14) + Volume‑Spikes</span></div>
+        </div>
+        <div class="row3 mt12">
+          <div class="pill">Letztes 5m‑Signal: <span id="sig5m" class="mono">–</span></div>
+          <div class="pill">Letztes 15m‑Signal: <span id="sig15m" class="mono">–</span></div>
+          <div class="pill">Letzter Volume‑Spike: <span id="sigVol" class="mono">–</span></div>
+        </div>
+        <div class="mt12 small muted">Support/Resistance (5m, letzte ~100 Kerzen)</div>
+        <div class="kv mt8">
+          <div>Support</div><div class="mono" id="srSupport">–</div>
+          <div>Resistance</div><div class="mono" id="srResistance">–</div>
+        </div>
+        <div class="mt12">
+          <div class="small muted">Signallog:</div>
+          <ul id="dayLog" style="list-style:none; padding-left:0; max-height:180px; overflow:auto;"></ul>
+        </div>
+      </div>
 
-        async function fetchLastHourClose() {
-            try {
-                const r = await fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=2', { cache: 'no-store' });
-                const a = await r.json();
-                if (Array.isArray(a) && a.length >= 1) {
-                    const prevClose = parseFloat(a[0][4]); // Close vorherige 1h-Kerze
-                    if (Number.isFinite(prevClose)) {
-                        lastHourClose = Math.round(prevClose);
-                        document.getElementById('lastClose').textContent = `$${lastHourClose.toLocaleString('en-US')}`;
-                        updateTriggers();
-                    }
-                }
-            } catch (_) { /* try again on next interval */ }
-        }
+      <!-- Empfehlungen -->
+      <div class="card">
+        <div class="card-title">🎯 Trading Empfehlungen</div>
+        <div class="alert-box">
+          <strong>Hinweis:</strong><br/>
+          Nutze Crash‑Detection und Day‑Trading‑Signale für Intraday‑Risikomanagement. Nutze DCA & Zonen für langfristige Allokation.
+        </div>
+        <div class="success-box" id="currentRecommendation">
+          <strong>📍 Status</strong><br/>
+          Wartet auf Signale.
+        </div>
+      </div>
 
-        // ------------------------
-        // Phasen / Trigger / Empfehlungen / Sonstiges (unverändert, aber ohne Simulations-Updates)
-        // ------------------------
-        function updatePhases() {
-            const phase1Active = currentPrice >= 116000 && currentPrice <= 119000;
-            updatePhase('phase1', 'phase1Status', phase1Active, '🎯 AKTIV', 'Bereit');
-            const phase2Active = currentPrice >= 109000 && currentPrice <= 114000;
-            updatePhase('phase2', 'phase2Status', phase2Active, '🚀 EXECUTE!', 'Wartend');
-            if (phase2Active && pushEnabled && updateCounter % 20 === 0) {
-                sendNotification('Phase 2 aktiviert!', `$${currentPrice.toLocaleString()} - Jetzt 280k USDT deployen!`);
-            }
-            const phase3Active = currentPrice >= 103000 && currentPrice <= 108000;
-            updatePhase('phase3', 'phase3Status', phase3Active, '💎 DEEP VALUE!', 'Reserve');
-            if (phase3Active && pushEnabled && updateCounter % 30 === 0) {
-                sendNotification('Phase 3 Deep Value!', `$${currentPrice.toLocaleString()} - Finale 140k USDT aktivieren!`);
-            }
-        }
+      <!-- App Info -->
+      <div class="card">
+        <div class="card-title">ℹ️ App Info</div>
+        <div class="small">
+          <p><strong>GitHub PWA Version 2.2</strong></p>
+          <p>📡 Live‑Updates: Echtzeit (WS) + Fallback 5 s</p>
+          <p>🔔 Push‑Benachrichtigungen</p>
+          <p>📱 Installation: Alle Browser</p>
+          <p>⚡ Offline‑fähig</p>
+          <p>🎯 Letztes Update: <span id="lastUpdate">–</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        function updatePhase(phaseId, statusId, isActive, activeText, inactiveText) {
-            const phaseEl = document.getElementById(phaseId);
-            const statusEl = document.getElementById(statusId);
-            if (isActive) {
-                phaseEl.classList.add('phase-active');
-                statusEl.textContent = activeText;
-                statusEl.className = 'phase-status status-active';
-            } else {
-                phaseEl.classList.remove('phase-active');
-                statusEl.textContent = inactiveText;
-                statusEl.className = 'phase-status status-waiting';
-            }
-        }
+  <script>
+    // ========= Globale Variablen =========
+    let currentPrice = 119540;
+    let lastHourClose = 118062;
+    let pushEnabled = false;
+    let isMonitoring = true;
+    let deferredPrompt;
+    let updateCounter = 0;
+    let fearGreedIndex = 50;
 
-        function updateTriggers() {
-            updateTrigger('trigger1', 'dot1', lastHourClose > 118400);
-            updateTrigger('trigger2', 'dot2', currentPrice >= 119100);
-            updateTrigger('trigger3', 'dot3', currentPrice <= 117200);
-            updateTrigger('trigger4', 'dot4', currentPrice >= 116400 && currentPrice <= 116900);
-            updateTrigger('trigger5', 'dot5', currentPrice <= 116100);
-            updateTrigger('trigger6', 'dot6', currentPrice <= 114500);
-            // KEINE zufälligen 1h-Close-Updates mehr – wird jetzt von fetchLastHourClose() gesetzt
-        }
+    // FOMC & PCE Referenz (PCE fest aus Beispiel)
+    let FOMC_NEXT = null; // aus Fed‑Terminen (siehe unten)
+    const PCE_DATE = new Date('2025-07-31T12:30:00Z');
 
-        function updateTrigger(triggerId, dotId, isActive) {
-            const triggerEl = document.getElementById(triggerId);
-            const dotEl = document.getElementById(dotId);
-            if (isActive) {
-                triggerEl.classList.add('trigger-active');
-                dotEl.classList.add('active');
-            } else {
-                triggerEl.classList.remove('trigger-active');
-                dotEl.classList.remove('active');
-            }
-        }
+    // Preisverlauf (für Crash‑Detection)
+    const priceHistory = []; // [{t: ms, p: price}]
+    const PRICE_HISTORY_WINDOW_MS = 60 * 60 * 1000; // 60m
 
-        function updateFearGreed() {
-            // leichte Variation beibehalten (optional)
-            if (Math.random() < 0.1) {
-                const priceChange = (currentPrice - 119540) / 119540;
-                fearGreedIndex = Math.max(0, Math.min(100, 
-                    fearGreedIndex + (priceChange * 20) + (Math.random() - 0.5) * 3
-                ));
-                document.getElementById('fearGreedValue').textContent = Math.round(fearGreedIndex);
-                document.getElementById('fearGreedIndicator').style.left = fearGreedIndex + '%';
-                const text = fearGreedIndex < 25 ? 'Extreme Fear' :
-                             fearGreedIndex < 45 ? 'Fear' :
-                             fearGreedIndex < 55 ? 'Neutral' :
-                             fearGreedIndex < 75 ? 'Greed' : 'Extreme Greed';
-                document.querySelector('.meter-value').nextElementSibling.textContent = text;
-                document.getElementById('fearGreedTime').textContent = 'vor ' + Math.floor(Math.random() * 3 + 1) + 'h';
-            }
-        }
+    // Day‑Trading‑Puffer
+    let dayModeOn = true;
+    let crashOn = true;
 
-        function generateRecommendations() {
-            const recEl = document.getElementById('currentRecommendation');
-            if (currentPrice >= 119000 && currentPrice <= 121000) {
-                recEl.innerHTML = '<strong>⚠️ Short-Liquiditätscluster AKTIV</strong><br>' +
-                    `$${currentPrice.toLocaleString()} - Stop-Hunt wahrscheinlich. Bereit für Dip-Kauf.`;
-            } else if (currentPrice < 116000) {
-                recEl.innerHTML = '<strong>🎯 KAUFGELEGENHEIT!</strong><br>' +
-                    `$${currentPrice.toLocaleString()} - Phase 2 Zone erreicht. 280k USDT bereithalten!`;
-            } else if (currentPrice < 108000) {
-                recEl.innerHTML = '<strong>💎 DEEP VALUE ZONE!</strong><br>' +
-                    `$${currentPrice.toLocaleString()} - Phase 3 aktiv. Finale 140k USDT deployen!`;
-            } else {
-                recEl.innerHTML = '<strong>📍 Normaler Handel</strong><br>' +
-                    `$${currentPrice.toLocaleString()} - Warten auf bessere Einstiegslevel.`;
-            }
-        }
+    // ========= PWA Install =========
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBanner')?.setAttribute('style','display:flex');
+    });
+    document.getElementById('installBtn')?.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      document.getElementById('installBanner')?.setAttribute('style','display:none');
+      if (pushEnabled) sendNotification('App installiert!', 'BTC Monitor installiert.');
+    });
 
-        function updateLastUpdateTime() {
-            const seconds = Math.floor((Date.now() / 1000) % 60);
-            const timeText = seconds < 10 ? 'vor wenigen Sekunden' : `vor ${seconds}s`;
-            document.getElementById('lastUpdate').textContent = timeText;
-        }
+    // ========= Countdowns =========
+    function fmt2(n){return n<10?'0'+n:n;}
+    function updateCountdowns() {
+      const now = new Date();
 
-        // ------------------------
-        // Push Notifications
-        // ------------------------
-        function enablePush() {
-            if (!('Notification' in window)) {
-                alert('❌ Ihr Browser unterstützt keine Push-Benachrichtigungen.');
-                return;
-            }
-            if (Notification.permission === 'granted') {
-                pushEnabled = true;
-                updatePushButton();
-                sendNotification('BTC Monitor bereit!', 'Push-Benachrichtigungen sind aktiv!');
-                return;
-            }
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    pushEnabled = true;
-                    updatePushButton();
-                    sendNotification('Setup Complete!', 'GitHub PWA BTC Trading Alerts sind jetzt aktiv!');
-                    alert('✅ Push-Benachrichtigungen aktiviert!');
-                } else {
-                    alert('❌ Push-Benachrichtigungen wurden abgelehnt.');
-                }
-            });
-        }
-
-        function updatePushButton() {
-            const btn = document.getElementById('pushBtn');
-            if (pushEnabled) {
-                btn.innerHTML = '✅ Push aktiv';
-                btn.className = 'btn btn-success';
-            }
-        }
-
-        function sendNotification(title, body) {
-            if (!pushEnabled || Notification.permission !== 'granted') return;
-            try {
-                const notification = new Notification(`🚨 ${title}`, {
-                    body, icon: '/favicon.ico', tag: 'btc-monitor',
-                    requireInteraction: true, vibrate: [200, 100, 200], timestamp: Date.now()
-                });
-                notification.onclick = () => { window.focus(); notification.close(); };
-                setTimeout(() => notification.close(), 10000);
-            } catch (error) {
-                console.log('Notification error:', error);
-            }
-        }
-
-        // ------------------------
-        // Control Functions
-        // ------------------------
-        function toggleMonitoring() {
-            isMonitoring = !isMonitoring;
-            const btn = document.getElementById('monitorBtn');
-            if (isMonitoring) {
-                btn.innerHTML = '⏸️ Pausieren';
-                btn.className = 'btn btn-warning';
-            } else {
-                btn.innerHTML = '▶️ Starten';
-                btn.className = 'btn btn-success';
-            }
-            if (pushEnabled) {
-                const status = isMonitoring ? 'gestartet' : 'pausiert';
-                sendNotification('Monitor Status', `BTC Monitor wurde ${status}`);
-            }
-        }
-
-        function forceUpdate() {
-            // Sofort neu laden: Preis (REST) + 1h Close
-            pollOnce();
-            fetchLastHourClose();
-            if (pushEnabled) {
-                sendNotification('Daten aktualisiert', `Aktueller BTC Preis: ${currentPrice.toLocaleString()}`);
-            }
-            const btn = document.getElementById('refreshBtn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '🔄 Updating...';
-            btn.disabled = true;
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }, 1000);
-        }
-
-        // ------------------------
-        // Service Worker (inline)
-        // ------------------------
-        const SW_CODE = `
-            const CACHE_NAME = 'btc-monitor-v2.1';
-            const urlsToCache = ['/', '/index.html'];
-
-            self.addEventListener('install', event => {
-                event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
-            });
-
-            self.addEventListener('fetch', event => {
-                event.respondWith(caches.match(event.request).then(response => response || fetch(event.request)));
-            });
-
-            self.addEventListener('push', event => {
-                const options = {
-                    body: event.data ? event.data.text() : 'BTC Monitor Update',
-                    icon: '/favicon.ico', badge: '/favicon.ico', vibrate: [100, 50, 100],
-                    data: { dateOfArrival: Date.now(), primaryKey: 1 }
-                };
-                event.waitUntil(self.registration.showNotification('🚨 BTC Monitor', options));
-            });
-        `;
-
-        function registerServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                const blob = new Blob([SW_CODE], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                navigator.serviceWorker.register(swUrl).then(() => {
-                    console.log('Service Worker registered successfully');
-                }).catch(error => {
-                    console.log('Service Worker registration failed:', error);
-                });
-            }
-        }
-
-        // ------------------------
-        // PWA Manifest generator
-        // ------------------------
-        function generateManifest() {
-            const manifest = {
-                "name": "BTC Trading Monitor",
-                "short_name": "BTC Monitor",
-                "description": "GitHub PWA für BTC Trading mit Live-Updates",
-                "start_url": "/",
-                "display": "standalone",
-                "background_color": "#667eea",
-                "theme_color": "#10b981",
-                "orientation": "portrait-primary",
-                "icons": [
-                    {
-                        "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiMxMGI5ODEiLz4KPHRleHQgeD0iOTYiIHk9IjEwNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjY0IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZmZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+4oK/PC90ZXh0Pgo8L3N2Zz4K",
-                        "sizes": "192x192",
-                        "type": "image/svg+xml"
-                    },
-                    {
-                        "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iNjQiIGZpbGw9IiMxMGI5ODEiLz4KPHRleHQgeD0iMjU2IiB5PSIyODAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNzAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZmZmZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7igrM8L3RleHQ+Cjwvc3ZnPgo=",
-                        "sizes": "512x512",
-                        "type": "image/svg+xml"
-                    }
-                ],
-                "categories": ["finance", "productivity", "utilities"],
-                "screenshots": [],
-                "shortcuts": [
-                    { "name": "Aktuelle Trigger", "short_name": "Trigger", "description": "Zeige aktuelle Trading Trigger", "url": "/#triggers" }
-                ]
-            };
-            const manifestBlob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
-            const manifestUrl = URL.createObjectURL(manifestBlob);
-            const link = document.createElement('link');
-            link.rel = 'manifest';
-            link.href = manifestUrl;
-            document.head.appendChild(link);
-        }
-
-        // ------------------------
-        // Event Listeners
-        // ------------------------
-        document.getElementById('pushBtn').addEventListener('click', enablePush);
-        document.getElementById('monitorBtn').addEventListener('click', toggleMonitoring);
-        document.getElementById('refreshBtn').addEventListener('click', forceUpdate);
-
-        // ------------------------
-        // Advanced Trading Analysis (dein Original; optional)
-        // ------------------------
-        function performTechnicalAnalysis() {
-            const prices = [];
-            const basePrice = 119540;
-            for (let i = 19; i >= 0; i--) {
-                const variation = (Math.random() - 0.5) * 0.02;
-                prices.push(basePrice * (1 + variation * (i / 20)));
-            }
-            prices.push(currentPrice);
-            const sma20 = prices.reduce((sum, price) => sum + price, 0) / prices.length;
-            let gains = 0, losses = 0;
-            for (let i = 1; i < prices.length; i++) {
-                const change = prices[i] - prices[i - 1];
-                if (change > 0) gains += change; else losses -= change;
-            }
-            const avgGain = gains / 14;
-            const avgLoss = losses / 14 || 1e-9;
-            const rs = avgGain / avgLoss;
-            const rsi = 100 - (100 / (1 + rs));
-            return {
-                sma20: Math.round(sma20),
-                rsi: Math.round(rsi),
-                trend: currentPrice > sma20 ? 'bullish' : 'bearish',
-                momentum: rsi > 70 ? 'overbought' : rsi < 30 ? 'oversold' : 'neutral'
-            };
-        }
-
-        // ------------------------
-        // Kritische Level Monitoring
-        // ------------------------
-        function checkCriticalLevels() {
-            const criticalLevels = [116000, 114000, 109000, 103000];
-            criticalLevels.forEach(level => {
-                const diff = Math.abs(currentPrice - level);
-                const threshold = level * 0.001; // 0.1%
-                if (diff < threshold && Math.random() < 0.1) {
-                    sendNotification('Kritisches Level erreicht!', `BTC bei ${currentPrice.toLocaleString()} - Nahe ${level.toLocaleString()}`);
-                }
-            });
-        }
-
-        // ------------------------
-        // Fehler-Handling & Shortcuts
-        // ------------------------
-        window.addEventListener('error', (event) => { console.error('App Error:', event.error); });
-        window.addEventListener('unhandledrejection', (event) => { console.error('Unhandled Promise Rejection:', event.reason); });
-
-        document.addEventListener('keydown', (event) => {
-            if (event.ctrlKey || event.metaKey) {
-                switch (event.key) {
-                    case 'r': event.preventDefault(); forceUpdate(); break;
-                    case ' ': event.preventDefault(); toggleMonitoring(); break;
-                }
-            }
-        });
-
-        // ------------------------
-        // Init
-        // ------------------------
-        function init() {
-            console.log('🚀 BTC Trading Monitor PWA gestartet');
-            generateManifest();
-            registerServiceWorker();
-
-            // Countdowns
-            updateCountdowns();
-            setInterval(() => { updateCountdowns(); updateCounter++; }, 1000);
-
-            // Live-Preis
-            startBinancePriceStream();
-            fetchLastHourClose();
-            setInterval(fetchLastHourClose, 60 * 1000);
-
-            // Optional: Logs & Alerts
-            setInterval(() => {
-                const analysis = performTechnicalAnalysis();
-                console.log('📊 Technical Analysis:', analysis);
-            }, 30000);
-
-            setInterval(() => {
-                if (pushEnabled && isMonitoring) {
-                    checkCriticalLevels();
-                }
-            }, 15000);
-
-            console.log('✅ Alle Systeme online (Live-Preis aktiviert)');
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
+      // FOMC
+      if (FOMC_NEXT) {
+        const diff = FOMC_NEXT - now;
+        if (diff > 0) {
+          const d = Math.floor(diff/86400000);
+          const h = Math.floor((diff%86400000)/3600000);
+          const m = Math.floor((diff%3600000)/60000);
+          const s = Math.floor((diff%60000)/1000);
+          document.getElementById('fomcCountdown').textContent = `${d>0?d+'d ':''}${fmt2(h)}h ${fmt2(m)}m ${fmt2(s)}s`;
+          document.getElementById('fomcDetail').textContent = `${FOMC_NEXT.toISOString()} UTC`;
+          if (diff < 24*3600000) document.getElementById('fomcCountdown').style.color = '#dc2626';
         } else {
-            init();
+          document.getElementById('fomcCountdown').textContent = 'FOMC LIVE!';
+          document.getElementById('fomcCountdown').style.color = '#dc2626';
         }
-    </script>
+      } else {
+        document.getElementById('fomcCountdown').textContent = 'Termin fehlt';
+        document.getElementById('fomcDetail').textContent = 'Füge unten einen FOMC‑Termin hinzu.';
+      }
+
+      // PCE
+      const pceDiff = PCE_DATE - now;
+      if (pceDiff > 0) {
+        const d = Math.floor(pceDiff/86400000);
+        const h = Math.floor((pceDiff%86400000)/3600000);
+        const m = Math.floor((pceDiff%3600000)/60000);
+        document.getElementById('pceCountdown').textContent = `PCE in ${d>0?d+'d ':''}${fmt2(h)}h ${fmt2(m)}m`;
+      } else {
+        document.getElementById('pceCountdown').textContent = 'PCE veröffentlicht';
+      }
+    }
+
+    function updateLastUpdateTime() {
+      const ts = new Date();
+      const hh = fmt2(ts.getHours()), mm = fmt2(ts.getMinutes()), ss = fmt2(ts.getSeconds());
+      document.getElementById('lastUpdate').textContent = `${hh}:${mm}:${ss}`;
+    }
+
+    // ========= Binance Live‑Preis (Ticker + 5m/15m Klines) =========
+    const STREAM_URL = 'wss://stream.binance.com:9443/stream?streams=btcusdt@ticker|btcusdt@kline_5m|btcusdt@kline_15m';
+    let ws = null, pollTimer = null;
+
+    function applyPriceUpdate(priceFloat, changePctFloat) {
+      currentPrice = Math.round(priceFloat);
+
+      // Preis
+      document.getElementById('btcPrice').textContent = `$${currentPrice.toLocaleString('en-US')}`;
+
+      // 24h‑Change
+      const changeEl = document.getElementById('priceChange');
+      const sign = changePctFloat >= 0 ? '+' : '';
+      changeEl.textContent = `${sign}${changePctFloat.toFixed(2)}% (24h)`;
+      changeEl.style.color = changePctFloat >= 0 ? '#10b981' : '#ef4444';
+
+      // Historie für Crash‑Detection
+      const now = Date.now();
+      priceHistory.push({ t: now, p: currentPrice });
+      while (priceHistory.length && (now - priceHistory[0].t) > PRICE_HISTORY_WINDOW_MS) priceHistory.shift();
+      if (crashOn) checkCrashSignals();
+
+      // Folge‑Updates
+      updatePhases();
+      updateTriggers();
+      generateRecommendations();
+      updateFearGreedUI(); // nur UI, Wert kommt getrennt
+      updateLastUpdateTime();
+    }
+
+    function startPriceStream() {
+      try {
+        ws = new WebSocket(STREAM_URL);
+        ws.onmessage = (evt) => {
+          const obj = JSON.parse(evt.data);
+          const stream = obj.stream;
+          const d = obj.data;
+          if (stream.endsWith('@ticker')) {
+            const last = parseFloat(d.c);
+            const pct  = parseFloat(d.P);
+            if (Number.isFinite(last) && Number.isFinite(pct)) {
+              applyPriceUpdate(last, pct);
+            }
+          } else if (stream.includes('@kline_5m')) {
+            onKline('5m', d.k);
+          } else if (stream.includes('@kline_15m')) {
+            onKline('15m', d.k);
+          }
+        };
+        ws.onclose = () => startPricePollingFallback();
+        ws.onerror = () => { try{ws.close();}catch{} };
+      } catch {
+        startPricePollingFallback();
+      }
+    }
+
+    async function pollOnce() {
+      try {
+        const r = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', { cache: 'no-store' });
+        const j = await r.json();
+        const last = parseFloat(j.lastPrice);
+        const pct  = parseFloat(j.priceChangePercent);
+        if (Number.isFinite(last) && Number.isFinite(pct)) applyPriceUpdate(last, pct);
+      } catch {}
+    }
+    function startPricePollingFallback() {
+      if (pollTimer) clearInterval(pollTimer);
+      pollOnce();
+      pollTimer = setInterval(pollOnce, 5000);
+    }
+
+    async function fetchLastHourClose() {
+      try {
+        const r = await fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=2', { cache: 'no-store' });
+        const a = await r.json();
+        if (Array.isArray(a) && a.length >= 1) {
+          const prevClose = parseFloat(a[0][4]);
+          if (Number.isFinite(prevClose)) {
+            lastHourClose = Math.round(prevClose);
+            document.getElementById('lastClose').textContent = `$${lastHourClose.toLocaleString('en-US')}`;
+            updateTriggers();
+          }
+        }
+      } catch {}
+    }
+
+    // ========= Phasen / Trigger =========
+    function updatePhases() {
+      const p1 = currentPrice >= 116000 && currentPrice <= 119000;
+      updatePhase('phase1', 'phase1Status', p1, '🎯 AKTIV', 'Bereit');
+      const p2 = currentPrice >= 109000 && currentPrice <= 114000;
+      updatePhase('phase2', 'phase2Status', p2, '🚀 EXECUTE!', 'Wartend');
+      const p3 = currentPrice >= 103000 && currentPrice <= 108000;
+      updatePhase('phase3', 'phase3Status', p3, '💎 DEEP VALUE!', 'Reserve');
+    }
+    function updatePhase(id, sid, active, aTxt, iTxt) {
+      const el = document.getElementById(id), st = document.getElementById(sid);
+      if (active) { el.classList.add('phase-active'); st.textContent = aTxt; st.className = 'phase-status status-active'; }
+      else { el.classList.remove('phase-active'); st.textContent = iTxt; st.className = 'phase-status status-waiting'; }
+    }
+    function updateTriggers() {
+      setTrigger('trigger1','dot1', lastHourClose > 118400);
+      setTrigger('trigger2','dot2', currentPrice >= 119100);
+      setTrigger('trigger3','dot3', currentPrice <= 117200);
+      setTrigger('trigger4','dot4', currentPrice >= 116400 && currentPrice <= 116900);
+      setTrigger('trigger5','dot5', currentPrice <= 116100);
+      setTrigger('trigger6','dot6', currentPrice <= 114500);
+    }
+    function setTrigger(tid, did, on) {
+      const t = document.getElementById(tid), d = document.getElementById(did);
+      if (on) { t.classList.add('trigger-active'); d.classList.add('active'); }
+      else { t.classList.remove('trigger-active'); d.classList.remove('active'); }
+    }
+
+    function generateRecommendations() {
+      const rec = document.getElementById('currentRecommendation');
+      if (currentPrice >= 119000 && currentPrice <= 121000) {
+        rec.innerHTML = '<strong>⚠️ Short‑Liquiditätscluster</strong><br>$'+currentPrice.toLocaleString()+' – Stop‑Hunt möglich.';
+      } else if (currentPrice < 116000 && currentPrice >= 109000) {
+        rec.innerHTML = '<strong>🎯 Phase 2 Bereich</strong><br>$'+currentPrice.toLocaleString()+' – Staffelkäufe vorbereiten.';
+      } else if (currentPrice < 109000) {
+        rec.innerHTML = '<strong>💎 Deep Value</strong><br>$'+currentPrice.toLocaleString()+' – Reserve prüfen.';
+      } else {
+        rec.innerHTML = '<strong>📍 Normaler Handel</strong><br>$'+currentPrice.toLocaleString()+' – Setup abwarten.';
+      }
+    }
+
+    // ========= Fear & Greed =========
+    async function fetchFearGreed() {
+      try {
+        const r = await fetch('https://api.alternative.me/fng/?limit=1&format=json', { cache: 'no-store' });
+        const j = await r.json();
+        if (j && j.data && j.data[0]) {
+          fearGreedIndex = parseInt(j.data[0].value, 10);
+          const ts = parseInt(j.data[0].timestamp, 10) * 1000;
+          document.getElementById('fearGreedTime').textContent = new Date(ts).toISOString();
+          updateFearGreedUI();
+          document.getElementById('fearGreedNote').textContent = 'Live‑Abruf erfolgreich.';
+        }
+      } catch {
+        document.getElementById('fearGreedNote').textContent = 'Live‑Abruf blockiert – Fallback aktiv.';
+        updateFearGreedUI();
+      }
+    }
+    function updateFearGreedUI() {
+      const v = Math.max(0, Math.min(100, Math.round(fearGreedIndex)));
+      document.getElementById('fearGreedValue').textContent = v;
+      document.getElementById('fearGreedIndicator').style.left = v + '%';
+      const text = v < 25 ? 'Extreme Fear' : v < 45 ? 'Fear' : v < 55 ? 'Neutral' : v < 75 ? 'Greed' : 'Extreme Greed';
+      document.getElementById('fearGreedText').textContent = text;
+    }
+
+    // ========= Fed‑Termine (LocalStorage) =========
+    const FED_KEY = 'fed_events_v1';
+    function loadFedEvents() {
+      try { return JSON.parse(localStorage.getItem(FED_KEY) || '[]'); } catch { return []; }
+    }
+    function saveFedEvents(list) { localStorage.setItem(FED_KEY, JSON.stringify(list)); }
+    function renderFedEvents() {
+      const ul = document.getElementById('fedList'); ul.innerHTML = '';
+      const list = loadFedEvents().sort((a,b)=>new Date(a.ts)-new Date(b.ts));
+      list.forEach((e, idx) => {
+        const li = document.createElement('li');
+        li.className = 'mt8';
+        li.innerHTML = `<span class="mono">${e.ts}</span> — ${e.label} <button class="btn btn-outline small" data-i="${idx}">Entfernen</button>`;
+        ul.appendChild(li);
+      });
+      ul.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', ()=>{
+          const i = parseInt(btn.getAttribute('data-i'),10);
+          const cur = loadFedEvents(); cur.splice(i,1); saveFedEvents(cur); renderFedEvents(); selectNextFOMC();
+        });
+      });
+      selectNextFOMC();
+    }
+    function selectNextFOMC() {
+      const now = new Date();
+      const upcoming = loadFedEvents().map(e => ({...e, d:new Date(e.ts)})).filter(e => e.d > now).sort((a,b)=>a.d-b.d);
+      FOMC_NEXT = upcoming.length ? upcoming[0].d : null;
+      updateCountdowns();
+    }
+    function addFedEvent(tsISO, label) {
+      if (!tsISO) return;
+      const d = new Date(tsISO);
+      if (isNaN(d.getTime())) { alert('Ungültiges ISO‑Datum.'); return; }
+      const list = loadFedEvents(); list.push({ ts: tsISO, label: label || 'FOMC' }); saveFedEvents(list); renderFedEvents();
+    }
+
+    // ========= Crash‑Detection =========
+    function pctChange(a,b){ return ((b-a)/a)*100; }
+    function findPriceAt(msAgo) {
+      const target = Date.now() - msAgo;
+      // lineare Suche rückwärts, da Puffer < 60m
+      for (let i=priceHistory.length-1; i>=0; i--) {
+        if (priceHistory[i].t <= target) return priceHistory[i].p;
+      }
+      return null;
+    }
+    function logCrash(msg, cls='bad') {
+      const li = document.createElement('li');
+      li.className = 'mt8 ' + cls;
+      li.textContent = msg;
+      const ul = document.getElementById('crashLog'); ul.prepend(li);
+      while (ul.children.length > 30) ul.removeChild(ul.lastChild);
+      if (pushEnabled) sendNotification('Preis‑Alarm', msg);
+    }
+    function checkCrashSignals() {
+      const t1 = parseFloat(document.getElementById('thr1').value || '-1');
+      const t5 = parseFloat(document.getElementById('thr5').value || '-3');
+      const t15 = parseFloat(document.getElementById('thr15').value || '-5');
+      const pNow = currentPrice;
+
+      const p1 = findPriceAt(60*1000);
+      if (p1) {
+        const pc1 = pctChange(p1, pNow);
+        if (pc1 <= t1) logCrash(`−${Math.abs(pc1).toFixed(2)}% in 1m → $${pNow.toLocaleString()}`, 'bad');
+        if (pc1 >= Math.abs(t1)) logCrash(`+${pc1.toFixed(2)}% in 1m → $${pNow.toLocaleString()}`, 'ok');
+      }
+      const p5 = findPriceAt(5*60*1000);
+      if (p5) {
+        const pc5 = pctChange(p5, pNow);
+        if (pc5 <= t5) logCrash(`−${Math.abs(pc5).toFixed(2)}% in 5m → $${pNow.toLocaleString()}`, 'bad');
+        if (pc5 >= Math.abs(t5)) logCrash(`+${pc5.toFixed(2)}% in 5m → $${pNow.toLocaleString()}`, 'ok');
+      }
+      const p15 = findPriceAt(15*60*1000);
+      if (p15) {
+        const pc15 = pctChange(p15, pNow);
+        if (pc15 <= t15) logCrash(`−${Math.abs(pc15).toFixed(2)}% in 15m → $${pNow.toLocaleString()}`, 'bad');
+        if (pc15 >= Math.abs(t15)) logCrash(`+${pc15.toFixed(2)}% in 15m → $${pNow.toLocaleString()}`, 'ok');
+      }
+    }
+
+    // ========= Day‑Trading‑Signale =========
+    const buf5m = []; // Array von {open, high, low, close, volume, t}
+    const buf15m = [];
+    function onKline(tf, k) {
+      const obj = {
+        open: +k.o, high: +k.h, low: +k.l, close: +k.c, volume: +k.v,
+        closed: k.x, t: k.t
+      };
+      const buf = tf==='5m' ? buf5m : buf15m;
+      // ersetze letzte if same start time
+      if (buf.length && buf[buf.length-1].t === obj.t) buf[buf.length-1] = obj;
+      else buf.push(obj);
+      const maxLen = tf==='5m' ? 200 : 200;
+      while (buf.length>maxLen) buf.shift();
+
+      if (dayModeOn) {
+        const sig = computeSignals(buf);
+        if (sig && obj.closed) {
+          const msg = `${tf} ${sig.type} @ ${obj.close.toFixed(0)} (RSI ${sig.rsi.toFixed(0)}, EMA9/21 ${sig.ema9.toFixed(0)}/${sig.ema21.toFixed(0)})`;
+          logDay(msg, sig.type==='BUY'?'ok':sig.type==='SELL'?'bad':'warn');
+        }
+        // Volume Spike
+        const volMsg = volumeSpike(buf);
+        if (volMsg && obj.closed) logDay(`${tf} ${volMsg}`, 'warn', true);
+        // S/R nachführen
+        updateSR();
+      }
+    }
+    function ema(arr, period, accessor) {
+      const k = 2/(period+1);
+      let emaVal = accessor(arr[0]); for (let i=1;i<arr.length;i++) emaVal = accessor(arr[i])*k + emaVal*(1-k);
+      return emaVal;
+    }
+    function rsi(arr, period=14) {
+      if (arr.length<period+1) return 50;
+      let gains=0, losses=0;
+      for (let i=arr.length-period;i<arr.length;i++){
+        const ch = arr[i].close - arr[i-1].close;
+        if (ch>0) gains += ch; else losses -= ch;
+      }
+      const avgG = gains/period, avgL = (losses/period)||1e-9;
+      const rs = avgG/avgL;
+      return 100 - (100/(1+rs));
+    }
+    function computeSignals(buf) {
+      if (buf.length<21) return null;
+      const closes = buf.map(b=>b.close);
+      const ema9 = ema(buf.slice(-50), 9, x=>x.close);
+      const ema21= ema(buf.slice(-50), 21, x=>x.close);
+      const r = rsi(buf, 14);
+      let type = null;
+      if (ema9>ema21 && r>55) type = 'BUY';
+      if (ema9<ema21 && r<45) type = 'SELL';
+      if (!type) return null;
+      return { type, rsi:r, ema9, ema21 };
+    }
+    function volumeSpike(buf) {
+      if (buf.length<25) return null;
+      const last = buf[buf.length-1];
+      const avg = buf.slice(-21,-1).reduce((s,b)=>s+b.volume,0)/20;
+      if (avg>0 && last.volume>1.5*avg) {
+        document.getElementById('sigVol').textContent = `${(last.volume).toFixed(2)} (>1.5×)`;
+        if (pushEnabled) sendNotification('Volume Spike', `TF: ${last.t} Vol > 1.5×`);
+        return `Volume‑Spike: ${(last.volume).toFixed(2)} (>1.5× 20‑Schnitt)`;
+      }
+      return null;
+    }
+    function logDay(msg, cls='ok', noPush=false) {
+      const ul = document.getElementById('dayLog');
+      const li = document.createElement('li'); li.className = 'mt8 '+cls; li.textContent = msg; ul.prepend(li);
+      while (ul.children.length>50) ul.removeChild(ul.lastChild);
+      if (!noPush && pushEnabled) sendNotification('Day‑Trading', msg);
+      if (msg.startsWith('5m')) document.getElementById('sig5m').textContent = msg;
+      if (msg.startsWith('15m')) document.getElementById('sig15m').textContent = msg;
+    }
+    function updateSR() {
+      if (buf5m.length<50) return;
+      const highs = buf5m.slice(-100).map(b=>b.high);
+      const lows  = buf5m.slice(-100).map(b=>b.low);
+      const res = Math.max(...highs);
+      const sup = Math.min(...lows);
+      document.getElementById('srResistance').textContent = `$${Math.round(res).toLocaleString('en-US')}`;
+      document.getElementById('srSupport').textContent = `$${Math.round(sup).toLocaleString('en-US')}`;
+    }
+
+    // ========= DCA / SMA200 / ATH & Fibs =========
+    async function fetchDaily(limit=365) {
+      const lim = Math.max(30, Math.min(1000, limit));
+      const url = `https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=${lim}`;
+      const r = await fetch(url, { cache: 'no-store' });
+      const a = await r.json();
+      return a.map(x=>({ open:+x[1], high:+x[2], low:+x[3], close:+x[4], vol:+x[5], t:+x[0] }));
+    }
+    function fmtUSD(n){ return '$'+Math.round(n).toLocaleString('en-US'); }
+    function dcaSim(kl, interval, amount) {
+      // Bestimme Kauf‑Tage
+      const buys = [];
+      if (interval==='daily') {
+        for (let i=0;i<kl.length;i++) buys.push(kl[i]);
+      } else if (interval==='weekly') {
+        for (let i=0;i<kl.length;i+=7) buys.push(kl[i]);
+      } else { // monthly
+        let lastMonth = -1;
+        for (let i=0;i<kl.length;i++) {
+          const m = new Date(kl[i].t).getUTCMonth();
+          if (m!==lastMonth){ buys.push(kl[i]); lastMonth=m; }
+        }
+      }
+      let invested=0, coins=0;
+      buys.forEach(b => { invested += amount; coins += amount / b.close; });
+      const avg = invested / (coins || 1e-9);
+      return { invested, coins, avg };
+    }
+    function sma(arr, period) {
+      if (arr.length<period) return null;
+      let sum = 0; for (let i=arr.length-period;i<arr.length;i++) sum += arr[i].close;
+      return sum/period;
+    }
+    function fibs(fromLow, toHigh) {
+      const diff = toHigh - fromLow;
+      const levels = [
+        {label:'23.6%', val: toHigh - 0.236*diff},
+        {label:'38.2%', val: toHigh - 0.382*diff},
+        {label:'50.0%', val: toHigh - 0.5*diff},
+        {label:'61.8%', val: toHigh - 0.618*diff},
+        {label:'78.6%', val: toHigh - 0.786*diff},
+      ];
+      return levels;
+    }
+
+    async function runDCA() {
+      try {
+        const days = parseInt(document.getElementById('dcaDays').value,10);
+        const interval = document.getElementById('dcaInterval').value;
+        const amount = parseFloat(document.getElementById('dcaAmount').value);
+        const kl = await fetchDaily(days);
+        const res = dcaSim(kl, interval, amount);
+        document.getElementById('dcaInvested').textContent = fmtUSD(res.invested);
+        document.getElementById('dcaCoins').textContent = res.coins.toFixed(6)+' BTC';
+        document.getElementById('dcaAvg').textContent = fmtUSD(res.avg);
+        const value = res.coins * currentPrice;
+        document.getElementById('dcaValue').textContent = fmtUSD(value);
+        const pl = value - res.invested;
+        const sign = pl>=0?'+':'';
+        document.getElementById('dcaPL').textContent = `${sign}${fmtUSD(pl)}`;
+      } catch (e) {
+        alert('DCA‑Berechnung fehlgeschlagen.');
+      }
+    }
+
+    async function updateSMAZonesAndATH() {
+      try {
+        const kl = await fetchDaily(1000);
+        // SMA200
+        const vSMA = sma(kl, 200);
+        if (vSMA) {
+          document.getElementById('sma200').textContent = fmtUSD(vSMA);
+          const zA = 0.8*vSMA, zB1 = 0.8*vSMA, zB2 = 0.9*vSMA, zC1 = 0.9*vSMA, zC2 = 1.0*vSMA;
+          document.getElementById('zoneA').textContent = '≤ ' + fmtUSD(zA);
+          document.getElementById('zoneB').textContent = fmtUSD(zB1) + ' – ' + fmtUSD(zB2);
+          document.getElementById('zoneC').textContent = fmtUSD(zC1) + ' – ' + fmtUSD(zC2);
+          let status = 'Über SMA';
+          if (currentPrice <= zA) status = 'Zone A';
+          else if (currentPrice <= zB2) status = 'Zone B';
+          else if (currentPrice <= zC2) status = 'Zone C';
+          document.getElementById('zoneStatus').textContent = status;
+        } else {
+          document.getElementById('sma200').textContent = '–';
+          document.getElementById('zoneStatus').textContent = 'nicht genug Daten';
+        }
+        // ATH & Fibs
+        let ath = { price: -Infinity, t: null };
+        let cycleLow = { price: Infinity, t: null };
+        for (const c of kl) {
+          if (c.high > ath.price) ath = { price: c.high, t: c.t };
+          if (c.low < cycleLow.price) cycleLow = { price: c.low, t: c.t };
+        }
+        document.getElementById('athPrice').textContent = fmtUSD(ath.price);
+        document.getElementById('athDate').textContent = new Date(ath.t).toISOString().slice(0,10);
+        const dist = ((ath.price - currentPrice)/ath.price)*100;
+        document.getElementById('athDist').textContent = (dist>=0?dist.toFixed(2)+'% unter ATH':(-dist).toFixed(2)+'% über ATH');
+        const daysSince = Math.floor((Date.now()-ath.t)/86400000);
+        document.getElementById('athDays').textContent = daysSince + ' Tage';
+        // Fibs
+        const levels = fibs(cycleLow.price, ath.price);
+        const fibWrap = document.getElementById('fibList'); fibWrap.innerHTML = '';
+        levels.forEach(l=>{
+          const k = document.createElement('div'); k.textContent = l.label; fibWrap.appendChild(k);
+          const v = document.createElement('div'); v.className='mono'; v.textContent = fmtUSD(l.val); fibWrap.appendChild(v);
+        });
+      } catch (e) {
+        // still ok
+      }
+    }
+
+    // ========= Profit‑Taking =========
+    function calcPT() {
+      const entry = parseFloat(document.getElementById('entryPrice').value||'0');
+      const steps = (document.getElementById('ptSteps').value||'10,20,30').split(',').map(s=>parseFloat(s.trim())).filter(x=>!isNaN(x));
+      const size = parseFloat(document.getElementById('ptSize').value||'0');
+      const ul = document.getElementById('ptList'); ul.innerHTML = '';
+      steps.forEach(p=>{
+        const lvl = entry * (1 + p/100);
+        const li = document.createElement('li'); li.className = 'mt8';
+        const diff = ((currentPrice - lvl)/lvl)*100;
+        li.textContent = `${p}% → ${fmtUSD(lvl)} (${diff>=0?'+':''}${diff.toFixed(2)}% vs Spot) — Teilverkauf: ${(size*0.3333).toFixed(4)} BTC`;
+        ul.appendChild(li);
+      });
+    }
+
+    // ========= Push =========
+    function enablePush() {
+      if (!('Notification' in window)) { alert('Browser unterstützt keine Push‑Benachrichtigungen.'); return; }
+      if (Notification.permission === 'granted') { pushEnabled = true; updatePushButton(); sendNotification('BTC Monitor', 'Push aktiv.'); return; }
+      Notification.requestPermission().then(p => {
+        if (p === 'granted') { pushEnabled = true; updatePushButton(); sendNotification('BTC Monitor', 'Push aktiv.'); }
+        else alert('Push abgelehnt.');
+      });
+    }
+    function updatePushButton() {
+      const btn = document.getElementById('pushBtn');
+      if (pushEnabled) { btn.innerHTML = '✅ Push aktiv'; btn.className = 'btn btn-success'; }
+    }
+    function sendNotification(title, body) {
+      if (!pushEnabled || Notification.permission!=='granted') return;
+      try {
+        const n = new Notification(`🚨 ${title}`, { body, icon:'/favicon.ico', tag:'btc-monitor', requireInteraction:false, vibrate:[200,100,200] });
+        setTimeout(()=>n.close(), 8000);
+      } catch {}
+    }
+
+    // ========= Controls =========
+    function toggleMonitoring() {
+      isMonitoring = !isMonitoring;
+      const btn = document.getElementById('monitorBtn');
+      if (isMonitoring) { btn.innerHTML = '⏸️ Pausieren'; btn.className = 'btn btn-warning'; }
+      else { btn.innerHTML = '▶️ Starten'; btn.className = 'btn btn-success'; }
+      if (pushEnabled) sendNotification('Monitor', isMonitoring?'gestartet':'pausiert');
+    }
+    function forceUpdate() {
+      pollOnce();
+      fetchLastHourClose();
+      fetchFearGreed();
+      updateSMAZonesAndATH();
+      if (pushEnabled) sendNotification('Daten aktualisiert', `Spot: $${currentPrice.toLocaleString()}`);
+      const btn = document.getElementById('refreshBtn'); const t = btn.innerHTML;
+      btn.innerHTML='🔄 Updating…'; btn.disabled = true; setTimeout(()=>{btn.innerHTML=t; btn.disabled=false;}, 900);
+    }
+
+    // ========= Service Worker =========
+    const SW_CODE = `
+      const CACHE_NAME='btc-monitor-v2.2';
+      const urlsToCache=['/','/index.html'];
+      self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(urlsToCache)))});
+      self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))});
+    `;
+    function registerServiceWorker() {
+      if ('serviceWorker' in navigator) {
+        const blob = new Blob([SW_CODE], {type:'application/javascript'});
+        const swUrl = URL.createObjectURL(blob);
+        navigator.serviceWorker.register(swUrl).catch(()=>{});
+      }
+    }
+
+    // ========= Events =========
+    document.getElementById('pushBtn').addEventListener('click', enablePush);
+    document.getElementById('monitorBtn').addEventListener('click', toggleMonitoring);
+    document.getElementById('refreshBtn').addEventListener('click', forceUpdate);
+    document.getElementById('fedAddBtn').addEventListener('click', () => {
+      const ts = document.getElementById('fedInput').value.trim();
+      const label = document.getElementById('fedLabel').value.trim() || 'FOMC';
+      addFedEvent(ts, label);
+      document.getElementById('fedInput').value = ''; document.getElementById('fedLabel').value = '';
+    });
+    document.getElementById('fedClearBtn').addEventListener('click', () => { saveFedEvents([]); renderFedEvents(); });
+    document.getElementById('crashToggle').addEventListener('click', () => {
+      crashOn = !crashOn;
+      document.getElementById('crashToggle').textContent = crashOn ? '✅ Aktiv' : '⛔ Deaktiviert';
+      document.getElementById('crashStatus').textContent = crashOn ? 'Überwacht Preisänderungen und sendet Push.' : 'Überwachung aus.';
+    });
+    document.getElementById('dayToggle').addEventListener('click', () => {
+      dayModeOn = !dayModeOn;
+      document.getElementById('dayToggle').textContent = dayModeOn ? '✅ Aktiv' : '⛔ Deaktiviert';
+      document.getElementById('dayStatus').textContent = dayModeOn ? 'Signale aktiv.' : 'Signale aus.';
+    });
+    document.getElementById('dcaCalcBtn').addEventListener('click', runDCA);
+    document.getElementById('ptCalcBtn').addEventListener('click', calcPT);
+
+    // ========= Day Trading Anzeige‑Felder =========
+    // (werden in logDay() aktualisiert)
+
+    // ========= Init =========
+    async function init() {
+      console.log('BTC Monitor v2.2 init');
+      registerServiceWorker();
+
+      // Fed‑Termine initial (Beispiel: nimm deinen nächsten Termin hier rein, sonst UI nutzen)
+      if (loadFedEvents().length === 0) {
+        addFedEvent('2025-07-30T14:00:00Z', 'FOMC Meeting'); // Beispieltermin
+      } else {
+        renderFedEvents();
+      }
+
+      // Countdowns
+      updateCountdowns();
+      setInterval(()=>{ updateCountdowns(); updateCounter++; }, 1000);
+
+      // Live Daten
+      startPriceStream();
+      fetchLastHourClose();
+      setInterval(fetchLastHourClose, 60*1000);
+
+      // Fear & Greed + SMA/ATH
+      fetchFearGreed();
+      updateSMAZonesAndATH();
+      setInterval(fetchFearGreed, 60*60*1000); // stündlich
+
+      console.log('✅ Systeme online');
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+
+    // ========= Utility UI Update bei Start =========
+    renderFedEvents();
+  </script>
 </body>
 </html>
