@@ -255,7 +255,7 @@
       <div class="card">
         <div class="card-title">ℹ️ App Info</div>
         <div class="small">
-          <p><strong>GitHub PWA Version 2.4</strong></p>
+          <p><strong>GitHub PWA Version 2.4.1</strong></p>
           <p>📡 Live‑Updates: Echtzeit (WS) + Fallback 5 s</p>
           <p>🔔 Push‑Benachrichtigungen</p>
           <p>📱 Installation: Alle Browser</p>
@@ -473,11 +473,10 @@
     function storeFFKey(k){ localStorage.setItem(FF_KEY_STORAGE, k||''); }
     function loadFFKey(){ return localStorage.getItem(FF_KEY_STORAGE)||''; }
     function parseFFDate(str){
-      // Format lt. Doku: "YYYY.MM.DD HH:MM:SS"
+      // erwartetes Format: "YYYY.MM.DD HH:MM:SS" (UTC)
       const m = /^(\d{4})\.(\d{2})\.(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(str||'');
       if (!m) return null;
       const [_,Y,M,D,h,mi,s] = m.map(Number);
-      // als UTC interpretieren, lokale Anzeige via toLocaleString()
       return new Date(Date.UTC(Y,M-1,D,h,mi,s));
     }
     function normalizeFF(items){
@@ -490,7 +489,14 @@
     }
     async function fetchFF(period){
       const key = loadFFKey().trim();
-      if (!key){ alert('API‑Key fehlt (JBlanked).'); return []; }
+      // UX‑Fix C: kein Alert, UI‑Hinweis
+      if (!key){
+        const ul = document.getElementById('ffList');
+        if (ul) ul.innerHTML = '<li class="mt8 bad">API‑Key fehlt. Trage ihn oben ein und klicke „Laden“.</li>';
+        nextMacro = null;
+        updateCountdowns();
+        return [];
+      }
       const endpoint = period==='today'
         ? 'https://www.jblanked.com/news/api/forex-factory/calendar/today/'
         : 'https://www.jblanked.com/news/api/forex-factory/calendar/week/';
@@ -516,12 +522,16 @@
       const now = new Date();
       nextMacro = filtered.find(e=>e.when>now) || null;
 
-      // List rendern
+      // Liste
       filtered.forEach(ev=>{
         const li = document.createElement('li'); li.className = 'mt8';
         li.innerHTML = `<span class="mono">${ev.when.toLocaleString()}</span> — <strong>${ev.currency}</strong> — ${ev.name} <span class="muted">(${ev.category||'–'})</span>`;
         ul.appendChild(li);
       });
+
+      if (filtered.length===0) {
+        ul.innerHTML = '<li class="mt8 warn">Keine passenden Events im gewählten Zeitraum/Filter.</li>';
+      }
 
       updateCountdowns();
     }
@@ -532,7 +542,9 @@
         ffEvents = normalizeFF(raw);
         applyFFToUI(ffEvents);
       }catch(e){
-        alert('Kalender‑Abruf fehlgeschlagen.'); console.log(e);
+        const ul = document.getElementById('ffList');
+        if (ul) ul.innerHTML = '<li class="mt8 bad">Kalender‑Abruf fehlgeschlagen.</li>';
+        console.log(e);
       }
     }
 
@@ -620,14 +632,15 @@
       if (pushEnabled) sendNotification('Monitor', isMonitoring?'gestartet':'pausiert');
     }
     function forceUpdate(){
-      pollOnce(); fetchLastHourClose(); fetchFearGreed(); updateSMAZonesAndATH(); loadFFFromControls();
+      pollOnce(); fetchLastHourClose(); fetchFearGreed(); updateSMAZonesAndATH();
+      if (loadFFKey()) { loadFFFromControls(); } // nur laden, wenn Key vorhanden
       if (pushEnabled) sendNotification('Daten aktualisiert', `Spot: $${currentPrice.toLocaleString()}`);
       const btn=document.getElementById('refreshBtn'); const t=btn.innerHTML; btn.innerHTML='🔄 Updating…'; btn.disabled=true; setTimeout(()=>{btn.innerHTML=t; btn.disabled=false;},900);
     }
 
     // ======= Service Worker (Cache‑Fix) =======
     const SW_CODE = `
-      const CACHE_NAME='btc-monitor-v2.4';
+      const CACHE_NAME='btc-monitor-v2.4.1';
       self.addEventListener('install',e=>{self.skipWaiting();});
       self.addEventListener('activate',e=>{e.waitUntil((async()=>{const ks=await caches.keys(); await Promise.all(ks.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k))); self.clients.claim();})());});
       self.addEventListener('fetch',e=>{
@@ -655,7 +668,7 @@
         categories:["finance","productivity","utilities"] };
       const blob=new Blob([JSON.stringify(manifest,null,2)],{type:'application/json'});
       const url=URL.createObjectURL(blob);
-      const link=document.createElement('link'); link.rel='manifest'; link.href=url+'?v=2.4'; document.head.appendChild(link);
+      const link=document.createElement('link'); link.rel='manifest'; link.href=url+'?v=2.4.1'; document.head.appendChild(link);
     }
 
     // ======= Events =======
@@ -667,16 +680,16 @@
 
     document.getElementById('ffSave').addEventListener('click', ()=>{
       const k=(document.getElementById('ffApiKey').value||'').trim(); storeFFKey(k);
-      loadFFFromControls();
+      // nach dem Speichern noch nichts laden; Nutzer klickt bewusst "Laden"
     });
     document.getElementById('ffLoad').addEventListener('click', loadFFFromControls);
 
     // ======= Init =======
     async function init(){
-      console.log('BTC Monitor v2.4 init');
+      console.log('BTC Monitor v2.4.1 init');
       generateManifest(); registerServiceWorker();
 
-      // UI‑Restore für FF‑Key
+      // FF‑Key in UI spiegeln
       document.getElementById('ffApiKey').value = loadFFKey();
 
       // Countdowns
@@ -688,13 +701,14 @@
       fetchLastHourClose();
       setInterval(fetchLastHourClose, 60*1000);
 
-      // Fear & Greed + SMA/ATH + FF‑Kalender
+      // Fear & Greed + SMA/ATH
       fetchFearGreed();
       updateSMAZonesAndATH();
-      // Erstes Laden Kalender:
-      loadFFFromControls();
-      // Optional periodisch neu laden (alle 30 Min):
-      setInterval(loadFFFromControls, 30*60*1000);
+
+      // UX‑Fix C: Kalender NICHT automatisch laden, wenn kein Key vorhanden
+      if (loadFFKey()) { loadFFFromControls(); }
+      // Optional: periodisch neu laden, aber nur falls Key vorhanden
+      setInterval(()=>{ if (loadFFKey()) loadFFFromControls(); }, 30*60*1000);
 
       console.log('✅ Systeme online');
     }
@@ -702,4 +716,3 @@
   </script>
 </body>
 </html>
-
